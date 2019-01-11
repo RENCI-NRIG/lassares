@@ -21,7 +21,7 @@ Amazon Web Services (AWS) provides several services that could be used, also mat
 - ELK can be deployed in on-premises infrastructure or institutional or public cloud
   - Provides substantial deployment and scaling flexibility
 
-[collection]
+[collection](../master/images/collection.png)
 
 ### Kafka and Elastic Search
 - Apache Kafka [1] is a “distributed streaming platform.” It provides many of the data collection architecture requirements out of the box; others may require custom programming. Kafka enables secure and scalable message transfer, fault-tolerant storage, and stream processing.  By coupling stream processing with storage, it allows for re-processing (see Kappa Architecture).
@@ -42,13 +42,11 @@ Amazon Web Services (AWS) provides several services that could be used, also mat
   - Used for GIS visualization of measurement gradients   
 - Visualization resolution currently limited to (at 30 deg lat for continental US)
 
-[measurement]
+[measurement](../master/images/measurement.png)
 
 Each measurement associated with metadata that is stored together with measured values
 
-[metadata]
+[metadata](../master/images/metadata.png)
 
 ### Measured variables (non-exhaustive 
-[variables]
-
-
+[variables](../master/images/variables.png)
