@@ -1,3 +1,10 @@
+# This file, secrets, provides an example of how to configure
+# sregistry with your authentication secrets. Copy it to secrets.py and
+# configure the settings you need.
 
-GEOPOSITION_GOOGLE_MAPS_API_KEY ='AIzaSyCn5bkltAo7AJuShCigkFl0b7-Av-anWI0'
-SECRET_KEY='fd00196b-df17-4a07-85bb-0abdfefa1ab0'
+# Secret Key
+# You must uncomment, and set SECRET_KEY to a secure random value
+# e.g. https://djskgen.herokuapp.com/
+
+SECRET_KEY = 'xxxxxxxxxxxxxxx'
+GEOPOSITION_GOOGLE_MAPS_API_KEY = 'xxxxxxxxxxxxxxxx'
