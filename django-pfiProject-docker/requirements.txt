@@ -1,0 +1,8 @@
+Django==2.1.5
+psycopg2-binary==2.7.5
+python-dotenv==0.9.1
+pytz==2018.5
+uwsgi==2.0.17.1
+django-allauth==0.38.0
+django-geoposition-2==0.3.6
+kafka-python==1.4.4

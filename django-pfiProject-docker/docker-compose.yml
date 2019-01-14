@@ -1,0 +1,54 @@
+version: '3.6'
+services:
+  database:
+    image: postgres:10
+    container_name: database
+    ports:
+    - 5432:${POSTGRES_PORT:-5432}
+
+  django:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: django
+    container_name: django
+    ports:
+    - 8000:8000
+    volumes:
+    - .:/code
+    - ./static:/code/static
+    - ./media:/code/media
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+    - 80:80
+    - 443:443
+    volumes:
+    - .:/code
+    - ./static:/code/static
+    - ./media:/code/media
+    - ./nginx/pfiProject_nginx_ssl.conf:/etc/nginx/conf.d/default.conf
+    - ./certs/self.signed.crt:/etc/ssl/SSL.crt
+    - ./certs/self.signed.key:/etc/ssl/SSL.key
+    environment:
+        - NGINX_HOST:${NGINX_HOST:-127.0.0.1}
+  zookeeper:
+    image: zookeeper
+    container_name: zookeeper 
+    restart: always
+    ports:
+      - 2181:2181
+  kafka:
+    image: kthare10/kafka
+    container_name: kafka
+    restart: always
+    hostname: kafka 
+    depends_on:
+        - zookeeper
+    ports:
+        - 9092:9092
+    environment:
+        ZOOKEEPER_CONNECT: zookeeper:2181
+        KAFKA_LISTENERS: ${KAFKA_LISTENER:-PLAINTEXT://kafka:9092}
