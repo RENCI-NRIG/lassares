@@ -88,39 +88,39 @@ Configure Admin site with following info to enable GMAIL authentication.
 To allow users to log in with their Gmail credentials we need to register our new website with Google. Go to the Google Developers Console and enter the name of your new project. I’ve called this one “Django Login Mega-Tutorial.” The click on the “Create” button.
 
 Google console
-![Console](../master/images/google-console.png)
+![Console](../../master/images/google-console.png)
 
 You’ll be sent to the Google “API & Services” page. We want to use Gmail so click on it.
-![Dashboard](../master/images/google-dashboard.png)
+![Dashboard](../../master/images/google-dashboard.png)
 
 The next screen shows all the details of the Gmail API. Click on the “Enable” button.
-![GmailApi](../master/images/gmail-api.png)
+![GmailApi](../../master/images/gmail-api.png)
 
 You may be asked for credentials at this point.
-![credentials](../master/images/credentials.png)
+![credentials](../../master/images/credentials.png)
 
 If so click on the “Create credentials” button. Make sure the fields are correct that we’re using the “Gmail API” with a “Web server” and accessing “User data.” Then click “What credentials do I need?”
-![add-credentials](../master/images/add-credentials.png)
+![add-credentials](../../master/images/add-credentials.png)
 
 Step 2 is to add a Name and Authorized Redirect URLs. The name I’ve just repeated the name of my overall project here. The redirect URL should be http://<domainname>/accounts/google/login/callback/. Then click on the “Create client ID” button.
   ![consent](../master/images/consent.png)  
   
 Third and final step is to configure the consent screen. This is the information shown to users after they click on the login button. They’ll be redirected to a Google site that shows the Product name and asks if the site has permission to access their Google account.
-![oauth-client-id](../master/images/oauth-client-id.png)  
+![oauth-client-id](../../master/images/oauth-client-id.png)  
 
 Now we have what we want: a client ID (I’ve hidden mine in red). I recommend downloading it and storing somewhere secure. You don’t want this information public.
-![api-keys](../master/images/api-keys.png) 
+![api-keys](../../master/images/api-keys.png) 
   
 2. Configure Site and Social Apps
   Go to the Admin site http://<domainname>/admin and notice Allauth has added a number of new sections for us.
   Go into “Sites” on this page.
-  ![site](../master/images/site.png) 
+  ![site](../../master/images/site.png) 
   
   Click on the existing Domain Name of “example.com”. Update it so the “Domain name” is <domainname>.
   Click save.
-  ![site-edit](../master/images/site-edit.png) 
+  ![site-edit](../../master/images/site-edit.png) 
   
   Now for each third-party application we want to add we just need to click on the “Add” button next to “Social applications” under “Social Accounts.”
-  ![social-app](../master/images/social-app.png) 
+  ![social-app](../../master/images/social-app.png) 
    
 On this page we need to select the provider (Google), provide a Name (Gmail), a Client ID, and a Secret Key. If you downloaded your API keys previously and open the file with a text editor you’ll see it is in JSON format and has both your Client ID and Client Secret. Enter both in here. Finally on the bottom of the page under “Sites” select “domainname” and click the -> arrow to add it to the Chosen Sites section. Now click on the “Save” button in the lower right of the screen.
