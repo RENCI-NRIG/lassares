@@ -22,6 +22,6 @@ Clone the code from the lassaress repository on any of linux CentOs-6 based serv
 ## Manual configuration
 
 Increase tileMap MaxPrecision:
-a) Log on to Kibana via http://<public-ip-of-your-instance>:5601
-b) Go to Management->Advanced Settings(under kibana), Change visualization:tileMap:maxPrecision to 10. Default value is 7.
+- Log on to Kibana via http://<public-ip-of-your-instance>:5601
+- Go to Management->Advanced Settings(under kibana), Change visualization:tileMap:maxPrecision to 10. Default value is 7.
 ![Advanced](../../master/images/Advanced.png)
