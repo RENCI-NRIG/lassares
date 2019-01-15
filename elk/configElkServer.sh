@@ -10,6 +10,7 @@ BUCKETNAME=$1
 ELASTIC_VERSION=$2
 ES_PASSWORD=elastic
 DEFAULT_INDEX_PATTERN=logstash
+LOCALIP=`/opt/aws/bin/ec2-metadata -o|cut -d' ' -f2`
 
 echo "Installing java"
 /usr/bin/yum -y install java-1.8.0-openjdk
@@ -25,18 +26,28 @@ fi
 echo "Installing elasticsearch"
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$ELASTIC_VERSION.rpm > /dev/null 2>&1
 rpm --install elasticsearch-$ELASTIC_VERSION.rpm  > /dev/null 2>&1
-chkconfig --add elasticsearch
 
 #Install kibana
 echo "Installing kibana"
 wget https://artifacts.elastic.co/downloads/kibana/kibana-$ELASTIC_VERSION-x86_64.rpm > /dev/null 2>&1
 rpm --install kibana-$ELASTIC_VERSION-x86_64.rpm > /dev/null 2>&1
-chkconfig --add kibana
 
 #Install logstash
 echo "Installing logstash"
 wget https://artifacts.elastic.co/downloads/logstash/logstash-$ELASTIC_VERSION.rpm > /dev/null 2>&1
 rpm --install logstash-$ELASTIC_VERSION.rpm > /dev/null 2>&1
+
+
+systemctl daemon-reload
+echo "enable for elk service"
+systemctl enable elasticsearch.service 
+systemctl enable kibana.service 
+systemctl enable logstash.service 
+
+echo "start elk services"
+systemctl start elasticsearch.service 
+systemctl start kibana.service 
+systemctl start logstash.service 
 
 echo "Setting up config files"
 #Install config files
@@ -47,7 +58,6 @@ cp /root/lassares/elk/logstash-simple.conf /etc/logstash/conf.d/logstash-simple.
 chmod 644 /etc/logstash/conf.d/logstash-simple.conf
 
 #Change ip address
-LOCALIP=`/opt/aws/bin/ec2-metadata -o|cut -d' ' -f2`
 sed -i 's/172.31.22.51/'$LOCALIP'/g' /etc/logstash/conf.d/logstash-simple.conf
 sed -i 's/172.31.22.51/'$LOCALIP'/g' /etc/logstash/logstash.yml
 sed -i 's/172.31.22.51/'$LOCALIP'/g' /etc/elasticsearch/elasticsearch.yml
@@ -57,34 +67,41 @@ chown root:elasticsearch /etc/logstash/conf.d/logstash-simple.conf /etc/logstash
 
 rm -rf /root/*.rpm
 
-until /usr/bin/aws s3 ls s3://$BUCKETNAME/webserver.ip; do sleep 2; done
-/usr/bin/aws s3 cp s3://$BUCKETNAME/webserver.ip /root/
-/usr/bin/aws s3 rm s3://$BUCKETNAME --recursive
-IP=`cat /root/webserver.ip`
-sed -i 's/172.31.17.173/'$IP'/g' /etc/logstash/conf.d/logstash-simple.conf
+if [ $BUCKETNAME != "skip" ]; then
+   until /usr/bin/aws s3 ls s3://$BUCKETNAME/webserver.ip; do sleep 2; done
+   /usr/bin/aws s3 cp s3://$BUCKETNAME/webserver.ip /root/
+   /usr/bin/aws s3 rm s3://$BUCKETNAME --recursive
+   IP=`cat /root/webserver.ip`
+   sed -i 's/172.31.17.173/'$IP'/g' /etc/logstash/conf.d/logstash-simple.conf
+fi
 
 echo "Setting boot strap password"
 echo changeme  | /usr/share/elasticsearch/bin/elasticsearch-keystore add --stdin "bootstrap.password"
 
 echo "Restart processes"
-service elasticsearch restart > /dev/null 2>&1
-service kibana restart > /dev/null 2>&1
-initctil stop logstash > /dev/null 2>&1
-initctil start logstash > /dev/null 2>&1
+systemctl restart elasticsearch.service 
+systemctl restart kibana.service 
+systemctl restart logstash.service 
 
-echo "Setting password to ${ES_PASSWORD}"
+echo "sleeping for 30 seconds"
+sleep 30
+
+echo "Setting elastic password to ${ES_PASSWORD}"
 curl -s -XPUT -u elastic:changeme "${LOCALIP}:9200/_xpack/security/user/elastic/_password" -H "Content-Type: application/json" -d "{
   \"password\" : \"${ES_PASSWORD}\"
 }"
 
+echo "Setting kibana password to ${ES_PASSWORD}"
 curl -s -XPUT -u elastic:${ES_PASSWORD} "${LOCALIP}:9200/_xpack/security/user/kibana/_password" -H "Content-Type: application/json" -d "{
   \"password\" : \"${ES_PASSWORD}\"
 }"
 
+echo "Setting logstash password to ${ES_PASSWORD}"
 curl -s -XPUT -u elastic:${ES_PASSWORD} "${LOCALIP}:9200/_xpack/security/user/logstash_system/_password" -H "Content-Type: application/json" -d "{
   \"password\" : \"${ES_PASSWORD}\"
 }"
 
+echo "Begin loading templates"
 # Load any declared extra index templates
 TEMPLATES=/root/lassares/elk/templates/*.json
 for f in $TEMPLATES
@@ -96,6 +113,7 @@ do
      -d@$f
 done
 
+echo "Begin loading indexes"
 INDEX=/root/lassares/elk/index/*.json
 for f in $INDEX
 do
@@ -108,12 +126,14 @@ do
          -d@$f
 done
 
+echo "Setup default index"
 curl -s -X POST http://elastic:${ES_PASSWORD}@${LOCALIP}:5601/api/kibana/settings/defaultIndex \
      -H 'kbn-xsrf:true' -H 'Content-Type: application/json' \
      -d "{\"value\":\"${DEFAULT_INDEX_PATTERN}\"}"
 
-wget http://nodejs.org/dist/v9.11.2/node-v9.11.2-linux-x64.tar.gz /
-tar --strip-components 1 -xzvf node-v* -C /usr/
+echo "Setup nodejs and cron job"
+wget http://nodejs.org/dist/v9.11.2/node-v9.11.2-linux-x64.tar.gz -O /root/node.tar.gz
+tar --strip-components 1 -xzvf /root/node.tar.gz -C /usr/
 /usr/bin/npm install elasticsearch
 
 cp -R /root/lassares/elk/cron /root/
