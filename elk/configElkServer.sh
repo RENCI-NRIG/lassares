@@ -64,7 +64,7 @@ IP=`cat /root/webserver.ip`
 sed -i 's/172.31.17.173/'$IP'/g' /etc/logstash/conf.d/logstash-simple.conf
 
 echo "Setting boot strap password"
-echo changeme  | bin/elasticsearch-keystore add --stdin "bootstrap.password"
+echo changeme  | /usr/share/elasticsearch/bin/elasticsearch-keystore add --stdin "bootstrap.password"
 
 echo "Restart processes"
 service elasticsearch restart > /dev/null 2>&1
