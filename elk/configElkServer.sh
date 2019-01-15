@@ -63,20 +63,25 @@ until /usr/bin/aws s3 ls s3://$BUCKETNAME/webserver.ip; do sleep 2; done
 IP=`cat /root/webserver.ip`
 sed -i 's/172.31.17.173/'$IP'/g' /etc/logstash/conf.d/logstash-simple.conf
 
+echo "Setting boot strap password"
+echo changeme  | bin/elasticsearch-keystore add --stdin "bootstrap.password"
+
+echo "Restart processes"
 service elasticsearch restart > /dev/null 2>&1
 service kibana restart > /dev/null 2>&1
-service logstash restart > /dev/null 2>&1
+initctil stop logstash > /dev/null 2>&1
+initctil start logstash > /dev/null 2>&1
 
 echo "Setting password to ${ES_PASSWORD}"
-curl -s -XPUT -u elastic:changeme '${LOCALIP}:9200/_xpack/security/user/elastic/_password' -H "Content-Type: application/json" -d "{
+curl -s -XPUT -u elastic:changeme "${LOCALIP}:9200/_xpack/security/user/elastic/_password" -H "Content-Type: application/json" -d "{
   \"password\" : \"${ES_PASSWORD}\"
 }"
 
-curl -s -XPUT -u elastic:${ES_PASSWORD} '${LOCALIP}:9200/_xpack/security/user/kibana/_password' -H "Content-Type: application/json" -d "{
+curl -s -XPUT -u elastic:${ES_PASSWORD} "${LOCALIP}:9200/_xpack/security/user/kibana/_password" -H "Content-Type: application/json" -d "{
   \"password\" : \"${ES_PASSWORD}\"
 }"
 
-curl -s -XPUT -u elastic:${ES_PASSWORD} '${LOCALIP}:9200/_xpack/security/user/logstash_system/_password' -H "Content-Type: application/json" -d "{
+curl -s -XPUT -u elastic:${ES_PASSWORD} "${LOCALIP}:9200/_xpack/security/user/logstash_system/_password" -H "Content-Type: application/json" -d "{
   \"password\" : \"${ES_PASSWORD}\"
 }"
 
