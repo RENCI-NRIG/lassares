@@ -18,11 +18,10 @@ LOCALIP=`/opt/aws/bin/ec2-metadata -o|cut -d' ' -f2`
 GOOGLE_API_KEY=$1
 BUCKETNAME=$2
 
-systemctl daemon-reload
 echo "enable for docker service"
-systemctl enable docker.service
+chkconfig --add docker
 echo "start docker service"
-systemctl start docker.service
+service docker start
 
 curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose

@@ -26,28 +26,19 @@ fi
 echo "Installing elasticsearch"
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$ELASTIC_VERSION.rpm > /dev/null 2>&1
 rpm --install elasticsearch-$ELASTIC_VERSION.rpm  > /dev/null 2>&1
+chkconfig --add elasticsearch
 
 #Install kibana
 echo "Installing kibana"
 wget https://artifacts.elastic.co/downloads/kibana/kibana-$ELASTIC_VERSION-x86_64.rpm > /dev/null 2>&1
 rpm --install kibana-$ELASTIC_VERSION-x86_64.rpm > /dev/null 2>&1
+chkconfig --add kibana
 
 #Install logstash
 echo "Installing logstash"
 wget https://artifacts.elastic.co/downloads/logstash/logstash-$ELASTIC_VERSION.rpm > /dev/null 2>&1
 rpm --install logstash-$ELASTIC_VERSION.rpm > /dev/null 2>&1
-
-
-systemctl daemon-reload
-echo "enable for elk service"
-systemctl enable elasticsearch.service 
-systemctl enable kibana.service 
-systemctl enable logstash.service 
-
-echo "start elk services"
-systemctl start elasticsearch.service 
-systemctl start kibana.service 
-systemctl start logstash.service 
+initctl start logstash
 
 echo "Setting up config files"
 #Install config files
@@ -79,9 +70,10 @@ echo "Setting boot strap password"
 echo changeme  | /usr/share/elasticsearch/bin/elasticsearch-keystore add --stdin "bootstrap.password"
 
 echo "Restart processes"
-systemctl restart elasticsearch.service 
-systemctl restart kibana.service 
-systemctl restart logstash.service 
+service elasticsearch restart
+service kibana restart
+initctl stop logstash
+initctl start logstash
 
 echo "sleeping for 30 seconds"
 sleep 30
