@@ -7,7 +7,7 @@ if [ $# -ne 2 ]; then
 fi
 
 mkdir -p /var/www
-mv /root/django-pfiProject-docker /var/www
+cp -R /root/lassaress/django-pfiProject-docker /var/www
 chown -R root:root /var/www/
 chmod -R g+w /var/www/
 cd /var/www/django-pfiProject-docker/
