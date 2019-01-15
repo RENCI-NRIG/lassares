@@ -40,10 +40,10 @@ rpm --install logstash-$ELASTIC_VERSION.rpm > /dev/null 2>&1
 
 echo "Setting up config files"
 #Install config files
-cp /root/lassaress/elk/logstash.yml /etc/logstash/logstash.yml
-cp /root/lassaress/elk/kibana.yml /etc/kibana/kibana.yml
-cp /root/lassaress/elk/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
-cp /root/lassaress/elk/logstash-simple.conf /etc/logstash/conf.d/logstash-simple.conf
+cp /root/lassares/elk/logstash.yml /etc/logstash/logstash.yml
+cp /root/lassares/elk/kibana.yml /etc/kibana/kibana.yml
+cp /root/lassares/elk/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
+cp /root/lassares/elk/logstash-simple.conf /etc/logstash/conf.d/logstash-simple.conf
 chmod 644 /etc/logstash/conf.d/logstash-simple.conf
 
 #Change ip address
@@ -86,7 +86,7 @@ curl -s -XPUT -u elastic:${ES_PASSWORD} "${LOCALIP}:9200/_xpack/security/user/lo
 }"
 
 # Load any declared extra index templates
-TEMPLATES=/root/lassaress/elk/templates/*.json
+TEMPLATES=/root/lassares/elk/templates/*.json
 for f in $TEMPLATES
 do
      filename=$(basename $f)
@@ -96,7 +96,7 @@ do
      -d@$f
 done
 
-INDEX=/root/lassaress/elk/index/*.json
+INDEX=/root/lassares/elk/index/*.json
 for f in $INDEX
 do
      filename=$(basename $f)
@@ -110,13 +110,13 @@ done
 
 curl -s -X POST http://elastic:${ES_PASSWORD}@${LOCALIP}:5601/api/kibana/settings/defaultIndex \
      -H 'kbn-xsrf:true' -H 'Content-Type: application/json' \
-     -d '{"value":"${DEFAULT_INDEX_PATTERN}"}'
+     -d "{\"value\":\"${DEFAULT_INDEX_PATTERN}\"}"
 
 wget http://nodejs.org/dist/v9.11.2/node-v9.11.2-linux-x64.tar.gz /
 tar --strip-components 1 -xzvf node-v* -C /usr/
 /usr/bin/npm install elasticsearch
 
-cp -R /root/lassaress/elk/cron /root/
+cp -R /root/lassares/elk/cron /root/
 #Change ip address
 LOCALIP=`/opt/aws/bin/ec2-metadata -o|cut -d' ' -f2`
 sed -i 's/172.31.22.51/'$LOCALIP'/g' /root/cron/setupLasaress.js
