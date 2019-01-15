@@ -1,0 +1,36 @@
+{
+  "template": "logstash-*",
+  "settings": {
+    "index": {
+      "number_of_shards": "1",
+      "mapper": {
+        "dynamic": "true"
+      }
+    }
+  },
+  "mappings": {
+    "doc": {
+      "properties": {
+        "Measurement": {
+          "properties": {
+            "JobId": {"type": "keyword"},
+            "ChemicalId": {"type": "keyword"},
+            "Concentration": {"type": "float"},
+            "Temperature": {"type": "float"},
+            "Humidity": {"type": "float"},
+            "Precipitation": {"type": "integer"},
+            "Barometric Pressure": {"type": "integer"},
+            "Wind Speed": {"type": "integer"},
+            "Wind Direction": {"type": "integer"},
+            "_DeviceId": {"type": "keyword"},
+            "_Timestamp": {"type": "date",
+                      "format": "yyyy-MM-dd HH:mm:ss"},
+            "_Location": {
+              "type" : "geo_point"
+            }
+          }
+        }
+      }
+    }
+  }
+}
