@@ -56,7 +56,19 @@ var client = new elasticsearch.Client({
 void async function() {
     try {
         // Delete all existing visualizations
-        await sendRestRequest('POST', deleteAllVisPath, 9200, deleteAllVisBody);
+        //await sendRestRequest('POST', deleteAllVisPath, 9200, deleteAllVisBody);
+        //
+        // Search for all the existing visualizations
+        const resp1 = await client.search({
+            index: '.kibana',
+            body: {"_source": {"includes": [ "type", "visualization.title"] }, "query":{ "match" : { "type": "visualization" } } }
+        });
+
+        var existingVis = [];
+        for( var t in resp1.hits.hits ){
+           existingVis.push(resp1.hits.hits[t]._source.visualization.title);
+        }
+
         // Search for all the unique jobIds
         const resp = await client.search({
             index: 'logstash-*',
@@ -76,12 +88,18 @@ void async function() {
         var jobArr = resp.aggregations.distinct_jobs.buckets;
         // Create visualization for each JobId
         for( var job in jobArr) {
-            if(jobArr.hasOwnProperty(job)) {
-                console.log("Creating visualization for JobId: " + jobArr[job].key.JobId);
-                var body = visualize;
-                body = replaceAll(body, "JOBID", jobArr[job].key.JobId);
-                console.log("Visualization body for JobId: " + body);
-                await sendRestRequest('POST', createVisPath, 5601, body);
+            if(existingVis.includes(jobArr[job].key.JobId)) {
+                // DO NOTHING
+                ;
+            }
+            else {
+                if(jobArr.hasOwnProperty(job)) {
+                    console.log("Creating visualization for JobId: " + jobArr[job].key.JobId);
+                    var body = visualize;
+                    body = replaceAll(body, "JOBID", jobArr[job].key.JobId);
+                    console.log("Visualization body for JobId: " + body);
+                    await sendRestRequest('POST', createVisPath, 5601, body);
+                }
             }
         }
     }

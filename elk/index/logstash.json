@@ -2,7 +2,7 @@
     "attributes":
     {
         "title":"logstash-*",
-        "timeFieldName":"Measurement._Timestamp",
+        "timeFieldName":"Measurement.Timestamp",
         "fields":"[
             {
                 \"name\":\"@timestamp\",
@@ -50,7 +50,7 @@
                 \"readFromDocValues\":true
             },
             {
-                \"name\":\"Measurement._DeviceId\",
+                \"name\":\"Measurement.DeviceId\",
                 \"type\":\"string\",
                 \"count\":0,
                 \"scripted\":false,
@@ -59,7 +59,7 @@
                 \"readFromDocValues\":true
             },
             {
-                \"name\":\"Measurement._Location\",
+                \"name\":\"Measurement.Location\",
                 \"type\":\"geo_point\",
                 \"count\":0,
                 \"scripted\":false,
@@ -68,7 +68,7 @@
                 \"readFromDocValues\":true
             },
             {
-                \"name\":\"Measurement._Timestamp\",
+                \"name\":\"Measurement.Timestamp\",
                 \"type\":\"date\",
                 \"count\":0,
                 \"scripted\":false,

@@ -22,10 +22,10 @@
             "Barometric Pressure": {"type": "integer"},
             "Wind Speed": {"type": "integer"},
             "Wind Direction": {"type": "integer"},
-            "_DeviceId": {"type": "keyword"},
-            "_Timestamp": {"type": "date",
+            "DeviceId": {"type": "keyword"},
+            "Timestamp": {"type": "date",
                       "format": "yyyy-MM-dd HH:mm:ss"},
-            "_Location": {
+            "Location": {
               "type" : "geo_point"
             }
           }
