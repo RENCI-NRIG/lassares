@@ -13,6 +13,7 @@
       "properties": {
         "Measurement": {
           "properties": {
+            "BoreId": {"type": "keyword"},
             "JobId": {"type": "keyword"},
             "ChemicalId": {"type": "keyword"},
             "Concentration": {"type": "float"},

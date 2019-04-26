@@ -9,6 +9,7 @@ from django.contrib.admin.sites import AdminSite
 from measWeb.models import Measurement
 
 from kafka import KafkaProducer
+import os
 
 def publish_message(producer_instance, topic_name, value):
     try:
@@ -23,7 +24,7 @@ def publish_message(producer_instance, topic_name, value):
 def connect_kafka_producer():
     _producer = None
     try:
-        _producer = KafkaProducer(bootstrap_servers=['localhost:9092'], api_version=(0, 10))
+        _producer = KafkaProducer(bootstrap_servers=[os.getenv('KAFKA_HOST', 'localhost:9092'), api_version=(0, 10))
     except Exception as ex:
         print('Exception while connecting Kafka')
         print(str(ex))

@@ -16,6 +16,7 @@ class Migration(migrations.Migration):
             name='Measurement',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('boreId', models.CharField(max_length=200)),
                 ('jobId', models.CharField(max_length=200)),
                 ('deviceId', models.CharField(max_length=200)),
                 ('chemicalId', models.CharField(max_length=200)),

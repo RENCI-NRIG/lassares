@@ -13,6 +13,7 @@ STATUS_CHOICES = (
 )
 
 class Measurement(models.Model):
+    boreId = models.CharField(max_length=200)
     jobId = models.CharField(max_length=200)
     deviceId = models.CharField(max_length=200)
     chemicalId = models.CharField(max_length=200)
@@ -23,7 +24,7 @@ class Measurement(models.Model):
     comment = models.CharField(max_length=1000, null=True, default="")
     position = GeopositionField(default=('0,0'))
 
-    def toString(self):              
+    def toString(self):
         #{DeviceX0001 2018-05-17 09:21:20.3 51.517016 -0.144819} {JobY001 CH5OH 10000.0 ppm}
-        retVal = "{" + self.deviceId + " " +  str(self.date) + " " + str(self.time) + " " + str(self.position.latitude) + " " + str(self.position.longitude) + "} {" + self.jobId + " " + self.chemicalId + " " + self.concentration + " ppm}"
+        retVal = "{" + self.deviceId + " " +  str(self.date) + " " + str(self.time) + " " + str(self.position.latitude) + " " + str(self.position.longitude) + "} {" + self.boreId + " " + self.jobId + " " + self.chemicalId + " " + self.concentration + " ppm}"
         return retVal

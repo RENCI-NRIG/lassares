@@ -41,6 +41,15 @@
                 \"readFromDocValues\":true
             },
             {
+                \"name\":\"Measurement.BoreId\",
+                \"type\":\"string\",
+                \"count\":0,
+                \"scripted\":false,
+                \"searchable\":true,
+                \"aggregatable\":true,
+                \"readFromDocValues\":true
+            },
+            {
                 \"name\":\"Measurement.JobId\",
                 \"type\":\"string\",
                 \"count\":0,
