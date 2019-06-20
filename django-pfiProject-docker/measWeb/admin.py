@@ -40,7 +40,7 @@ def push_measurement_to_elk_stack(modeladmin, request, queryset):
         obj.save()
 
 class MeasurementAdmin(admin.ModelAdmin):
-    list_display = ('jobId', 'deviceId', 'chemicalId', 'concentration', 'date', 'time', 'status', 'comment','position')
+    list_display = ('jobId', ,'boreId', 'deviceId', 'chemicalId', 'concentration', 'date', 'time', 'status', 'comment','position')
     actions = [push_measurement_to_elk_stack]
 
 admin.site.register(Measurement, MeasurementAdmin)

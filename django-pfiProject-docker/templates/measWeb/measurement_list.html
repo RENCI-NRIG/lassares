@@ -82,6 +82,10 @@
                                     <div class="text"><a href="?o=1">JobId</a></div>
                                     <div class="clear"></div>
                                 </th>
+                                <th scope="col"  class="sortable column-boreId">
+                                    <div class="text"><a href="?o=1">BoreId</a></div>
+                                    <div class="clear"></div>
+                                </th>
                                 <th scope="col"  class="sortable column-deviceId">
                                     <div class="text"><a href="?o=2">DeviceId</a></div>
                                     <div class="clear"></div>
@@ -123,6 +127,7 @@
                                         <input type="checkbox" name="_selected_action" value="{{ meas.id }}" class="action-select" />
                                     </td>
                                     <th class="field-jobId"><a href="{% url "measWeb:measurement_update" meas.id %}">{{ meas.jobId }}</a></th>
+                                    <td class="field-boreId">{{ meas.boreId}}</td>
                                     <td class="field-deviceId">{{ meas.deviceId }}</td>
                                     <td class="field-chemicalId">{{ meas.chemicalId }}</td>
                                     <td class="field-concentration">{{ meas.concentration }}</td>
