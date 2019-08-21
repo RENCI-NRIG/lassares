@@ -21,7 +21,8 @@ from django.views.i18n import JavaScriptCatalog
 
 urlpatterns = [
     path('', include('pages.urls')), #new
-    path('meas/', include(('measWeb.urls','measWeb'), 'measWeb')), #new
+    path('meas/', include(('meas_web.urls','meas_web'), 'meas_web')), #new
+    path('drf/', include(('drf_data.urls','drf_data'), 'drf_data')), #new
 
     # Django Admin
     path('admin/', admin.site.urls),

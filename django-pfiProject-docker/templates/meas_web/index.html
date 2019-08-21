@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en-us" >
+<head>
+    <title>Measweb administration</title>
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/dashboard.css" />
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/responsive.css" />
+    <meta name="robots" content="NONE,NOARCHIVE" />
+</head>
+
+<body class=" dashboard app-meas_web" data-admin-utc-offset="0">
+
+<!-- Container -->
+<div id="container">
+
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+            <h1 id="site-name">Lassaress Web Server</h1>
+        </div>
+        <div id="user-tools">
+                Welcome,
+                <strong>{{ user.username }}</strong>.
+                <a href="{% url 'account_logout' %}">Log out</a>
+        </div>
+    </div>
+    <!-- END Header -->
+    
+    <div class="breadcrumbs">
+        <a href="{% url "home" %}">Home</a>
+        &rsaquo; Measweb
+    </div>
+
+    <!-- Content -->
+    <div id="content" class="colMS">
+        <h1>Measweb administration</h1>
+        <div id="content-main">
+            <div class="app-meas_web module">
+                <table>
+                    <caption>
+                        Measweb
+                    </caption>
+                    <tr class="model-measurement">
+                        <th scope="row"><a href="{% url "meas_web:measurement_list" %}">Measurements</a></th>
+                        <td><a href="{% url "meas_web:measurement_create" %}" class="addlink">Add</a></td>
+                        <td><a href="{% url "meas_web:measurement_list" %}" class="changelink">Change</a></td>
+            
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
+
+    <div id="footer"></div>
+</div>
+<!-- END Container -->
+
+</body>
+</html>

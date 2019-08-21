@@ -39,32 +39,67 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites', # new
+    'django.contrib.gis', # new
 
     'allauth', # new
     'allauth.account', # new
     'allauth.socialaccount', # new
     'allauth.socialaccount.providers.google', # new
 
-    'geoposition', #new
-    'measWeb', #new
+    'meas_web', #new
     'users', #new
     'pages', #new
+
+    #'corsheaders', # new
+    'rest_framework', # new
+    'rest_framework_gis', # new
+    'django_filters', # new
+    'rest_framework_filters', # new
+    'mapwidgets', # new
+    'drf_data', # new
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser' # new
-LOGIN_REDIRECT_URL = 'measWeb:index' #new
+LOGIN_REDIRECT_URL = 'meas_web:index' #new
 LOGOUT_REDIRECT_URL = 'home' #new
 
+REST_FRAMEWORK = {
+   'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+   ],
+   'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+   ],
+   'DEFAULT_FILTER_BACKENDS': [
+        'rest_framework_filters.backends.ComplexFilterBackend',
+   ],
+   'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+   ]
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    #'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+"""CORS_ORIGIN_ALLOW_ALL = False
+
+CORS_ORIGIN_WHITELIST = (
+    'https://localhost:8000',
+    'https://127.0.0.1:8000',
+    'https://localhost:8080',
+    'https://127.0.0.1:8080',
+    'https://localhost:8443',
+    'https://127.0.0.1:8443',
+)"""
 
 ROOT_URLCONF = 'pfiProject.urls'
 
@@ -98,7 +133,8 @@ WSGI_APPLICATION = 'pfiProject.wsgi.application'
 #new
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        #'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.getenv('POSTGRES_DB', 'postgres'),
         'USER': os.getenv('POSTGRES_USER', 'postgres'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'postgres'),
@@ -149,6 +185,23 @@ STATIC_URL = '/static/'
 #new
 STATIC_ROOT = os.path.join(BASE_DIR, 'static') #new
 
+try:
+    from .secrets.secrets import *
+    from .secrets import secrets
+except ImportError:
+    pass
+#new
+
+MAP_WIDGETS = {
+    "GooglePointFieldWidget": (
+        ("zoom", 15),
+        ("mapCenterLocation", [40.723379, -73.848271]),
+        ("markerFitZoom", 11),
+        ("GooglePlaceAutocompleteOptions", {'componentRestrictions': {'country': 'us'}})
+    ),
+    "GOOGLE_MAP_API_KEY": secrets.GOOGLE_MAP_API_KEY,
+}
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -161,15 +214,6 @@ SITE_ID = 1
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
-
-GEOPOSITION_MAP_OPTIONS = {
-    'minZoom': 3,
-    'maxZoom': 22,
-}
-
-GEOPOSITION_MARKER_OPTIONS = {
-    'cursor': 'move'
-}
 
 # Default Django logging is WARNINGS+ to console
 # so visible via docker-compose logs django
@@ -189,8 +233,3 @@ LOGGING = {
     },
 }
 
-try:
-    from .secrets import *
-except ImportError:
-    pass
-#new

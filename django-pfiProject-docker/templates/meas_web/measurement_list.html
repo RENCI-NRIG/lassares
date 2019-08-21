@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en-us" >
+<head>
+    <title>Select measurement to change</title>
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/changelists.css" />
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="robots" content="NONE,NOARCHIVE" />
+</head>
+
+
+<body class=" app-meas_web model-measurement change-list" data-admin-utc-offset="0">
+<script>
+  function select_all(element)  {
+     var value = false;
+     if (element.checked) {
+        value = true;
+     }
+   var _selected_action = document.getElementsByName("_selected_action");
+   for (var i = 0; i < _selected_action.length; i++) {
+      _selected_action[i].checked = value;
+   }
+  }
+
+</script>
+
+<!-- Container -->
+<div id="container">
+
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+            <h1 id="site-name">Lassaress Web Server</h1>
+        </div>
+        <div id="user-tools">
+                Welcome,
+                <strong>{{ user.username }}</strong>.
+                <a href="{% url 'account_logout' %}">Log out</a>
+        </div>
+    </div>
+    <!-- END Header -->
+    
+    <div class="breadcrumbs">
+        <a href="{% url "home" %}">Home</a>&rsaquo;
+        <a href="{% url "meas_web:index" %}">Measweb</a>
+        &rsaquo; Measurements
+    </div>
+
+    <!-- Content -->
+    <div id="content" class="flex">
+        <h1>Select measurement to change</h1>
+        <div id="content-main">
+        <ul class="object-tools">
+            <li>
+              <a href="{% url "meas_web:measurement_create" %}" class="addlink">
+                Add measurement
+              </a>
+            </li>
+        </ul>
+        <div class="module" id="changelist">
+            <form id="changelist-form" method="post" novalidate>{% csrf_token %}
+                <div class="actions">
+                    <label>Action: <select name="action" required>
+                        <option value="" selected>---------------------------------</option>
+                        <option value="delete">Delete selected measurements</option>
+                        <option value="push">Push selected measurement to elk stack</option>
+                    </select></label>
+                    <input type="hidden" name="select_across" value="0" class="select-across" />
+                    <button type="submit" class="button" title="Run the selected action" name="index" value="0">Go</button>
+                    <span class="action-counter" data-actions-icnt="1">0 of 1 selected</span>
+                </div>
+
+                <div class="results">
+                    <table id="result_list">
+                        <thead>
+                            <tr>
+                                <th scope="col"  class="action-checkbox-column">
+                                    <div class="text"><span><input type="checkbox" id="action-toggle" onclick="select_all(this)"/></span></div>
+                                    <div class="clear"></div>
+                                </th>
+                                <th scope="col"  class="sortable column-job_id">
+                                    <div class="text"><a href="?o=1">JobId</a></div>
+                                    <div class="clear"></div>
+                                </th>
+                                <th scope="col"  class="sortable column-bore_id">
+                                    <div class="text"><a href="?o=1">BoreId</a></div>
+                                    <div class="clear"></div>
+                                </th>
+                                <th scope="col"  class="sortable column-device_id">
+                                    <div class="text"><a href="?o=2">DeviceId</a></div>
+                                    <div class="clear"></div>
+                                </th>
+                                <th scope="col"  class="sortable column-chemical_id">
+                                    <div class="text"><a href="?o=3">ChemicalId</a></div>
+                                    <div class="clear"></div>
+                                </th>
+                                <th scope="col"  class="sortable column-concentration">
+                                    <div class="text"><a href="?o=4">Concentration</a></div>
+                                    <div class="clear"></div>
+                                </th>
+                                <th scope="col"  class="sortable column-date">
+                                    <div class="text"><a href="?o=5">Date</a></div>
+                                    <div class="clear"></div>
+                                </th>
+                                <th scope="col"  class="sortable column-time">
+                                    <div class="text"><a href="?o=6">Time</a></div>
+                                    <div class="clear"></div>
+                                </th>
+                                <th scope="col"  class="sortable column-status">
+                                    <div class="text"><a href="?o=6">Status</a></div>
+                                    <div class="clear"></div>
+                                </th>
+                                <th scope="col"  class="sortable column-comment">
+                                    <div class="text"><a href="?o=7">Comment</a></div>
+                                    <div class="clear"></div>
+                                </th>
+                                <th scope="col"  class="sortable column-geometry">
+                                    <div class="text"><a href="?o=8">Geometry</a></div>
+                                    <div class="clear"></div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for meas in object_list %}
+                                <tr class="row1">
+                                    <td class="action-checkbox">
+                                        <input type="checkbox" name="_selected_action" value="{{ meas.id }}" class="action-select" />
+                                    </td>
+                                    <th class="field-job_id"><a href="{% url "meas_web:measurement_update" meas.id %}">{{ meas.job_id }}</a></th>
+                                    <td class="field-bore_id">{{ meas.bore_id}}</td>
+                                    <td class="field-device_id">{{ meas.device_id }}</td>
+                                    <td class="field-chemical_id">{{ meas.chemical_id }}</td>
+                                    <td class="field-concentration">{{ meas.concentration }}</td>
+                                    <td class="field-date nowrap">{{ meas.date }}</td>
+                                    <td class="field-time nowrap">{{ meas.time }}</td>
+                                    <td class="field-status">{{ meas.status }}</td>
+                                    <td class="field-comment">{{ meas.comment }}</td>
+                                    <td class="field-geometry">{{ meas.geometry }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </div>
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
+    <div id="footer"></div>
+</div>
+<!-- END Container -->
+
+</body>
+</html>
+
