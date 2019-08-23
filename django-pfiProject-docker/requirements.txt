@@ -4,7 +4,7 @@ djangorestframework-gis==0.14.0
 django-filter==2.2
 djangorestframework-filters>=0.11.1.dev0
 djangorestframework-queryfields
-#django-cors-headers
+django-cors-headers
 django-map-widgets
 markdown
 packaging
