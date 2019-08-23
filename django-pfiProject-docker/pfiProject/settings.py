@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'users', #new
     'pages', #new
 
-    #'corsheaders', # new
+    'corsheaders', # new
     'rest_framework', # new
     'rest_framework_gis', # new
     'django_filters', # new
@@ -82,7 +82,7 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    #'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -90,7 +90,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-"""CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = (
     'https://localhost:8000',
@@ -99,7 +99,7 @@ CORS_ORIGIN_WHITELIST = (
     'https://127.0.0.1:8080',
     'https://localhost:8443',
     'https://127.0.0.1:8443',
-)"""
+)
 
 ROOT_URLCONF = 'pfiProject.urls'
 
