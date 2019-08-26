@@ -57,7 +57,7 @@
                     <form action="" method="post" id="measurement_form" novalidate>{% csrf_token %}
                         <table>
                             {{ form.media }}
-                            {{ form.as_table }}
+                            {{ form.as_p }}
                         </table>
                         <div class="submit-row">
                             <input type="submit" value="Save" class="default" name="_save">
