@@ -6,9 +6,9 @@ from mapwidgets.widgets import GooglePointFieldWidget, GoogleStaticOverlayMapWid
 class MeasurementForm(ModelForm):
     class Meta:
         model = Measurement
-        fields = ('bore_id', 'job_id', 'device_id', 'chemical_id', 'concentration', 'date', 'time', 'status', 'comment', 'geometry')
+        fields = ('bore_id', 'job_id', 'device_id', 'chemical_id', 'concentration', 'date', 'time', 'status', 'comment', 'geom')
         widgets = {
-            'geometry': GooglePointFieldWidget,
+            'geom': GooglePointFieldWidget,
         }
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)

@@ -48,18 +48,16 @@
                         Voltage: {{ feature.properties['voltage'] }}</br>
                         Service Date: {{ feature.properties['service_date'] }}
                       </div>
-                      <div v-else-if="pid == feature.properties['chem_id']">
-                        Chemical ID: {{ chem_id }}</br>
-                        Concentration: {{ concentrat }}</br>
-                        Timestamp: {{ timestamp }}
-                        Device ID: {{ feature.properties['device_id'] }}</br>
+                      <div v-else-if="pid == feature.properties['chemical_id']">
+                        Bore ID: {{ feature.properties['bore_id'] }}</br>
                         Job ID: {{ feature.properties['job_id'] }}</br>
-                        Air Temperature: {{ feature.properties['amb_temp'] }}</br>
-                        Air Pressure: {{ feature.properties['air_pressu'] }}</br>
-                        Relative Humidity: {{ feature.properties['rel_humid'] }}</br>
-                        Precipitation: {{ feature.properties['precip'] }}</br>
-                        Wind Speed: {{ feature.properties['wind_speed'] }}</br>
-                        Wind Direction: {{ feature.properties['wind_direc'] }}
+                        Device ID: {{ feature.properties['device_id'] }}</br>
+                        Chemical ID: {{ chemical_id }}</br>
+                        Concentration: {{ concentration }}</br>
+                        Timestamp: {{ timestamp }}
+                        status: {{ feature.properties['status'] }}</br>
+                        comment: {{ feature.properties['comment'] }}</br>
+
                       </div>
                       </p>
                     </div>
@@ -280,7 +278,7 @@
 
         <div class="panel-block">
           <table class="table is-fullwidth">
-            <div v-if="pid == chem_id">
+            <div v-if="pid == chemical_id">
               <div v-if="Object.keys(selectedFeaturesBarBox).length > 0">
                 <tr>
                   <th>{{ pid }} Concentration</th>
@@ -335,16 +333,16 @@
   import axios from 'axios'
 
   // color values for measurement concentrations
-  let concentrat2color = function (concentrat) {
+  let concentration2color = function (concentration) {
     let r = 0
     let g = 0
     let b = 0
-    if (concentrat < 50) {
+    if (concentration < 50) {
       g = 255
-      b = Math.round(5.1 * concentrat)
+      b = Math.round(5.1 * concentration)
     } else {
       b = 255
-      g = Math.round(510 - 5.10 * concentrat)
+      g = Math.round(510 - 5.10 * concentration)
     }
     let h = r * 0x1 + g * 0x100 + b * 0x10000
     return '#' + ('000000' + h.toString(16)).slice(-6)
@@ -370,7 +368,7 @@
     },
     created: function () {
       let that = this
-      let turl = 'https://127.0.0.1:8443/drf/api/timestamp_Model/?format=json'
+      let turl = 'https://127.0.0.1:8443/drf/api/timestamp/?format=json'
       axios.get(turl)
         .then(function (response) {
           that.searchtoptions = response.data
@@ -379,7 +377,7 @@
           console.log(error)
         })
 
-      let jurl = 'https://127.0.0.1:8443/drf/api/jobid_Model/?format=json'
+      let jurl = 'https://127.0.0.1:8443/drf/api/jobid/?format=json'
       axios.get(jurl)
         .then(function (response) {
           that.searchjoptions = response.data
@@ -405,9 +403,9 @@
         jobidsx: undefined,
         joptions: null,
         pid: undefined,
-        chem_id: undefined,
+        chemical_id: undefined,
         powerline: undefined,
-        concentrat: undefined,
+        concentration: undefined,
         timestamp: undefined,
         storeFeatures: [],
         selectedFeatures: [],
@@ -470,7 +468,7 @@
             visible: true,
             source: {
               cmp: 'vl-source-vector',
-              url: 'https://127.0.0.1:8443/drf/api/fdr_18001_0_11_Model/?format=json',
+              url: 'https://127.0.0.1:8443/drf/api/fdr_18001_0_11/?format=json',
             },
             style: [
               {
@@ -480,18 +478,18 @@
             ],
           },
           {
-            id: 'test_measurements',
+            id: 'measurements',
             title: 'Test Measurements',
             cmp: 'vl-layer-vector',
             visible: true,
             source: {
               cmp: 'vl-source-vector',
-              url: this.Test_MeasurementsURL('2019-05-12T00:00:00', '2019-06-20T17:43:30'),
+              url: this.MeasurementsURL('2019-05-12T00:00:00', '2019-12-20T17:43:30'),
             },
             style: [
               {
                 cmp: 'vl-style-func',
-                factory: this.Test_MeasurementsStyle,
+                factory: this.MeasurementsStyle,
               },
             ],
           },
@@ -537,13 +535,13 @@
           ]
         }
       },
-      Test_MeasurementsStyle () {
+      MeasurementsStyle () {
         return feature => {
           return [
             new Style({
               image: new Circle({
-                radius: (this.zoom / 2.6) + (feature.get('concentrat') / 2),
-                fill: new Fill({ color: concentrat2color(feature.get('concentrat') * 4.54) }), // 'rgba(245, 111, 66, 0.7)'
+                radius: (this.zoom / 2.6) + (feature.get('concentration') / 2),
+                fill: new Fill({ color: concentration2color(feature.get('concentration') * 4.54) }), // 'rgba(245, 111, 66, 0.7)'
                 stroke: new Stroke({
                   color: 'rgb(145, 7, 4, 1)',
                   width: 1,
@@ -576,12 +574,12 @@
           // features that intersect the box are added to the collection of
           // selected features
           const extent = dragBox.getGeometry().getExtent()
-          // only use source that have chem_id
+          // only use source that have chemical_id
           let source
           let i
           for (i = 0; i < this.$refs.layerSource.length; i++) {
             let features = this.$refs.layerSource[i].getFeatures()
-            if (features[0].values_.chem_id) {
+            if (features[0].values_.chemical_id) {
               source = this.$refs.layerSource[i].$source
             }
           }
@@ -592,9 +590,9 @@
           source.forEachFeatureIntersectingExtent(extent, feature => {
             feature = writeGeoJsonFeature(feature)
             this.selectedFeatures.push(feature)
-            this.selectedFeaturesBarBox.push({ x: feature.properties['timestamp'], y: feature.properties['concentrat'] })
-            this.chem_id = feature.properties['chem_id']
-            this.pid = this.chem_id
+            this.selectedFeaturesBarBox.push({ x: feature.properties['timestamp'], y: feature.properties['concentration'] })
+            this.chemical_id = feature.properties['chemical_id']
+            this.pid = this.chemical_id
           })
         })
 
@@ -643,18 +641,18 @@
           let feature = features[0]
           let properties = feature.getProperties()
 
-          if (properties['chem_id']) {
-            this.pid = properties['chem_id']
-            this.chem_id = this.pid
-            this.concentrat = properties['concentrat']
+          if (properties['chemical_id']) {
+            this.pid = properties['chemical_id']
+            this.chemical_id = this.pid
+            this.concentration = properties['concentration']
             this.timestamp = properties['timestamp']
-            this.selectedFeaturesBarClick.push({ x: this.timestamp, y: this.concentrat })
+            this.selectedFeaturesBarClick.push({ x: this.timestamp, y: this.concentration })
             this.selectedFeaturesBarBox = []
             this.isBox = 'no'
           } else if (properties['powerline']) {
             this.pid = properties['powerline']
             this.powerline = this.pid
-            this.concentrat = undefined
+            this.concentration = undefined
             this.timestamp = undefined
             this.selectedFeaturesBarClick = []
             this.selectedFeaturesBarBox = []
@@ -669,7 +667,7 @@
         let j
         for (i = 0; i < this.$refs.layerSource.length; i++) {
           let features = this.$refs.layerSource[i].getFeatures()
-          if (features[0].values_.chem_id) {
+          if (features[0].values_.chemical_id) {
             for (j = 0; j < features.length; j++) {
               let timestamp = features[j].values_.timestamp
               startTimestamps.push(timestamp)
@@ -688,14 +686,14 @@
           this.joptions = this.getFilterFields()[1].map(id => ({ id, label: `${id}` }))
         }
       },
-      Test_MeasurementsURL (starttimestampx, endtimestampx, jobidsx) {
+      MeasurementsURL (starttimestampx, endtimestampx, jobidsx) {
         if (!jobidsx) {
-          return 'https://127.0.0.1:8443/drf/api/testdata_Model/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx
+          return 'https://127.0.0.1:8443/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx
         } else if (jobidsx) {
           if (starttimestampx) {
-            return 'https://127.0.0.1:8443/drf/api/testdata_Model/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id=' + jobidsx
+            return 'https://127.0.0.1:8443/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id=' + jobidsx
           } else if (!starttimestampx) {
-            return 'https://127.0.0.1:8443/drf/api/testdata_Model/?format=json&job_id=' + jobidsx
+            return 'https://127.0.0.1:8443/drf/api/meas/?format=json&job_id=' + jobidsx
           }
         }
       },
@@ -708,9 +706,9 @@
             let i
             for (i = 0; i < this.$refs.layerSource.length; i++) {
               let features = this.$refs.layerSource[i].getFeatures()
-              if (features[0].values_.chem_id) {
+              if (features[0].values_.chemical_id) {
                 // url to get data from
-                let url = this.Test_MeasurementsURL(this.starttimestampx, this.endtimestampx, this.jobidsx)
+                let url = this.MeasurementsURL(this.starttimestampx, this.endtimestampx, this.jobidsx)
                 // the that is used to deal with this scope
                 var that = this
                 // eye is used for i to deal with the async effects of axios
@@ -747,8 +745,8 @@
             let i
             for (i = 0; i < this.$refs.layerSource.length; i++) {
               let features = this.$refs.layerSource[i].getFeatures()
-              if (features[0].values_.chem_id) {
-                let url = this.Test_MeasurementsURL(this.starttimestampx, this.endtimestampx, this.jobidsx)
+              if (features[0].values_.chemical_id) {
+                let url = this.MeasurementsURL(this.starttimestampx, this.endtimestampx, this.jobidsx)
                 this.layers[i].source.url = url
                 this.$refs.layerSource[i].removeFeatures(features)
                 // the that is used to deal with this scope
@@ -777,7 +775,7 @@
             let j
             for (j = 0; j < this.$refs.layerSource.length; j++) {
               let features = this.$refs.layerSource[j].getFeatures()
-              if (features[0].values_.chem_id) {
+              if (features[0].values_.chemical_id) {
                 this.$refs.layerSource[j].addFeature(this.storeFeatures[i])
               }
             }
@@ -791,7 +789,7 @@
           } else {
             for (i = 0; i < this.$refs.layerSource.length; i++) {
               let features = this.$refs.layerSource[i].getFeatures()
-              if (features[0].values_.chem_id) {
+              if (features[0].values_.chemical_id) {
                 let j
                 for (j = 0; j < features.length; j++) {
                   let id = features[j].id_

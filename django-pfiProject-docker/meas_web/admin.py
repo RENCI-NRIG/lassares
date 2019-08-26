@@ -43,7 +43,7 @@ def push_measurement_to_elk_stack(modeladmin, request, queryset):
         obj.save()
 
 class MeasurementAdmin(admin.ModelAdmin):
-    list_display = ('job_id', 'bore_id', 'device_id', 'chemical_id', 'concentration', 'date', 'time', 'status', 'comment', 'geometry')
+    list_display = ('job_id', 'bore_id', 'device_id', 'chemical_id', 'concentration', 'date', 'time', 'status', 'comment', 'geom')
     formfield_overrides = {
         models.PointField: {"widget": GooglePointFieldWidget}
     }

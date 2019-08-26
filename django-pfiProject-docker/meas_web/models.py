@@ -19,9 +19,9 @@ class Measurement(models.Model):
     time = models.TimeField('time')
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='d')
     comment = models.CharField(max_length=1000, null=True, default="")
-    geometry = models.PointField(null=False)
+    geom = models.PointField(null=False)
 
     def toString(self):
         #{DeviceX0001 2018-05-17 09:21:20.3 51.517016 -0.144819} {JobY001 CH5OH 10000.0 ppm}
-        retVal = "{" + self.device_id + " " +  str(self.date) + " " + str(self.time) + "} {" + self.bore_id + " " + self.job_id + " " + self.chemical_id + " " + self.concentration + " ppm" + self.geometry + "}"
+        retVal = "{" + self.device_id + " " +  str(self.date) + " " + str(self.time) + "} {" + self.bore_id + " " + self.job_id + " " + self.chemical_id + " " + self.concentration + " ppm" + self.geom + "}"
         return retVal

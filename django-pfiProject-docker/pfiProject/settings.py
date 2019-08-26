@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'django_filters', # new
     'rest_framework_filters', # new
     'mapwidgets', # new
-    'drf_data', # new
+    'drf', # new
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser' # new

@@ -1,4 +1,4 @@
-"""drf_data URL Configuration
+"""drf URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.2/topics/http/urls/
@@ -18,11 +18,10 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register(r'fdr_18001_0_11_Model', views.fdr_18001_0_11_View)
-router.register(r'testdata_Model', views.testdata_View)
-router.register(r'testdatav_Model', views.testdatav_View)
-router.register(r'timestamp_Model', views.timestamp_View)
-router.register(r'jobid_Model', views.jobid_View)
+router.register(r'fdr_18001_0_11', views.fdr_18001_0_11_View)
+router.register(r'meas', views.drf_Measurement_View)
+router.register(r'timestamp', views.drf_Timestamp_View)
+router.register(r'jobid', views.drf_Jobid_View)
 
 urlpatterns = [
     url(r'^api/', include(router.urls)),
