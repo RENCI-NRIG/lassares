@@ -19,7 +19,7 @@ Django is a high-level Python Web framework that encourages rapid development an
      ```python
      # SECURITY WARNING: keep the secret key used in production secret!
      SECRET_KEY = 'xxxxxxxxxxxxxxxxxx'  # generate a secret key
-     GEOPOSITION_GOOGLE_MAPS_API_KEY = 'xxxxxxxxxxxxxxxx'
+     GOOGLE_MAPS_API_KEY = 'xxxxxxxxxxxxxxxx'
      ```
 
  2. Update `pfiProject/.env` file as per your need 
@@ -35,8 +35,6 @@ Django is a high-level Python Web framework that encourages rapid development an
      export POSTGRES_DB=postgres
      export POSTGRES_HOST=database
      export POSTGRES_PORT=5432
-     export KAFKA_HOST=127.0.0.1:9092
-
      export ADMIN_PWD=abcd1234!
      ```
  3. Update the `nginx` section of the `docker-compose.yml` file
@@ -75,8 +73,6 @@ Django is a high-level Python Web framework that encourages rapid development an
      Creating database ... done
      Creating django   ... done
      Creating nginx    ... done
-     Creating zookeeper... done
-     Creating kafka    ... done
      ```
     After a few moments the docker containers will have stood up and configured themselves.
  Naviage to [https://127.0.0.1:8443/](https://127.0.0.1:8443/) (or whatever you've configured your host to be).

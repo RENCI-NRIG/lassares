@@ -13,7 +13,6 @@ from django.views.generic import FormView
 from django.views.generic.edit import FormMixin
 from django.views.generic.list import MultipleObjectMixin
 from django.views import View
-from meas_web.push import push_measurement_to_elk_stack
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 class MeasDRF(viewsets.ModelViewSet):
@@ -44,11 +43,6 @@ class MeasChange(FormMixin, MultipleObjectMixin, View):
             if str(obj.id) in list_of_ids:
                 if action == 'delete':
                     return redirect(reverse_lazy('meas_web:measurement_delete',  kwargs={'pk': obj.id}))
-                if action == 'push':
-                #if action == 'push' and obj.status != 'p':
-                    if push_measurement_to_elk_stack(obj):
-                        obj.status = 'p'
-                        obj.save()
         return redirect(self.get_success_url())
 
 class MeasChangeList(LoginRequiredMixin, View):

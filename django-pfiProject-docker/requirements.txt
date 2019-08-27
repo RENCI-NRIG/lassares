@@ -14,4 +14,3 @@ python-dotenv==0.9.1
 pytz==2018.5
 uwsgi==2.0.18
 django-allauth==0.38.0
-kafka-python==1.4.4
