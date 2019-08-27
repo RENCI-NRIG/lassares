@@ -40,3 +40,7 @@ sed -i 's/kafka/'$LOCALIP'/g' /var/www/django-pfiProject-docker/pfiProject/.env
 echo "RUN_ROOT=1" >> /var/www/django-pfiProject-docker/pfiProject/.env
 
 NGINX_HOST=$LOCALIP KAFKA_LISTENER=PLAINTEXT://$LOCALIP:9092 docker-compose up -d
+
+docker container exec -i $(docker-compose ps -q database) psql -U postgres -d postgres < /var/www/django-pfiProject-docker/pfiProject/data/drf_fdr_18001_0_11.sql
+docker container exec -i $(docker-compose ps -q database) psql -U postgres -d postgres < /var/www/django-pfiProject-docker/pfiProject/data/meas_web_measurement.sql
+
