@@ -14,7 +14,7 @@
      "InstanceType" : {
        "Description" : "EC2 instance type",
        "Type" : "String",
-       "Default" : "t2.small",
+       "Default" : "t2.medium",
        "AllowedValues" : [
         "t1.micro",
         "t2.nano",
@@ -83,21 +83,6 @@
       "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
       "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
     },
-    "S3BucketName" : {
-        "Default": "lassaress",
-        "Description" : "S3 bucket Name",
-        "Type": "String",
-        "MinLength": "1",
-        "MaxLength": "64"
-      },
-    "ElasticVersion" : {
-        "Default": "6.5.4",
-        "Description" : "Elastic Stack Version",
-        "Type": "String",
-        "MinLength": "1",
-        "MaxLength": "64",
-       "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})"
-      },
     "GoogleApiKey" : {
         "Description" : "Google Map Api Key",
         "Type": "String",
@@ -185,12 +170,6 @@
   },
 
   "Resources" : {
-    "S3Bucket" : {
-         "Type" : "AWS::S3::Bucket",
-         "Properties" : {
-           "BucketName": { "Ref": "S3BucketName" }
-         }
-    },
     "RunCmdInstanceProfile": {
         "Type": "AWS::IAM::InstanceProfile",
         "Properties": {
@@ -237,127 +216,18 @@
             }
        }
     },    
-    "ElkServerSecurityGroup" : {
-      "Type" : "AWS::EC2::SecurityGroup",
-      "Properties" : {
-        "GroupDescription" : "Enable HTTP access via port 80 + SSH access + ElasticSearch + Kibana",
-        "SecurityGroupIngress" : [
-          {"IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"},
-          {"IpProtocol" : "tcp", "FromPort" : "9200", "ToPort" : "9200", "CidrIp" : "0.0.0.0/0"},
-          {"IpProtocol" : "tcp", "FromPort" : "5601", "ToPort" : "5601", "CidrIp" : "0.0.0.0/0"},
-          {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "SSHLocation"}}
-        ]
-      }
-    },
     "WebServerSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
         "GroupDescription" : "Enable HTTP access via port 80 + SSH access + Kafka",
         "SecurityGroupIngress" : [
           {"IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"},
-          {"IpProtocol" : "tcp", "FromPort" : "9092", "ToPort" : "9092", "CidrIp" : "0.0.0.0/0"},
           {"IpProtocol" : "tcp", "FromPort" : "443", "ToPort" : "443", "CidrIp" : "0.0.0.0/0"},
           {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "SSHLocation"}}
         ]
       }
     },
 
-    "ElkServer": {
-      "Type" : "AWS::EC2::Instance",
-      "Metadata" : {
-        "AWS::CloudFormation::Init" : {
-          "configSets" : {
-            "elk_install" : ["install_cfn", "install_elk" ]
-          },
-          "install_cfn" : {
-            "files": {
-              "/etc/cfn/cfn-hup.conf": {
-                "content": { "Fn::Join": [ "", [
-                  "[main]\n",
-                  "stack=", { "Ref": "AWS::StackId" }, "\n",
-                  "region=", { "Ref": "AWS::Region" }, "\n"
-                ]]},
-                "mode"  : "000400",
-                "owner" : "root",
-                "group" : "root"
-              },
-              "/etc/cfn/hooks.d/cfn-auto-reloader.conf": {
-                "content": { "Fn::Join": [ "", [
-                  "[cfn-auto-reloader-hook]\n",
-                  "triggers=post.update\n",
-                  "path=Resources.ElkServer.Metadata.AWS::CloudFormation::Init\n",
-                  "action=/opt/aws/bin/cfn-init -v ",
-                          "         --stack ", { "Ref" : "AWS::StackName" },
-                          "         --resource ElkServer ",
-                          "         --configsets elk_install ",
-                          "         --region ", { "Ref" : "AWS::Region" }, "\n"
-                ]]},          
-                "mode"  : "000400",
-                "owner" : "root",
-                "group" : "root"
-              }
-            },
-            "services" : {
-              "sysvinit" : {
-                "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
-                              "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"] }
-              }
-            }
-          },
-
-          "install_elk" : {
-            "packages" : {
-              "yum" : {
-                  "java-1.8.0-openjdk"  : [],
-                  "java-1.8.0-openjdk-devel"  : [],
-                  "git"  : []
-              }
-            },
-            "commands" : {
-              "01_fetch_elk" : {
-                "command" : "git clone https://github.com/RENCI-NRIG/lassares.git /root/lassares"
-              },
-              "02_configure_elk" : {
-                "command" : { "Fn::Join": [ "", ["/root/lassares/elk/configElkServer.sh " , { "Ref": "S3BucketName" }, " ", {  "Ref": "ElasticVersion" }, " > /var/log/configElkServer.log 2>&1" ] ] }
-              }
-            },
-            "services" : {
-              "sysvinit" : {
-              }
-            }
-          }
-        }
-      },
-      "Properties": {
-        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
-                          { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
-        "InstanceType"   : { "Ref" : "InstanceType" },
-        "SecurityGroups" : [ {"Ref" : "ElkServerSecurityGroup"} ],
-        "KeyName"        : { "Ref" : "KeyName" },
-        "Tags"        : [ {"Key" : "Name", "Value" : {"Fn::Join" : ["",[{ "Ref" : "AWS::StackName" },"elkServer"]]}}],
-        "IamInstanceProfile": { "Ref": "RunCmdInstanceProfile" },
-        "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
-                       "#!/bin/bash -xe\n",
-                       "yum update -y aws-cfn-bootstrap\n",
-
-                       "/opt/aws/bin/cfn-init -v ",
-                       "         --stack ", { "Ref" : "AWS::StackName" },
-                       "         --resource ElkServer ",
-                       "         --configsets elk_install ",
-                       "         --region ", { "Ref" : "AWS::Region" }, "\n",
-
-                       "/opt/aws/bin/cfn-signal -e $? ",
-                       "         --stack ", { "Ref" : "AWS::StackName" },
-                       "         --resource ElkServer ",
-                       "         --region ", { "Ref" : "AWS::Region" }, "\n"
-        ]]}}
-      },
-      "CreationPolicy" : {
-        "ResourceSignal" : {
-          "Timeout" : "PT15M"
-        }
-      }
-    },
     "WebServer": {
       "Type" : "AWS::EC2::Instance",
       "Metadata" : {
@@ -412,10 +282,10 @@
             },
             "commands" : {
               "01_fetch_git_repo" : {
-                "command" : "git clone https://github.com/RENCI-NRIG/lassares.git /root/lassares"
+                "command" : "git clone https://github.com/RENCI-NRIG/lassares.git /root/lassares;cd /root/lassares/;git checkout -b brRemoveElk;git pull origin brRemoveElk"
               },
               "02_install_webserver" : {
-                "command" : { "Fn::Join": [ "", ["/root/lassares/start_django_project.sh ", { "Ref": "GoogleApiKey" }, " ", { "Ref": "S3BucketName" }, " > /var/log/configWebServer.log 2>&1" ] ] }
+                "command" : { "Fn::Join": [ "", ["/root/lassares/start_django_project.sh ", { "Ref": "GoogleApiKey" }, " > /var/log/configWebServer.log 2>&1" ] ] }
               }
             },
             "services" : {
