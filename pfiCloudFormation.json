@@ -282,7 +282,7 @@
             },
             "commands" : {
               "01_fetch_git_repo" : {
-                "command" : "git clone https://github.com/RENCI-NRIG/lassares.git /root/lassares;cd /root/lassares/;git checkout -b brRemoveElk;git pull origin brRemoveElk"
+                "command" : "git clone https://github.com/RENCI-NRIG/lassares.git /root/lassares"
               },
               "02_install_webserver" : {
                 "command" : { "Fn::Join": [ "", ["/root/lassares/start_django_project.sh ", { "Ref": "GoogleApiKey" }, " > /var/log/configWebServer.log 2>&1" ] ] }
