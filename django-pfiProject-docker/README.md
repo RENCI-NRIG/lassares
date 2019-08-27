@@ -14,7 +14,7 @@ Django is a high-level Python Web framework that encourages rapid development an
 ## <a name="tldr"></a>TL;DR
  I just want to run everything in Docker and don't care for an explanation
 
- 1. Update `pfiProject/secrets.py` file 
+ 1. Update `pfiProject/secrets/secrets.py` file 
 
      ```python
      # SECURITY WARNING: keep the secret key used in production secret!
