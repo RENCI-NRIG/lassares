@@ -27,13 +27,13 @@ chmod +x /usr/local/bin/docker-compose
 ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 echo "" > /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
-echo "GOOGLE_MAPS_API_KEY='$GOOGLE_API_KEY'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
+echo "GOOGLE_MAP_API_KEY='$GOOGLE_API_KEY'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 SECRET=`uuidgen`
 echo "SECRET_KEY='$SECRET'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 echo "RUN_ROOT=1" >> /var/www/django-pfiProject-docker/pfiProject/.env
 
 NGINX_HOST=$LOCALIP docker-compose up -d
 
-docker container exec -i $(docker-compose ps -q database) psql -U postgres -d postgres < /var/www/django-pfiProject-docker/pfiProject/data/drf_fdr_18001_0_11.sql
-docker container exec -i $(docker-compose ps -q database) psql -U postgres -d postgres < /var/www/django-pfiProject-docker/pfiProject/data/meas_web_measurement.sql
+docker container exec -i $(docker-compose ps -q database) psql -U postgres -d postgres < /var/www/django-pfiProject-docker/data/drf_fdr_18001_0_11.sql
+docker container exec -i $(docker-compose ps -q database) psql -U postgres -d postgres < /var/www/django-pfiProject-docker/data/meas_web_measurement.sql
 

@@ -19,7 +19,7 @@ Django is a high-level Python Web framework that encourages rapid development an
      ```python
      # SECURITY WARNING: keep the secret key used in production secret!
      SECRET_KEY = 'xxxxxxxxxxxxxxxxxx'  # generate a secret key
-     GOOGLE_MAPS_API_KEY = 'xxxxxxxxxxxxxxxx'
+     GOOGLE_MAP_API_KEY = 'xxxxxxxxxxxxxxxx'
      ```
 
  2. Update `pfiProject/.env` file as per your need 

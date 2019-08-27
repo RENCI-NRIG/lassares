@@ -7,4 +7,4 @@
 # e.g. https://djskgen.herokuapp.com/
 
 SECRET_KEY = 'xxxxxxxxxxxxxxx'
-GOOGLE_MAPS_API_KEY = 'xxxxxxxxxxxxxxxx'
+GOOGLE_MAP_API_KEY = 'xxxxxxxxxxxxxxxx'
