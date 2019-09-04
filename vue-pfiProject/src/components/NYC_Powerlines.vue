@@ -331,7 +331,12 @@
   import { Treeselect, LOAD_ROOT_OPTIONS } from '@riophae/vue-treeselect'
   import '@riophae/vue-treeselect/dist/vue-treeselect.css'
   import axios from 'axios'
-
+  
+  // import mbtoken from '@/assets/mbtoken.json'
+  // const mbtoken = require('@/assets/mbtoken.json')
+  let gettoken = function () {
+    return 'sk.eyJ1IjoiY29kZWZvcmFtZXJpY2EiLCJhIjoiY2ptd3F1d2Q4MDJ4djNxcjJ6NDltNzhnayJ9.4wsfBXJpT4y9L4tahnag9g'
+  }
   // color values for measurement concentrations
   let concentration2color = function (concentration) {
     let r = 0
@@ -366,32 +371,11 @@
       d3Barchart,
       Treeselect,
     },
-    created: function () {
-      let that = this
-      let turl = 'https://127.0.0.1:8443/drf/api/timestamp/?format=json'
-      axios.get(turl)
-        .then(function (response) {
-          that.searchtoptions = response.data
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
-
-      let jurl = 'https://127.0.0.1:8443/drf/api/jobid/?format=json'
-      axios.get(jurl)
-        .then(function (response) {
-          that.searchjoptions = response.data
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
-    },
     data () {
       return {
         center: [-73.851271, 40.725070],
         zoom: 15,
         rotation: 0,
-        mbtoken: [],
         searchtoptions: [],
         searchjoptions: [],
         starttimestamp: undefined,
@@ -455,7 +439,7 @@
             title: 'Mapbox Satellite',
             // mapId: 'mapbox.mapbox-streets-v7',
             mapId: 'mapbox.satellite',
-            accessToken: 'xxxxxxxxxxxxxxxxxxxxxxxx',
+            accessToken: gettoken(),
             visible: false,
           },
         ],
@@ -468,7 +452,7 @@
             visible: true,
             source: {
               cmp: 'vl-source-vector',
-              url: 'https://127.0.0.1:8443/drf/api/fdr_18001_0_11/?format=json',
+              url: 'https://127.0.0.1:443/drf/api/fdr_18001_0_11/?format=json',
             },
             style: [
               {
@@ -495,6 +479,26 @@
           },
         ],
       }
+    },
+    created: function () {
+      let that = this
+      let turl = 'https://127.0.0.1:443/drf/api/timestamp/?format=json'
+      axios.get(turl)
+        .then(function (response) {
+          that.searchtoptions = response.data
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
+
+      let jurl = 'https://127.0.0.1:443/drf/api/jobid/?format=json'
+      axios.get(jurl)
+        .then(function (response) {
+          that.searchjoptions = response.data
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
     },
     methods: {
       camelCase,
@@ -688,17 +692,17 @@
       },
       MeasurementsURL (starttimestampx, endtimestampx, jobidsx) {
         if (!jobidsx) {
-          return 'https://127.0.0.1:8443/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx
+          return 'https://127.0.0.1:443/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx
         } else if (jobidsx) {
           if (starttimestampx) {
-            return 'https://127.0.0.1:8443/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id=' + jobidsx
+            return 'https://127.0.0.1:443/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id=' + jobidsx
           } else if (!starttimestampx) {
-            return 'https://127.0.0.1:8443/drf/api/meas/?format=json&job_id=' + jobidsx
+            return 'https://127.0.0.1:443/drf/api/meas/?format=json&job_id=' + jobidsx
           }
         }
       },
       searchMeasurements () {
-        console.log(this.mbtoken)
+        // console.log(mbtoken)
         if (this.starttimestampx && this.endtimestampx) {
           if (this.endtimestampx < this.starttimestampx) {
             this.$notification.open('You have to pick end timestep later than the start timestamp!')

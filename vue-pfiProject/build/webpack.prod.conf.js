@@ -3,7 +3,8 @@ const path = require('path')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+// const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin')
@@ -32,8 +33,18 @@ const webpackConfig = merge(baseWebpackConfig, {
       },
     },
     minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            warnings: false,
+          },
+        },
+        cache: true,
+        sourceMap: true,
+        parallel: true,  
+      }),
       // UglifyJs do not support ES6+, you can also use babel-minify for better treeshaking: https://github.com/babel/minify
-      new UglifyJsPlugin({
+      /* new UglifyJsPlugin({
         uglifyOptions: {
           compress: {
             warnings: false,
@@ -42,7 +53,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         cache: true,
         sourceMap: true,
         parallel: true,
-      }),
+      }), */
       // Compress extracted CSS. We are using this plugin so that possible
       // duplicated CSS from different components can be deduped.
       new OptimizeCSSPlugin({

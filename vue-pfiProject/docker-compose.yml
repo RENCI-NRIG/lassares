@@ -1,0 +1,9 @@
+version: '3.7'
+services:
+  vuejs:
+    container_name: vuejs 
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '80:80'
