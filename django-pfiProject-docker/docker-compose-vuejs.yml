@@ -4,6 +4,6 @@ services:
     container_name: vuejs 
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: vuejs/Dockerfile
     ports:
-      - '80:80'
+      - '8081:80'

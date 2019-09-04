@@ -19,6 +19,14 @@ services:
     - ./static:/code/static
     - ./media:/code/media
 
+  vuejs:
+    container_name: vuejs
+    build:
+      context: .
+      dockerfile: vuejs/Dockerfile
+    ports:
+      - 8081:80
+
   nginx:
     image: nginx:latest
     container_name: nginx
