@@ -332,10 +332,9 @@
   import '@riophae/vue-treeselect/dist/vue-treeselect.css'
   import axios from 'axios'
   
-  // import mbtoken from '@/assets/mbtoken.json'
-  // const mbtoken = require('@/assets/mbtoken.json')
+  import mbtoken from '@/assets/mbtoken.json'
   let gettoken = function () {
-    return 'sk.eyJ1IjoiY29kZWZvcmFtZXJpY2EiLCJhIjoiY2ptd3F1d2Q4MDJ4djNxcjJ6NDltNzhnayJ9.4wsfBXJpT4y9L4tahnag9g'
+    return mbtoken[0].MB_KEY
   }
   // color values for measurement concentrations
   let concentration2color = function (concentration) {
@@ -702,7 +701,7 @@
         }
       },
       searchMeasurements () {
-        // console.log(mbtoken)
+        // console.log(mbtoken[0].MB_KEY)
         if (this.starttimestampx && this.endtimestampx) {
           if (this.endtimestampx < this.starttimestampx) {
             this.$notification.open('You have to pick end timestep later than the start timestamp!')

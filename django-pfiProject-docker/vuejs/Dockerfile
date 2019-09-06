@@ -1,5 +1,5 @@
 # build enviroment
-FROM node:12.2.0-alpine AS build
+FROM node:12.8.1-alpine AS build
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY ./vuejs/package.json /app/package.json
