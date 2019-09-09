@@ -19,25 +19,21 @@ services:
     - ./static:/code/static
     - ./media:/code/media
 
-  vuejs:
-    container_name: vuejs
+  nginx:
     build:
       context: .
-      dockerfile: vuejs/Dockerfile
-    ports:
-      - 8081:80
-
-  nginx:
-    image: nginx:latest
-    container_name: nginx
+      dockerfile: nginx/Dockerfile
+    image: vuejs
+    container_name: vuejs
     ports:
     - 80:80
     - 443:443
+    depends_on:
+    - django
     volumes:
     - .:/code
     - ./static:/code/static
     - ./media:/code/media
-    - ./nginx/pfiProject_nginx_ssl.conf:/etc/nginx/conf.d/default.conf
     - ./certs/self.signed.crt:/etc/ssl/SSL.crt
     - ./certs/self.signed.key:/etc/ssl/SSL.key
     environment:

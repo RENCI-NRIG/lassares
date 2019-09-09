@@ -20,7 +20,7 @@ from django.views.i18n import JavaScriptCatalog
 
 
 urlpatterns = [
-    path('', include('pages.urls')), #new
+    path('pages/', include('pages.urls')), #new
     path('meas/', include(('meas_web.urls','meas_web'), 'meas_web')), #new
     path('drf/', include(('drf.urls','drf'), 'drf')), #new
 
