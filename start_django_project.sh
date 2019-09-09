@@ -6,6 +6,11 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
+if [ $# -ne 2 ]; then
+    echo "Required arguments [MBTOKEN] not provided!"
+    exit 2 
+fi
+
 mkdir -p /var/www
 cp -R /root/lassares/django-pfiProject-docker /var/www
 chown -R root:root /var/www/
@@ -16,6 +21,7 @@ cd /var/www/django-pfiProject-docker/
 LOCALIP=`/opt/aws/bin/ec2-metadata -o|cut -d' ' -f2`
 
 GOOGLE_API_KEY=$1
+MBTOKEN=$2
 
 echo "enable for docker service"
 chkconfig --add docker
@@ -30,6 +36,7 @@ echo "" > /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 echo "GOOGLE_MAP_API_KEY='$GOOGLE_API_KEY'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 SECRET=`uuidgen`
 echo "SECRET_KEY='$SECRET'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
+cat /var/www/django-pfiProject-docker/vuejs/src/assets/mbtoken.json | MBTOKEN="$MBTOKEN" jq 'map(if .MB_KEY == "YOU NEED TO REPLACE THIS WITH A MAP BOX TOKEN" then . + {"MB_KEY":env.MBTOKEN} else . end)' > /var/www/django-pfiProject-docker/vuejs/src/assets/mbtokenpass.json && mv /var/www/django-pfiProject-docker/vuejs/src/assets/mbtokenpass.json /var/www/django-pfiProject-docker/vuejs/src/assets/mbtoken.json 
 echo "RUN_ROOT=1" >> /var/www/django-pfiProject-docker/pfiProject/.env
 
 NGINX_HOST=$LOCALIP docker-compose up -d

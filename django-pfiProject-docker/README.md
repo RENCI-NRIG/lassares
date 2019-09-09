@@ -21,8 +21,12 @@ Django is a high-level Python Web framework that encourages rapid development an
      SECRET_KEY = 'xxxxxxxxxxxxxxxxxx'  # generate a secret key
      GOOGLE_MAP_API_KEY = 'xxxxxxxxxxxxxxxx'
      ```
+ 1. Update `vuejs/src/assets/mbtoken.json` file
 
- 2. Update `pfiProject/.env` file as per your need 
+     ```python
+     "MB_KEY":"YOU NEED TO REPLACE THIS WITH A MAP BOX TOKEN"
+
+ 3. Update `pfiProject/.env` file as per your need 
 
      ```
      # debug
@@ -37,7 +41,7 @@ Django is a high-level Python Web framework that encourages rapid development an
      export POSTGRES_PORT=5432
      export ADMIN_PWD=abcd1234!
      ```
- 3. Update the `nginx` section of the `docker-compose.yml` file
+ 4. Update the `nginx` section of the `docker-compose.yml` file
 
      ```
      ...
@@ -66,7 +70,7 @@ Django is a high-level Python Web framework that encourages rapid development an
      ├── self.signed.crt
      └── self.signed.key
      ```
- 4. Run `docker-compose up -d`
+ 5. Run `docker-compose up -d`
 
      ```console
      $ docker-compose up -d
