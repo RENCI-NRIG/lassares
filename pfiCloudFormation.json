@@ -88,6 +88,12 @@
         "Type": "String",
         "MinLength": "1",
         "MaxLength": "64"
+      }, 
+    "MBToken" : {
+        "Description" : "Map Box Token",
+        "Type": "String",
+        "MinLength": "1",
+        "MaxLength": "255"
       }
 },
 
@@ -285,7 +291,7 @@
                 "command" : "git clone https://github.com/RENCI-NRIG/lassares.git /root/lassares"
               },
               "02_install_webserver" : {
-                "command" : { "Fn::Join": [ "", ["/root/lassares/start_django_project.sh ", { "Ref": "GoogleApiKey" }, " > /var/log/configWebServer.log 2>&1" ] ] }
+                "command" : { "Fn::Join": [ "", ["/root/lassares/start_django_project.sh ", { "Ref": "GoogleApiKey" }, " ", { "Ref": "MBToken" }" > /var/log/configWebServer.log 2>&1" ] ] }
               }
             },
             "services" : {
