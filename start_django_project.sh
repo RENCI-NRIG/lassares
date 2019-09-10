@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 yum update -y
-yum install jq
+yum -y install jq
 
 set -e
 
