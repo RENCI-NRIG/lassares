@@ -100,7 +100,7 @@ except ImportError:
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = (
-    secrets.PUBHOST_URL,
+        'https://'+secrets.PUBHOST_URL,
 )
 
 ROOT_URLCONF = 'pfiProject.urls'

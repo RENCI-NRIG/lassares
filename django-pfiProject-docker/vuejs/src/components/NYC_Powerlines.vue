@@ -452,7 +452,7 @@
             visible: true,
             source: {
               cmp: 'vl-source-vector',
-              url: pubhost[0].PUBHOST_URL + '/drf/api/fdr_18001_0_11/?format=json',
+              url: 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/fdr_18001_0_11/?format=json',
             },
             style: [
               {
@@ -482,7 +482,7 @@
     },
     created: function () {
       let that = this
-      let turl = pubhost[0].PUBHOST_URL + '/drf/api/timestamp/?format=json'
+      let turl = 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/timestamp/?format=json'
       axios.get(turl)
         .then(function (response) {
           that.searchtoptions = response.data
@@ -491,7 +491,7 @@
           console.log(error)
         })
 
-      let jurl = pubhost[0].PUBHOST_URL + '/drf/api/jobid/?format=json'
+      let jurl = 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/jobid/?format=json'
       axios.get(jurl)
         .then(function (response) {
           that.searchjoptions = response.data
@@ -692,12 +692,12 @@
       },
       MeasurementsURL (starttimestampx, endtimestampx, jobidsx) {
         if (!jobidsx) {
-          return pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx
+          return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx
         } else if (jobidsx) {
           if (starttimestampx) {
-            return pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id=' + jobidsx
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id=' + jobidsx
           } else if (!starttimestampx) {
-            return pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&job_id=' + jobidsx
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&job_id=' + jobidsx
           }
         }
       },
