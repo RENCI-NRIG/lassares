@@ -46,16 +46,20 @@ Django is a high-level Python Web framework that encourages rapid development an
      ```
      ...
        nginx:
-         image: nginx:latest
-         container_name: nginx
+         build:
+           context: .
+           dockerfile: nginx/Dockerfile
+         image: vuejs 
+         container_name: vuejs
          ports:
            - 8080:80                    # change http port as needed
            - 8443:443                   # change https port as needed
+         depends_on:
+           - django
          volumes:
            - .:/code
            - ./static:/code/static
            - ./media:/code/media
-           - ./nginx/core_nginx_ssl.conf:/etc/nginx/conf.d/default.conf # use SSL config
            - /LOCAL_PATH_TO/your-ssl.crt:/etc/ssl/SSL.crt               # path to your SSL cert
            - /LOCAL_PATH_TO/your-ssl.key:/etc/ssl/SSL.key               # path to your SSL key
      ```
@@ -74,9 +78,9 @@ Django is a high-level Python Web framework that encourages rapid development an
 
      ```console
      $ docker-compose up -d
-     Creating database ... done
      Creating django   ... done
-     Creating nginx    ... done
+     Creating database ... done
+     Creating vuejs    ... done
      ```
     After a few moments the docker containers will have stood up and configured themselves.
  Naviage to [https://127.0.0.1:8443/](https://127.0.0.1:8443/) (or whatever you've configured your host to be).

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+yum update -y
+yum install jq
+
 set -e
 
 if [ $# -ne 2 ]; then
@@ -14,7 +17,7 @@ cd /var/www/django-pfiProject-docker/
 /var/www/django-pfiProject-docker/generate-certificates.sh
 
 LOCALIP=`/opt/aws/bin/ec2-metadata -o|cut -d' ' -f2`
-
+PUBHOSTURL=`/opt/aws/bin/ec2-metadata -p|cut -d' ' -f2`
 GOOGLE_API_KEY=$1
 MBTOKEN=$2
 
@@ -31,9 +34,14 @@ echo "" > /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 echo "GOOGLE_MAP_API_KEY='$GOOGLE_API_KEY'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 SECRET=`uuidgen`
 echo "SECRET_KEY='$SECRET'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
+echo "PUBHOST_URL='$PUBHOSTURL'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 MBTOKENFILE="/var/www/django-pfiProject-docker/vuejs/src/assets/mbtoken.json"
 MBTOKENTMP="/var/www/django-pfiProject-docker/vuejs/src/assets/mbtokentmp.json"
 cat $MBTOKENFILE | MBTOKEN="$MBTOKEN" jq 'map(if .MB_KEY == "YOU NEED TO REPLACE THIS WITH A MAP BOX TOKEN" then . + {"MB_KEY":env.MBTOKEN} else . end)' > $MBTOKENTMP && mv $MBTOKENTMP $MBTOKENFILE
+PUBHOSTFILE="/var/www/django-pfiProject-docker/vuejs/src/assets/pubhost.json"
+PUBHOSTTMP="/var/www/django-pfiProject-docker/vuejs/src/assets/pubhosttmp.json"
+cat $PUBHOSTFILE | PUBHOSTURL="$PUBHOSTURL" jq 'map(if .PUBHOST_URL == "https://127.0.0.1:443" then . + {"PUBHOST_URL":env.PUBHOSTURL} else . end)' > $PUBHOSTTMP && mv $PUBHOSTTMP $PUBHOSTFILE
+
 echo "RUN_ROOT=1" >> /var/www/django-pfiProject-docker/pfiProject/.env
 
 NGINX_HOST=$LOCALIP docker-compose up -d

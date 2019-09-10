@@ -90,23 +90,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+#new
+try:
+    from .secrets.secrets import *
+    from .secrets import secrets
+except ImportError:
+    pass
+
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = (
-    'https://localhost:8000',
-    'https://127.0.0.1:8000',
-    'https://localhost:8080',
-    'https://127.0.0.1:8080',
-    'https://localhost:8081',
-    'https://127.0.0.1:8081',
-    'http://localhost:8081',
-    'http://127.0.0.1:8081',
-    'http://localhost:8080',
-    'http://127.0.0.1:8080',
-    'https://localhost:8443',
-    'https://127.0.0.1:8443',
-    'https://localhost:443',
-    'https://127.0.0.1:443',
+    secrets.PUBHOST_URL,
 )
 
 ROOT_URLCONF = 'pfiProject.urls'
@@ -193,13 +187,7 @@ STATIC_URL = '/static/'
 #new
 STATIC_ROOT = os.path.join(BASE_DIR, 'static') #new
 
-try:
-    from .secrets.secrets import *
-    from .secrets import secrets
-except ImportError:
-    pass
 #new
-
 MAP_WIDGETS = {
     "GooglePointFieldWidget": (
         ("zoom", 15),
