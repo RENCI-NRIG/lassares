@@ -176,52 +176,6 @@
   },
 
   "Resources" : {
-    "RunCmdInstanceProfile": {
-        "Type": "AWS::IAM::InstanceProfile",
-        "Properties": {
-          "Path": "/",
-          "Roles": [ { "Ref": "RunCmdRole" } ]
-        }
-    },
-    "RunCmdRole": {
-        "Type": "AWS::IAM::Role",
-        "Properties": {
-            "AssumeRolePolicyDocument": {
-                "Version": "2012-10-17",
-                "Statement": [
-                    {
-                        "Sid": "",
-                        "Effect": "Allow",
-                        "Principal": { "Service": "ec2.amazonaws.com" },
-                        "Action": "sts:AssumeRole"
-                    }
-                ]
-            },
-            "Path": "/"
-        }
-    },
-    "RunCmdPolicies": {
-        "Type": "AWS::IAM::Policy",
-        "Properties": {
-            "PolicyName": "runcmd",
-            "Roles": [ { "Ref": "RunCmdRole" } ],
-            "PolicyDocument": {
-                "Version": "2012-10-17",
-                "Statement": [
-                    {
-                        "Effect": "Allow",
-                        "Action": [
-                            "s3:PutObject",
-                            "s3:GetObject",
-                            "s3:ListBucket",
-                            "s3:DeleteObject"
-                        ],
-                        "Resource": "*"
-                    }
-                ]
-            }
-       }
-    },    
     "WebServerSecurityGroup" : {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
@@ -291,7 +245,7 @@
                 "command" : "git clone https://github.com/RENCI-NRIG/lassares.git /root/lassares"
               },
               "02_install_webserver" : {
-                "command" : { "Fn::Join": [ "", ["/root/lassares/start_django_project.sh ", { "Ref": "GoogleApiKey" }, " ", { "Ref": "MBToken" }" > /var/log/configWebServer.log 2>&1" ] ] }
+                "command" : { "Fn::Join": [ "", ["/root/lassares/start_django_project.sh ", { "Ref": "GoogleApiKey" }, " ", { "Ref": "MBToken" }, " > /var/log/configWebServer.log 2>&1" ] ] }
               }
             },
             "services" : {
@@ -308,7 +262,6 @@
         "SecurityGroups" : [ {"Ref" : "WebServerSecurityGroup"} ],
         "KeyName"        : { "Ref" : "KeyName" },
         "Tags"        : [ {"Key" : "Name", "Value" : {"Fn::Join" : ["",[{ "Ref" : "AWS::StackName" },"webServer"]]}}],
-        "IamInstanceProfile": { "Ref": "RunCmdInstanceProfile" },
         "UserData" : { "Fn::Base64" : { "Fn::Join" : ["", [
                        "#!/bin/bash -xe\n",
                        "yum update -y aws-cfn-bootstrap\n",
