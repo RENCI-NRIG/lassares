@@ -1,14 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-if [ $# -ne 1 ]; then
-    echo "Required arguments [GOOGLE_API_KEY] not provided!"
-    exit 1
-fi
-
 if [ $# -ne 2 ]; then
-    echo "Required arguments [MBTOKEN] not provided!"
-    exit 2 
+    echo "Required arguments [GOOGLE_API_KEY] [MBTOKEN] not provided!"
+    exit 2
 fi
 
 mkdir -p /var/www
@@ -38,7 +33,7 @@ SECRET=`uuidgen`
 echo "SECRET_KEY='$SECRET'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 MBTOKENFILE="/var/www/django-pfiProject-docker/vuejs/src/assets/mbtoken.json"
 MBTOKENTMP="/var/www/django-pfiProject-docker/vuejs/src/assets/mbtokentmp.json"
-cat $MBTOKENFILE | MBTOKEN="$MBTOKEN" jq 'map(if .MB_KEY == "YOU NEED TO REPLACE THIS WITH A MAP BOX TOKEN" then . + {"MB_KEY":env.MBTOKEN} else . end)' > $MBTOKENTMP && mv $MBTOKENTMP $MBTOKENFILE 
+cat $MBTOKENFILE | MBTOKEN="$MBTOKEN" jq 'map(if .MB_KEY == "YOU NEED TO REPLACE THIS WITH A MAP BOX TOKEN" then . + {"MB_KEY":env.MBTOKEN} else . end)' > $MBTOKENTMP && mv $MBTOKENTMP $MBTOKENFILE
 echo "RUN_ROOT=1" >> /var/www/django-pfiProject-docker/pfiProject/.env
 
 NGINX_HOST=$LOCALIP docker-compose up -d
