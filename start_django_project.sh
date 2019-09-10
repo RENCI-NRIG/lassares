@@ -36,7 +36,9 @@ echo "" > /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 echo "GOOGLE_MAP_API_KEY='$GOOGLE_API_KEY'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 SECRET=`uuidgen`
 echo "SECRET_KEY='$SECRET'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
-cat /var/www/django-pfiProject-docker/vuejs/src/assets/mbtoken.json | MBTOKEN="$MBTOKEN" jq 'map(if .MB_KEY == "YOU NEED TO REPLACE THIS WITH A MAP BOX TOKEN" then . + {"MB_KEY":env.MBTOKEN} else . end)' > /var/www/django-pfiProject-docker/vuejs/src/assets/mbtokenpass.json && mv /var/www/django-pfiProject-docker/vuejs/src/assets/mbtokenpass.json /var/www/django-pfiProject-docker/vuejs/src/assets/mbtoken.json 
+MBTOKENFILE="/var/www/django-pfiProject-docker/vuejs/src/assets/mbtoken.json"
+MBTOKENTMP="/var/www/django-pfiProject-docker/vuejs/src/assets/mbtokentmp.json"
+cat $MBTOKENFILE | MBTOKEN="$MBTOKEN" jq 'map(if .MB_KEY == "YOU NEED TO REPLACE THIS WITH A MAP BOX TOKEN" then . + {"MB_KEY":env.MBTOKEN} else . end)' > $MBTOKENTMP && mv $MBTOKENTMP $MBTOKENFILE 
 echo "RUN_ROOT=1" >> /var/www/django-pfiProject-docker/pfiProject/.env
 
 NGINX_HOST=$LOCALIP docker-compose up -d
