@@ -77,7 +77,7 @@ Django is a high-level Python Web framework that encourages rapid development an
  5. Run `docker-compose up -d` if you want to run the operational version, or run 'docker-compose -f docker-compose-dev.yml up -d' if you want to run the development version.
 
      ```console
-     $ docker-compose up -d
+     $ docker-compose -f docker-compose-dev.yml up -d
      Creating django   ... done
      Creating database ... done
      Creating vuejs    ... done
