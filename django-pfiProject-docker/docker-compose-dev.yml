@@ -21,22 +21,33 @@ services:
       - ./static:/code/static
       - ./media:/code/media
 
-  nginx:
-    build:
-      context: .
-      dockerfile: nginx/Dockerfile
-    image: vuejs
+  vuejs:
+    image: node:12.8.1-alpine
+    command: npm run serve
     container_name: vuejs
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./vuejs:/app
+    working_dir: /app
+    restart: on-failure
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
     ports:
-      - 80:80
-      - 443:443
+      - 8443:443
     depends_on:
       - django
     volumes:
       - .:/code
       - ./static:/code/static
       - ./media:/code/media
+      - ./nginx/pfiProject_nginx_ssl_dev.conf:/etc/nginx/nginx.conf:ro
       - ./certs/self.signed.crt:/etc/ssl/SSL.crt
       - ./certs/self.signed.key:/etc/ssl/SSL.key
     environment:
       - NGINX_HOST:${NGINX_HOST:-127.0.0.1}
+    logging:
+      driver: json-file 
+
+

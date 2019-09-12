@@ -8,4 +8,4 @@
 
 SECRET_KEY = 'xxxxxxxxxxxxxxx'
 GOOGLE_MAP_API_KEY = 'xxxxxxxxxxxxxxxx'
-PUBHOST_URL = '127.0.0.1'
+PUBHOST_URL = '127.0.0.1:8443'

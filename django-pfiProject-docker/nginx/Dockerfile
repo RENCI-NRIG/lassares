@@ -4,7 +4,6 @@ WORKDIR /app
 
 COPY vuejs/package.json vuejs/package-lock.json /app/
 RUN npm install
-RUN npm install @vue/cli@3.7.0 -g
 
 COPY vuejs /app
 RUN npm run build
