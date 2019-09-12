@@ -41,7 +41,7 @@ Django is a high-level Python Web framework that encourages rapid development an
      export POSTGRES_PORT=5432
      export ADMIN_PWD=abcd1234!
      ```
- 4. Update the `nginx` section of the `docker-compose.yml` file
+ 4. Update the `nginx` section of the `docker-compose.yml` file, if you want to run the operational version on your local machine. If you want to run the development version the docker-compose-dev.yml already has these changes.
 
      ```
      ...
@@ -74,7 +74,7 @@ Django is a high-level Python Web framework that encourages rapid development an
      ├── self.signed.crt
      └── self.signed.key
      ```
- 5. Run `docker-compose up -d`
+ 5. Run `docker-compose up -d` if you want to run the operational version, or run 'docker-compose -f docker-compose-dev.yml up -d' if you want to run the development version.
 
      ```console
      $ docker-compose up -d
