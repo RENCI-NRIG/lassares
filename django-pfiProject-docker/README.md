@@ -21,7 +21,7 @@ Django is a high-level Python Web framework that encourages rapid development an
      SECRET_KEY = 'xxxxxxxxxxxxxxxxxx'  # generate a secret key
      GOOGLE_MAP_API_KEY = 'xxxxxxxxxxxxxxxx'
      ```
- 1. Update `vuejs/src/assets/mbtoken.json` file
+ 1. Update `quasar/src/assets/mbtoken.json` file
 
      ```python
      "MB_KEY":"YOU NEED TO REPLACE THIS WITH A MAP BOX TOKEN"
@@ -49,8 +49,8 @@ Django is a high-level Python Web framework that encourages rapid development an
          build:
            context: .
            dockerfile: nginx/Dockerfile
-         image: vuejs 
-         container_name: vuejs
+         image: quasar 
+         container_name: quasar 
          ports:
            - 8080:80                    # change http port as needed
            - 8443:443                   # change https port as needed
@@ -80,7 +80,7 @@ Django is a high-level Python Web framework that encourages rapid development an
      $ docker-compose -f docker-compose-dev.yml up -d
      Creating django   ... done
      Creating database ... done
-     Creating vuejs    ... done
+     Creating quasar    ... done
      ```
     After a few moments the docker containers will have stood up and configured themselves.
  Naviage to [https://127.0.0.1:8443/](https://127.0.0.1:8443/) (or whatever you've configured your host to be).

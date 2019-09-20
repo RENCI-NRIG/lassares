@@ -21,19 +21,22 @@ services:
       - ./static:/code/static
       - ./media:/code/media
 
-  vuejs:
-    image: node:12.8.1-alpine
-    command: npm run serve
-    container_name: vuejs
+  quasar:
+    build:
+      context: .
+      dockerfile: quasar/Dockerfile
+    image: quasar-dev
+    command: /bin/sh -c "yarn && quasar dev"
+    container_name: quasar-dev 
     volumes:
       - ./.env:/app/.env:ro
-      - ./vuejs:/app
+      - ./quasar:/app
     working_dir: /app
     restart: on-failure
 
   nginx:
     image: nginx:alpine
-    container_name: nginx
+    container_name: nginx-dev
     ports:
       - 8443:443
     depends_on:
@@ -49,5 +52,4 @@ services:
       - NGINX_HOST:${NGINX_HOST:-127.0.0.1}
     logging:
       driver: json-file 
-
 

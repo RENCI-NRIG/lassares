@@ -1,0 +1,3 @@
+/dist
+/*.js
+/src/mixins/vue-d3-barchart.vue

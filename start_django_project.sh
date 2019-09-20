@@ -35,11 +35,11 @@ echo "GOOGLE_MAP_API_KEY='$GOOGLE_API_KEY'" >> /var/www/django-pfiProject-docker
 SECRET=`uuidgen`
 echo "SECRET_KEY='$SECRET'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 echo "PUBHOST_URL='$PUBHOSTURL'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
-MBTOKENFILE="/var/www/django-pfiProject-docker/vuejs/src/assets/mbtoken.json"
-MBTOKENTMP="/var/www/django-pfiProject-docker/vuejs/src/assets/mbtokentmp.json"
+MBTOKENFILE="/var/www/django-pfiProject-docker/quasar/src/assets/mbtoken.json"
+MBTOKENTMP="/var/www/django-pfiProject-docker/quasar/src/assets/mbtokentmp.json"
 cat $MBTOKENFILE | MBTOKEN="$MBTOKEN" jq 'map(if .MB_KEY == "YOU NEED TO REPLACE THIS WITH A MAP BOX TOKEN" then . + {"MB_KEY":env.MBTOKEN} else . end)' > $MBTOKENTMP && mv $MBTOKENTMP $MBTOKENFILE
-PUBHOSTFILE="/var/www/django-pfiProject-docker/vuejs/src/assets/pubhost.json"
-PUBHOSTTMP="/var/www/django-pfiProject-docker/vuejs/src/assets/pubhosttmp.json"
+PUBHOSTFILE="/var/www/django-pfiProject-docker/quasar/src/assets/pubhost.json"
+PUBHOSTTMP="/var/www/django-pfiProject-docker/quasar/src/assets/pubhosttmp.json"
 cat $PUBHOSTFILE | PUBHOSTURL="$PUBHOSTURL" jq 'map(if .PUBHOST_URL == "127.0.0.1:8443" then . + {"PUBHOST_URL":env.PUBHOSTURL} else . end)' > $PUBHOSTTMP && mv $PUBHOSTTMP $PUBHOSTFILE
 
 echo "RUN_ROOT=1" >> /var/www/django-pfiProject-docker/pfiProject/.env

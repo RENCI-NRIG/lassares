@@ -2,15 +2,16 @@ FROM node:12.8.1-alpine AS build
 
 WORKDIR /app
 
-COPY vuejs/package.json vuejs/package-lock.json /app/
-RUN npm install
+COPY quasar/package.json quasar/package-lock.json /app/
+RUN yarn global add @quasar/cli
 
-COPY vuejs /app
-RUN npm run build
+COPY quasar /app
+RUN yarn
+RUN quasar build
 
 FROM nginx:alpine
 
 COPY nginx/pfiProject_nginx_ssl.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist/ /dist/
+COPY --from=build /app/dist/spa /dist/
 
 CMD ["nginx", "-g", "daemon off;"]
