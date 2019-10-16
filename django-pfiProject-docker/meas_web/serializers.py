@@ -6,6 +6,6 @@ class Measurement_Serializer(QueryFieldsMixin, GeoFeatureModelSerializer):
     class Meta:
         model = Measurement
         geo_field = 'geom'
-        fields = ('bore_id', 'job_id', 'device_id', 'chemical_id', 'concentration',
+        fields = ('id','bore_id', 'job_id', 'device_id', 'chemical_id', 'concentration',
                   'date', 'time', 'status', 'comment')
 

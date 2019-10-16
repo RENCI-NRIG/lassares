@@ -35,6 +35,7 @@ module.exports = function (ctx) {
         'QHeader',
         'QFooter',
         'QSeparator',
+        'QSpace',
         'QDrawer',
         'QPageContainer',
         'QPage',
@@ -42,6 +43,12 @@ module.exports = function (ctx) {
         'QToolbarTitle',
         'QBtn',
         'QBtnDropdown',
+        'QInput',
+        'QSelect',
+        'QForm',
+        'QDate',
+        'QTime',
+        'QPopupProxy',
         'QIcon',
         'QList',
         'QItem',
@@ -64,7 +71,9 @@ module.exports = function (ctx) {
         'QBanner',
         'QPageSticky',
         'QFab',
-        'QFabAction'
+        'QFabAction',
+         'QMarkupTable',
+        'QPagination'
       ],
 
       directives: [

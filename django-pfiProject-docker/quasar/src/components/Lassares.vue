@@ -1,252 +1,310 @@
 <template>
   <q-layout view="lHr lpr lFr">
-    <!-- left side draw -->
-    <div v-if="signIn==='yes'">
-      <q-drawer
-        v-model="leftDrawerOpen"
-        show-if-above
-        bordered
-        content-class="teal"
-      >
-        <q-list>
-          <q-item-label header>Measurements Data Entry</q-item-label>
-          <q-item clickable tag="a" target="_blank" href="https://renci.org">
-            <q-item-section avatar>
-              <q-icon name="school" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>Test</q-item-label>
-              <q-item-label caption>test</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
+    <!-- left side drawer -->
+    <div v-if="authenticated">
+      <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="teal">
+        <!-- measurement-create></measurement-create -->
+        <div class="q-pa-md" style="max-width: 600px">
+          <q-card>
+            <div class="q-pa-md" style="max-width: 600px">
+              <div class="text-h6">Measurements</div>
+              <div class="text-subtitle2">Input Data</div>
+
+              <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
+                <q-input color="teal" filled v-model="measurement.properties.bore_id" type="number" id="bore_id" label="Bore ID *" hint="ID of the bore hole" lazy-rules
+                  :rules="[ val => val !== null && val !== '' || 'Please type id', val => val > 0 && val < 1000 || 'Please type a correct id' ]"/>
+
+                <q-input color="teal" filled v-model="measurement.properties.job_id" type="number" id="job_id" label="Job ID *" hint="ID of the job" lazy-rules
+                  :rules="[ val => val !== null && val !== '' || 'Please type id', val => val > 0 && val < 1000 || 'Please type a correct id' ]"/>
+
+                <q-input color="teal" filled v-model="measurement.properties.device_id" id="device_id" label="Device ID *" hint="ID of the device" lazy-rules
+                  :rules="[ val => val && val.length > 0 || 'Please type something']"/>
+
+                <q-input color="teal" filled v-model="measurement.properties.chemical_id" id="chemical_id" label="Chemical ID *" hint="ID of chemical" lazy-rules
+                  :rules="[ val => val && val.length > 0 || 'Please type something']"/>
+
+                <q-input color="teal" filled v-model="measurement.properties.concentration" id="concentration" type="number" label="Concentration *" hint="Concentration of chemical" lazy-rules
+                  :rules="[ val => val !== null && val !== '' || 'Please type concentration', val => val > 0 && val < 30 || 'Please type correct chemical concentration' ]"/>
+
+                <q-input color="teal" filled v-model="measurement.properties.comment" id="comment" label="Comment *" hint="Comment" lazy-rules
+                  :rules="[ val => val && val.length > 0 || 'Please type something']"/>
+
+                <q-input color="teal" filled v-model="measurement.properties.date" id="date" label="Date *" hint="Date of measurement">
+                  <template v-slot:append>
+                    <q-icon name="event" class="cursor-pointer">
+                      <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
+                        <q-date v-model="measurement.properties.date" mask="YYYY-MM-DD" color="teal" text-color="black" />
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+
+                <q-input color="teal" filled v-model="measurement.properties.time" id="time" label="Time *" hint="Time of measurement" mask="fulltime" :rules="['fulltime']">
+                  <template v-slot:append>
+                    <q-icon name="access_time" class="cursor-pointer">
+                      <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
+                        <q-time now-btn v-model="measurement.properties.time" with-seconds format12h color="teal" text-color="black" />
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
+
+                <!-- q-btn label="Select Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'">
+                </q-btn>
+                <q-btn label="Stop Selection" type="Point" color="teal" class="text-black" @click="drawType = undefined">
+                </q-btn -->
+
+                <q-input color="teal" filled v-model="longitude" id="longitude" label="Longitude *" hint="Longitude of the bore hole" lazy-rules
+                  :rules="[ val => val && val.length > 0 || 'Please type the longitude']"/>
+                <q-input color="teal" filled v-model="latitude" id="latitude" label="Latitude *" hint="Latitude of the bore hole" lazy-rules
+                  :rules="[ val => val && val.length > 0 || 'Please type the latitude']"/>
+
+                <div>
+                  <q-btn label="Submit" type="submit" color="teal" class="text-black" v-if="!this.measurement.id" @click="createMeasurement()" >
+                    <span v-if="creating">Creating... Please wait </span>
+                  </q-btn>
+                  <q-btn label="Ubdate" type="submit" color="teal" class="text-black" v-if="this.measurement.id" @click="updateMeasurement()" >
+                    <span v-if="creating">Creating... Please wait </span>
+                  </q-btn>
+                  <q-btn label="Reset" type="reset" color="teal" flat class="q-ml-sm" @click="onReset()" />
+                </div>
+              </q-form>
+            </div>
+          </q-card>
+        </div>
+        <q-space />
+        <q-separator />
+        <q-space />
+        <q-card>
+          <div class="q-pa-md" style="max-width: 600px">
+            <q-btn label="View List of Measurements" type="viewlist" color="teal" class="text-black">
+              <q-popup-proxy class="measurement-popup" transition-show="flip-up" transition-hide="flip-down">
+                <measurement-list></measurement-list>
+              </q-popup-proxy>
+            </q-btn>
+          </div>
+        </q-card>
       </q-drawer>
     </div>
 
-    <!-- right side draw -->
-    <div v-if="signIn==='yes'">
-      <q-drawer
-        side="right"
-        v-model="rightDrawerOpen"
-        show-if-above
-        bordered
-        content-class="teal"
-      >
-        <q-list bordered class="rounded-borders">
-          <q-expansion-item default-opened expand-separator icon="list" label="Base Layers">
-            <div class="q-pa-md" style="min-width: 200px">
-              <q-list link>
-                <!--
-                  Rendering a <label> tag (notice tag="label")
-                  so QRadios will respond to clicks on QItems to
-                  change Toggle state.
-                -->
-                <q-item tag="label" v-ripple>
-                  <q-item-section avatar>
-                    <q-radio v-on:input="showBaseLayer" val="osm" v-model="baselayer" color="black" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>OpenStreetMap</q-item-label>
-                  </q-item-section>
-                </q-item>
+    <!-- right side drawer -->
+    <q-drawer side="right" v-model="rightDrawerOpen" show-if-above bordered content-class="teal">
+      <q-list bordered class="rounded-borders">
+        <q-expansion-item default-opened expand-separator icon="list" label="Base Layers">
+          <div class="q-pa-md" style="min-width: 200px">
+            <q-list link>
+              <!--
+                Rendering a <label> tag (notice tag="label")
+                so QRadios will respond to clicks on QItems to
+                change Toggle state.
+              -->
+              <q-item tag="label" v-ripple>
+                <q-item-section avatar>
+                  <q-radio v-on:input="showBaseLayer" val="osm" v-model="baselayer" color="teal" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>OpenStreetMap</q-item-label>
+                </q-item-section>
+              </q-item>
 
-                <q-item tag="label" v-ripple>
-                  <q-item-section avatar>
-                    <q-radio v-on:input="showBaseLayer" val="mapbox" v-model="baselayer" color="black" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>MapBock Satellite</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </div>
-          </q-expansion-item>
+              <q-item tag="label" v-ripple>
+                <q-item-section avatar>
+                  <q-radio v-on:input="showBaseLayer" val="mapbox" v-model="baselayer" color="teal" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>MapBock Satellite</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
+        </q-expansion-item>
 
-          <q-expansion-item default-opened expand-separator icon="list" label="Layers">
-            <div class="q-pa-md q-gutter-y-sm column">
-              <q-toggle
-                :label="`Measurements Layer ${ measurementsModel }`"
-                :key="layers[1].id"
-                v-on:input="showMapPanelLayer(layers)"
-                :class="{ 'is-active': layers[1].visible }"
-                color="black"
-                false-value="Not Selected"
-                true-value="Selected"
-                v-model="measurementsModel"
-              />
-              <q-toggle
-                :label="`Powerlines Layer ${ powerlinesModel }`"
-                :key="layers[0].id"
-                v-on:input="showMapPanelLayer(layers)"
-                :class="{ 'is-active': layers[0].visible }"
-                color="black"
-                false-value="Not Selected"
-                true-value="Selected"
-                v-model="powerlinesModel"
-              />
-            </div>
-          </q-expansion-item>
+        <q-expansion-item default-opened expand-separator icon="list" label="Layers">
+          <div class="q-pa-md q-gutter-y-sm column">
+            <q-toggle
+              :label="`Measurements Layer ${ measurementsModel }`"
+              :key="layers[1].id"
+              v-on:input="showMapPanelLayer(layers)"
+              :class="{ 'is-active': layers[1].visible }"
+              color="teal"
+              false-value="Not Selected"
+              true-value="Selected"
+              v-model="measurementsModel"
+            />
+            <q-toggle
+              :label="`Powerlines Layer ${ powerlinesModel }`"
+              :key="layers[0].id"
+              v-on:input="showMapPanelLayer(layers)"
+              :class="{ 'is-active': layers[0].visible }"
+              color="teal"
+              false-value="Not Selected"
+              true-value="Selected"
+              v-model="powerlinesModel"
+            />
+          </div>
+        </q-expansion-item>
 
-          <q-expansion-item expand-separator icon="list" label="State">
-            <div class="q-pa-md q-gutter-y-sm column">
-              <table class="table is-fullwidth">
-                <tr>
-                  <th>Map center</th>
-                  <td>{{ center }}</td>
-                </tr>
-                <tr>
-                  <th>Map zoom</th>
-                  <td>{{ zoom }}</td>
-                </tr>
-                <tr>
-                  <th>Map rotation</th>
-                  <td>{{ rotation }}</td>
-                </tr>
-                <tr>
-                  <th>Device coordinate</th>
-                  <td>{{ deviceCoordinate }}</td>
-                </tr>
-                <tr>
-                  <th>Selected features</th>
-                  <td>{{ pid }}</td>
-                </tr>
-              </table>
-            </div>
-          </q-expansion-item>
-
-          <q-expansion-item expand-separator icon="list" label="Legend">
+        <q-expansion-item expand-separator icon="list" label="State">
+          <div class="q-pa-md q-gutter-y-sm column">
             <table class="table is-fullwidth">
               <tr>
-                <q-expansion-item
-                  group="powerlines"
-                  label="Powerlines"
-                  default-opened
-                  header-class="text-black"
-                  class="text-black"
-                >
-                  <div slot="trigger">
-                    <th>NYC Powerlines</th>
-                  </div>
-                  <q-card>
-                    <q-card-section>
-                      <table class="table is-fullwidth">
-                        <tr>
-                          <td><hr style=getNYC_PowerlinesStyle() /></td>
-                          <td>Powerlines</td>
-                        </tr>
-                        <tr>
-                          <td><b>Source</b></td>
-                          <td>This data was derived from nothing.</td>
-                        </tr>
-                      </table>
-                    </q-card-section>
-                  </q-card>
-                </q-expansion-item>
+                <th>Map center</th>
+                <td>{{ center }}</td>
               </tr>
               <tr>
-                <q-expansion-item
-                  group="measurements"
-                  label="Measurements"
-                  default-opened
-                  header-class="text-black"
-                >
-                  <div slot="trigger">
-                    <th>PFC 1 Bubbles</th>
-                  </div>
-                  <q-card>
-                    <q-card-section>
-                      <table class="table is-fullwidth">
-                        <tr>
-                          <td><span class="dot"></span></td>
-                          <td>Test Measurments</td>
-                        </tr>
-                        <tr>
-                          <td><b>Source</b></td>
-                          <td>This data was derived from nothing.</td>
-                        </tr>
-                      </table>
-                    </q-card-section>
-                  </q-card>
-                </q-expansion-item>
+                <th>Map zoom</th>
+                <td>{{ zoom }}</td>
+              </tr>
+              <tr>
+                <th>Map rotation</th>
+                <td>{{ rotation }}</td>
+              </tr>
+              <tr>
+                <th>Device coordinate</th>
+                <td>{{ deviceCoordinate }}</td>
+              </tr>
+              <tr>
+                <th>Selected features</th>
+                <td>{{ pid }}</td>
               </tr>
             </table>
-          </q-expansion-item>
+          </div>
+        </q-expansion-item>
 
-          <q-expansion-item expand-separator icon="list" label="Filter">
-            <table class="table is-fullwidth">
-              <tr>
-                <th>Select Start Timestamp</th>
-              </tr>
-              <tr>
-                <td>
-                  <treeselect :load-options="loadFilterOptions" :options="toptions" v-model="starttimestamp"
-                    :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
-                </td>
-              </tr>
-              <tr>
-                <th>Select End Timestamp</th>
-              </tr>
-              <tr>
-                <td>
-                  <treeselect :load-options="loadFilterOptions" :options="toptions" v-model="endtimestamp"
-                    :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <q-btn color="teal" class="text-black" @click="filterMeasurements">Filter Measurements</q-btn>
-                </td>
-              </tr>
-            </table>
-          </q-expansion-item>
-          <q-expansion-item expand-separator icon="list" label="Search">
-            <table class="table is-fullwidth">
-              <tr>
-                <th>Select Start Timestamp</th>
-              </tr>
-              <tr>
-                <td>
-                  <treeselect :options="searchtoptions" v-model="starttimestampx"
-                    :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
-                </td>
-              </tr>
-              <tr>
-                <th>Select End Timestamp</th>
-              </tr>
-              <tr>
-                <td>
-                  <treeselect :options="searchtoptions" v-model="endtimestampx"
-                    :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
-                </td>
-              </tr>
-              <tr>
-                <th>Select Job ID</th>
-              </tr>
-              <tr>
-                <td>
-                  <treeselect :options="searchjoptions" v-model="jobidsx"
-                    :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <q-btn color="teal" class="text-black" @click="searchMeasurements">Search Measurements</q-btn>
-                </td>
-              </tr>
-            </table>
-          </q-expansion-item>
-        </q-list>
-      </q-drawer>
-    </div>
+        <q-expansion-item expand-separator icon="list" label="Legend">
+          <table class="table is-fullwidth">
+            <tr>
+              <q-expansion-item
+                group="powerlines"
+                label="Powerlines"
+                default-opened
+                header-class="text-black"
+                class="text-black"
+              >
+                <div slot="trigger">
+                  <th>NYC Powerlines</th>
+                </div>
+                <q-card>
+                  <q-card-section>
+                    <table class="table is-fullwidth">
+                      <tr>
+                        <td><hr style=getNYC_PowerlinesStyle() /></td>
+                        <td>Powerlines</td>
+                      </tr>
+                      <tr>
+                        <td><b>Source</b></td>
+                        <td>This data was derived from nothing.</td>
+                      </tr>
+                    </table>
+                  </q-card-section>
+                </q-card>
+              </q-expansion-item>
+            </tr>
+            <tr>
+              <q-expansion-item group="measurements" label="Measurements" default-opened header-class="text-black">
+                <div slot="trigger">
+                  <th>PFC 1 Bubbles</th>
+                </div>
+                <q-card>
+                  <q-card-section>
+                    <table class="table is-fullwidth">
+                      <tr>
+                        <td><span class="dot"></span></td>
+                        <td>Test Measurments</td>
+                      </tr>
+                      <tr>
+                        <td><b>Source</b></td>
+                        <td>This data was derived from nothing.</td>
+                      </tr>
+                    </table>
+                  </q-card-section>
+                </q-card>
+              </q-expansion-item>
+            </tr>
+          </table>
+        </q-expansion-item>
+
+        <q-expansion-item expand-separator icon="list" label="Filter">
+          <table class="table is-fullwidth">
+            <tr>
+              <th>Select Start Timestamp</th>
+            </tr>
+            <tr>
+              <td>
+                <treeselect :load-options="loadFilterOptions" :options="toptions" v-model="starttimestamp"
+                  :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
+              </td>
+            </tr>
+            <tr>
+              <th>Select End Timestamp</th>
+            </tr>
+            <tr>
+              <td>
+                <treeselect :load-options="loadFilterOptions" :options="toptions" v-model="endtimestamp"
+                  :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <q-btn color="teal" class="text-black" @click="filterMeasurements">Filter Measurements</q-btn>
+              </td>
+            </tr>
+          </table>
+        </q-expansion-item>
+
+        <q-expansion-item expand-separator icon="list" label="Search">
+          <table class="table is-fullwidth">
+            <tr>
+              <th>Select Start Timestamp</th>
+            </tr>
+            <tr>
+              <td>
+                <treeselect :options="searchtoptions" v-model="starttimestampx"
+                  :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
+              </td>
+            </tr>
+            <tr>
+              <th>Select End Timestamp</th>
+            </tr>
+            <tr>
+              <td>
+                <treeselect :options="searchtoptions" v-model="endtimestampx"
+                  :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
+              </td>
+            </tr>
+            <tr>
+              <th>Select Job ID</th>
+            </tr>
+            <tr>
+              <td>
+                <treeselect :options="searchjoptions" v-model="jobidsx"
+                  :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <q-btn color="teal" class="text-black" @click="searchMeasurements">Search Measurements</q-btn>
+              </td>
+            </tr>
+           </table>
+        </q-expansion-item>
+        <q-expansion-item expand-separator icon="list" label="Draw">
+          <q-btn label="Select Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'">
+          </q-btn>
+          <q-btn label="Stop Selection" type="Point" color="teal" class="text-black" @click="drawType = undefined">
+          </q-btn>
+        </q-expansion-item>
+      </q-list>
+    </q-drawer>
 
     <!--// app map -->
     <vl-map v-if="mapVisible" class="map" ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true"
       @click="onMapClick" data-projection="EPSG:4326" @mounted="onMapMounted" :controls="false">
        <!--// map view aka ol.View -->
-      <vl-view ref="mapView" :center.sync="center" :zoom.sync="zoom" :rotation.sync="rotation"></vl-view>
+      <vl-view ref="view" :center.sync="center" :zoom.sync="zoom" :rotation.sync="rotation"></vl-view>
 
       <!--// click interactions -->
-      <vl-interaction-select ref="selectInteraction" :features.sync="selectedFeatures">
+      <vl-interaction-select ref="selectInteraction" :features.sync="selectedFeatures" v-if="drawType == null">
         <template slot-scope="select">
           <!--// select styles -->
           <vl-style-box>
@@ -271,28 +329,42 @@
               :position="pointOnSurface(feature.geometry)" :auto-pan="true" :auto-pan-animation="{ duration: 300 }">
               <q-card class="feature-popup">
                 <q-card-section>
-                  <q-banner inline-actions class="text-black bg-white">
-                    <div class="text-h6">
-                      Feature ID {{ feature.id }}
-                    </div>
-                    <template v-slot:action>
-                      <q-btn flat round dense icon="close" @click="selectedFeatures = selectedFeatures.filter(f => f.id !== feature.id)" />
-                    </template>
-                  </q-banner>
-                  <div v-if="pid == feature.properties['powerline']">
-                    Powerline: {{ powerline }}<br>
-                    Voltage: {{ feature.properties['voltage'] }}<br>
-                    Service Date: {{ feature.properties['service_date'] }}
+                  <div v-if="feature.id == undefined">
+                    <q-banner inline-actions class="text-black bg-white">
+                      <div class="text-h7">
+                        New Feature Coordinates
+                      </div>
+                      <template v-slot:action>
+                        <q-btn flat round dense icon="close" @click="selectedFeatures = selectedFeatures.filter(f => f.id !== feature.id)" />
+                      </template>
+                    </q-banner>
+                    Longitude: {{ coordinates[0] }}<br>
+                    Latitude: {{ coordinates[1] }}<br>
                   </div>
-                  <div v-else-if="pid == feature.properties['chemical_id']">
-                    Bore ID: {{ feature.properties['bore_id'] }}<br>
-                    Job ID: {{ feature.properties['job_id'] }}<br>
-                    Device ID: {{ feature.properties['device_id'] }}<br>
-                    Chemical ID: {{ chemical_id }}<br>
-                    Concentration: {{ concentration }}<br>
-                    Timestamp: {{ timestamp }}
-                    status: {{ feature.properties['status'] }}<br>
-                    comment: {{ feature.properties['comment'] }}<br>
+                  <div v-else>
+                    <q-banner inline-actions class="text-black bg-white">
+                      <div class="text-h6">
+                        Feature ID {{ feature.id }}
+                      </div>
+                      <template v-slot:action>
+                        <q-btn flat round dense icon="close" @click="selectedFeatures = selectedFeatures.filter(f => f.id !== feature.id)" />
+                      </template>
+                    </q-banner>
+                    <div v-if="pid == feature.properties['powerline']">
+                      Powerline: {{ powerline }}<br>
+                      Voltage: {{ feature.properties['voltage'] }}<br>
+                      Service Date: {{ feature.properties['service_date'] }}
+                    </div>
+                    <div v-else-if="pid == feature.properties['chemical_id']">
+                      Bore ID: {{ feature.properties['bore_id'] }}<br>
+                      Job ID: {{ feature.properties['job_id'] }}<br>
+                      Device ID: {{ feature.properties['device_id'] }}<br>
+                      Chemical ID: {{ chemical_id }}<br>
+                      Concentration: {{ concentration }}<br>
+                      Timestamp: {{ timestamp }}
+                      status: {{ feature.properties['status'] }}<br>
+                      comment: {{ feature.properties['comment'] }}<br>
+                    </div>
                   </div>
                 </q-card-section>
               </q-card>
@@ -337,6 +409,29 @@
       </vl-interaction-select>
       <!--// click interactions -->
 
+      <!-- geolocation -->
+      <!-- vl-geoloc @update:position="onUpdatePosition">
+        <template slot-scope="geoloc">
+          <vl-feature v-if="geoloc.position" id="position-feature">
+            <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
+            <vl-style-box>
+              <vl-style-icon src="./assets/marker.png" :scale="0.4" :anchor="[0.5, 1]"></vl-style-icon>
+            </vl-style-box>
+          </vl-feature>
+        </template>
+      </vl-geoloc -->
+      <vl-geoloc @update:position="geolocPosition = $event">
+        <template slot-scope="geoloc">
+          <vl-feature v-if="geoloc.position" id="position-feature">
+            <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
+            <vl-style-box>
+              <vl-style-icon src="./assets/marker.png" :scale="0.4" :anchor="[0.5, 1]"></vl-style-icon>
+            </vl-style-box>
+          </vl-feature>
+        </template>
+      </vl-geoloc>
+          <!--// geolocation -->
+
       <!--// base layers -->
       <vl-layer-tile v-for="layer in baseLayers" :key="layer.name" :id="layer.name" :visible="layer.visible">
         <component :is="'vl-source-' + layer.name" v-bind="layer"></component>
@@ -357,13 +452,42 @@
       </component>
       <!-- eslint-enable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
       <!--// other layers -->
+
+      <!-- draw components -->
+      <vl-layer-vector id="draw-pane">
+        <vl-source-vector ident="draw-target" :features.sync="drawnFeatures"></vl-source-vector>
+      </vl-layer-vector>
+
+      <vl-interaction-draw v-if="drawType" source="draw-target" :type="drawType"></vl-interaction-draw>
+      <vl-interaction-modify source="draw-target"></vl-interaction-modify>
+      <vl-interaction-snap source="draw-target" :priority="10"></vl-interaction-snap>
+      <!--// draw components -->
     </vl-map>
     <!--// app map -->
 
-    <!-- q-page-sticky -->
-    <q-page-sticky position="top-left" :offset="[18, 18]">
-      <q-btn flat dense round icon="menu" class="bg-teal text-black" @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu"></q-btn>
-    </q-page-sticky>
+    <!-- left side drawer buttons -->
+    <div v-if="!authenticated">
+      <q-page-sticky position="top-left" :offset="[22, 18]">
+        <q-btn flat dense round icon="fas fa-sign-in-alt" class="bg-teal text-black" aria-label="Login" v-if="!authenticated" @click="logind"></q-btn>
+      </q-page-sticky>
+    </div>
+    <div v-if="authenticated">
+      <q-page-sticky position="top-left" :offset="[58, 18]">
+        <q-btn flat dense round icon="fas fa-sign-out-alt" class="bg-teal text-black" aria-label="Logout" v-if="authenticated" @click="logoutd"></q-btn>
+      </q-page-sticky>
+      <q-page-sticky position="top-left" :offset="[18, 18]">
+        <q-btn flat dense round icon="menu" class="bg-teal text-black" @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu"></q-btn>
+      </q-page-sticky>
+    </div>
+
+    <div class="container">
+      <router-view
+        :auth="auth"
+        :authenticated="authenticated">
+      </router-view>
+    </div>
+
+    <!-- map controls -->
     <q-page-sticky position="top-left" :offset="[18, 58]">
       <div id="ZoomTarget"></div>
     </q-page-sticky>
@@ -373,19 +497,21 @@
     <q-page-sticky position="bottom-left" :offset="[15, 8]">
       <div id="ScaleTarget"></div>
     </q-page-sticky>
+    <!-- right side drawer buttons -->
     <q-page-sticky position="top-right" :offset="[18, 18]">
       <q-btn flat dense round icon="menu" class="bg-teal text-black" @click="rightDrawerOpen = !rightDrawerOpen" aria-label="Menu"></q-btn>
     </q-page-sticky>
     <q-page-sticky position="top-right" :offset="[18, 58]">
       <div id="FullScreenTarget"></div>
     </q-page-sticky>
+    <!-- q-page-sticky examnple -->
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab icon="keyboard_arrow_up" direction="up" color="teal text-black">
         <q-fab-action color="teal" @click="leftDrawerOpen = !leftDrawerOpen" icon="fas fa-object-group" class="text-black" />
         <q-fab-action color="teal" @click="rightDrawerOpen = !rightDrawerOpen" icon="fas fa-object-group" class="text-black" />
       </q-fab>
     </q-page-sticky>
-    <!-- /q-page-sticky -->
+    <!--/ q-page-sticky examnple -->
 
     <!-- div>Built with <a href="https://quasar.dev/" target="_blank" style="color:black; text-decoration:none;">Quasar</a>,
     <a href="https://vuejs.org/" target="_blank" style="color:black; text-decoration:none;">Vue.js</a>,
@@ -394,12 +520,11 @@
     <a href="https://d3js.org/" target="_blank" style="color:black; text-decoration:none;">D3.js</a>,
     <a href="https://www.openstreetmap.org" target="_blank" style="color:black; text-decoration:none;">OSM</a>,
     and <a href="https://www.mapbox.com/" target="_blank" style="color:black; text-decoration:none;">MapBox</a></div -->
-
   </q-layout>
 </template>
 
 <script>
-import { openURL } from 'quasar'
+import { openURL, date } from 'quasar'
 import { camelCase } from 'lodash'
 import { findPointOnSurface, writeGeoJsonFeature } from 'vuelayers/lib/ol-ext'
 import ScaleLine from 'ol/control/ScaleLine'
@@ -410,11 +535,21 @@ import { Style, Stroke, Fill, Circle } from 'ol/style'
 import { DEVICE_PIXEL_RATIO } from 'ol/has.js'
 import DragBox from 'ol/interaction/DragBox'
 import { platformModifierKeyOnly } from 'ol/events/condition.js'
-import d3Barchart from '../mixins/vue-d3-barchart'
 import { toLonLat } from 'ol/proj.js'
+import d3Barchart from '../mixins/vue-d3-barchart'
 import { Treeselect, LOAD_ROOT_OPTIONS } from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import axios from 'axios'
+
+import { APIService } from '../http/APIService'
+const apiService = new APIService()
+
+import AuthService from '../auth/AuthService'
+const auth = new AuthService()
+const { login, logout, authenticated, authNotifier } = auth
+
+import MeasurementList from './MeasurementList'
+import MeasurementCreate from './MeasurementCreate'
 
 import pubhost from '../assets/pubhost.json'
 import mbtoken from '../assets/mbtoken.json'
@@ -449,15 +584,48 @@ export default {
   name: 'Lassares',
   components: {
     d3Barchart,
-    Treeselect
+    Treeselect,
+    MeasurementList,
+    MeasurementCreate
   },
   data () {
+    auth.handleAuthentication()
+    authNotifier.on('authChange', authState => {
+      this.authenticated = authState.authenticated
+    })
     return {
-      signIn: 'yes',
+      geolocPosition: undefined,
+      showCreateMessage: false,
+      showUpdateMessage: false,
+      showError: false,
+      measurement: {
+        'type': 'Feature',
+        'properties': {
+          'bore_id': null,
+          'job_id': null,
+          'device_id': null,
+          'chemical_id': null,
+          'concentration': null,
+          'date': null,
+          'time': null,
+          'status': 'd',
+          'comment': null
+        },
+        'geometry': {
+          'type': 'Point',
+          'coordinates': [null, null]
+        }
+      },
+      longitude: null,
+      latitude: null,
+      measurements: '',
+      creating: false,
+      updating: false,
+      auth,
+      authenticated,
       dialog: false,
       leftDrawerOpen: false,
       rightDrawerOpen: false,
-      tab: 'layers',
       baselayer: 'osm',
       barplotpoint: undefined,
       powerlinesModel: 'Selected',
@@ -487,6 +655,21 @@ export default {
       deviceCoordinate: undefined,
       boxCoordinate: undefined,
       mapVisible: true,
+      drawControls: [
+        {
+          type: 'point',
+          label: 'Draw Point',
+          icon: 'map-marker'
+        },
+        {
+          type: undefined,
+          label: 'Stop drawing',
+          icon: 'times'
+        }
+      ],
+      drawType: undefined,
+      drawnFeatures: [],
+      coordinates: [],
       baroptions: {
         colors: ['red', 'lightgreen'],
         rules: true,
@@ -605,8 +788,19 @@ export default {
     openURL,
     camelCase,
     pointOnSurface: findPointOnSurface,
-    onClick: function () {
-      alert('I clicked it!')
+    login,
+    logout,
+    logind: function () {
+      login()
+    },
+    logoutd: function () {
+      logout()
+    },
+    handleAuthentication: function () {
+      auth.handleAuthentication()
+    },
+    onUpdatePosition: function (coordinate) {
+      this.deviceCoordinate = coordinate
     },
     getPowerlinesStyle: function () {
       let canvas = document.createElement('canvas')
@@ -750,7 +944,7 @@ export default {
     onMapClick: function (event) {
       let pixel = event.pixel
       let features = this.$refs.map.$map.getFeaturesAtPixel(pixel)
-
+      // console.log(view)
       if (!features) {
         this.selectedFeaturesBarBox = []
         this.selectedFeatures = []
@@ -759,21 +953,26 @@ export default {
         this.deviceCoordinate = event.coordinate
         let feature = features[0]
         let properties = feature.getProperties()
-
-        if (properties['chemical_id']) {
-          this.pid = properties['chemical_id']
-          this.chemical_id = this.pid
-          this.concentration = properties['concentration']
-          this.timestamp = properties['timestamp']
+        if (feature.id_ === undefined) {
+          this.coordinates = toLonLat([properties.geometry.flatCoordinates[0], properties.geometry.flatCoordinates[1]])
           this.selectedFeaturesBarBox = []
           this.isBox = 'no'
-        } else if (properties['powerline']) {
-          this.pid = properties['powerline']
-          this.powerline = this.pid
-          this.concentration = undefined
-          this.timestamp = undefined
-          this.selectedFeaturesBarBox = []
-          this.isBox = 'no'
+        } else {
+          if (properties['chemical_id']) {
+            this.pid = properties['chemical_id']
+            this.chemical_id = this.pid
+            this.concentration = properties['concentration']
+            this.timestamp = properties['timestamp']
+            this.selectedFeaturesBarBox = []
+            this.isBox = 'no'
+          } else if (properties['powerline']) {
+            this.pid = properties['powerline']
+            this.powerline = this.pid
+            this.concentration = undefined
+            this.timestamp = undefined
+            this.selectedFeaturesBarBox = []
+            this.isBox = 'no'
+          }
         }
       }
     },
@@ -815,7 +1014,6 @@ export default {
       }
     },
     searchMeasurements: function () {
-      // console.log(mbtoken[0].MB_KEY)
       if (this.starttimestampx && this.endtimestampx) {
         if (this.endtimestampx < this.starttimestampx) {
           this.$notification.open('You have to pick end timestep later than the start timestamp!')
@@ -928,6 +1126,78 @@ export default {
       } else if (!this.starttimestamp && this.endtimestamp) {
         this.$notification.open('You have to select a start timestep')
       }
+    },
+    currentDate: function () {
+      let timeStamp = Date.now()
+      let formattedString = date.formatDate(timeStamp, 'YYYY-MM-DD')
+      return formattedString
+    },
+    currentTime: function () {
+      let timeStamp = Date.now()
+      let formattedString = date.formatDate(timeStamp, 'HH:mm:ss.SSSZ')
+      return formattedString
+    },
+    onSubmit: function () {
+      this.$q.notify({
+        color: 'red-5',
+        textColor: 'black',
+        icon: 'warning',
+        message: this.currentTime()
+      })
+    },
+    onReset: function () {
+      this.measurement.properties.bore_id = null
+      this.measurement.properties.job_id = null
+      this.measurement.properties.device_id = null
+      this.measurement.properties.chemical_id = null
+      this.measurement.properties.concentration = null
+      this.measurement.properties.comment = null
+      this.measurement.properties.date = null
+      this.measurement.properties.time = null
+      this.longitude = null
+      this.latitude = null
+      this.measurement.geometry.coordinates = null
+    },
+    createMeasurement: function () {
+      let coordinates = [parseFloat(this.longitude), parseFloat(this.latitude)]
+      this.measurement.geometry.coordinates = coordinates
+      // console.log(JSON.stringify(this.measurement))
+      console.log(this.measurement)
+      this.creating = true
+      apiService.createMeasurement(this.measurement).then((result) => {
+        // console.log(result)
+        // success
+        if (result.status === 201) {
+          this.measurement = result.data
+          this.showCreateMessage = true
+        }
+        sleep(1000).then(() => {
+          this.creating = false
+        })
+      })
+    },
+    updateMeasurement: function () {
+      this.updating = true
+      console.log('update measurement' + JSON.stringify(this.measurement))
+      apiService.updateMeasurement(this.measurement).then((result) => {
+        console.log(result)
+        // success
+        if (result.status === 200) {
+          // this.measurement = {}
+          this.showUpdateMessage = true
+          sleep(1000).then(() => {
+            this.updating = false
+          })
+        }
+      })
+    }
+  },
+  mounted () {
+    if (this.$route.params.id) {
+      console.log(this.$route.params.id)
+      apiService.getMeasurement(this.$route.params.id).then((measurement) => {
+        this.measurement = measurement
+      })
     }
   }
 }
@@ -949,13 +1219,13 @@ export default {
   .Powerlines
     position: relative
 
-    .map
-      height: 100%
-      width: 100%
+  .map
+    full-height
+    full-width
 
   .feature-popup
     position: absolute
-    left: -50px
+    left: -20px
     bottom: 12px
     width: 20em
     max-width: none
@@ -988,7 +1258,7 @@ export default {
 
   .barchart-popup
     position: absolute
-    left: -50px
+    left: -20px
     bottom: 12px
     width: auto
     min-width: 27em
@@ -1019,6 +1289,9 @@ export default {
 
     .content
        word-break: break-all
+
+  .measurement-popup
+    window-height: 100em
 
   .dot
     height: 15px;

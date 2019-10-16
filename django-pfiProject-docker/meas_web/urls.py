@@ -9,10 +9,11 @@ router.register(r'meas', views.MeasDRF)
 
 urlpatterns = [
     path('', views.index, name='index'),
-    #path('list/', views.MeasList.as_view(), name='measurement_list'),
     path('list/', views.MeasChangeList.as_view(), name='measurement_list'),
     path('create/', views.MeasCreate.as_view(), name='measurement_create'),
     path('update/<int:pk>/', views.MeasUpdate.as_view(), name='measurement_update'),
     path('delete/<int:pk>/', views.MeasDelete.as_view(), name='measurement_delete'),
     url(r'^api/', include(router.urls)),
+    url(r'^api/measurements/$', views.measurement_list),
+    url(r'^api/measurements/(?P<pk>[0-9]+)$', views.measurement_detail),
 ]

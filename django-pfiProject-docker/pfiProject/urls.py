@@ -18,8 +18,8 @@ from django.urls import path
 from django.conf.urls import url, include
 from django.views.i18n import JavaScriptCatalog
 
-
 urlpatterns = [
+
     path('pages/', include('pages.urls')), #new
     path('meas/', include(('meas_web.urls','meas_web'), 'meas_web')), #new
     path('drf/', include(('drf.urls','drf'), 'drf')), #new

@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+import AuthService from '../auth/AuthService'
+
 import VueLayers from 'vuelayers'
 import 'vuelayers/lib/style.css'
 
@@ -18,17 +20,41 @@ Vue.use(VueLayers, {
  * directly export the Router instantiation
  */
 
-export default function (/* { store, ssrContext } */) {
-  const Router = new VueRouter({
-    scrollBehavior: () => ({ x: 0, y: 0 }),
-    routes,
+// export default function (/* { store, ssrContext } */) {
+//  const Router = new VueRouter({
+//    scrollBehavior: () => ({ x: 0, y: 0 }),
+//    routes,
 
-    // Leave these as is and change from quasar.conf.js instead!
-    // quasar.conf.js -> build -> vueRouterMode
-    // quasar.conf.js -> build -> publicPath
-    mode: process.env.VUE_ROUTER_MODE,
-    base: process.env.VUE_ROUTER_BASE
-  })
+//     Leave these as is and change from quasar.conf.js instead!
+//     quasar.conf.js -> build -> vueRouterMode
+//     quasar.conf.js -> build -> publicPath
+//    mode: process.env.VUE_ROUTER_MODE,
+//    base: process.env.VUE_ROUTER_BASE
+//  })
 
-  return Router
+//  return Router
+// }
+
+const router = new VueRouter({
+  mode: 'history',
+  routes
+})
+
+router.beforeEach((to, from, next) => {
+  // console.log('routing ', from, AuthService.authenticated())
+  if (to.meta.requiresAuth) {
+    if (!AuthService.authenticated()) {
+      next('/')
+    }
+  }
+  next()
+})
+
+export function authGuard (to, from, next) {
+  if (!AuthService.authenticated()) {
+    next('/')
+  }
+  next()
 }
+
+export default router

@@ -12,6 +12,13 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
+import textwrap
+import json
+from six.moves.urllib import request
+
+from cryptography.x509 import load_pem_x509_certificate
+from cryptography.hazmat.backends import default_backend
+
 from dotenv import load_dotenv
 
 load_dotenv('pfiProject/.env')
@@ -53,6 +60,10 @@ INSTALLED_APPS = [
     'corsheaders', # new
     'rest_framework', # new
     'rest_framework_gis', # new
+
+    'rest_framework.authtoken', # test
+    'rest_framework_jwt', # test
+
     'django_filters', # new
     'rest_framework_filters', # new
     'mapwidgets', # new
@@ -75,8 +86,15 @@ REST_FRAMEWORK = {
         'rest_framework_filters.backends.ComplexFilterBackend',
    ],
    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-   ]
+        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        #'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+   ],
+   'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+   ],
 }
 
 MIDDLEWARE = [
@@ -88,6 +106,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.auth.middleware.RemoteUserMiddleware', # check
 ]
 
 #new
@@ -203,8 +222,33 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
+    "django.contrib.auth.backends.RemoteUserBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 )
+
+AUTH0_DOMAIN = os.environ.get('AUTH0_DOMAIN')
+API_IDENTIFIER = os.environ.get('API_IDENTIFIER')
+PUBLIC_KEY = None
+JWT_ISSUER = None
+
+# If AUTH0_DOMAIN is defined, load the jwks.json
+if AUTH0_DOMAIN:
+    jsonurl = request.urlopen('https://' + AUTH0_DOMAIN + '/.well-known/jwks.json')
+    jwks = json.loads(jsonurl.read())
+    cert = '-----BEGIN CERTIFICATE-----\n' + jwks['keys'][0]['x5c'][0] + '\n-----END CERTIFICATE-----'
+    certificate = load_pem_x509_certificate(cert.encode('utf-8'), default_backend())
+    PUBLIC_KEY = certificate.public_key()
+    JWT_ISSUER = 'https://' + AUTH0_DOMAIN + '/'
+
+
+JWT_AUTH = {
+    'JWT_PAYLOAD_GET_USERNAME_HANDLER': 'meas_web.user.jwt_get_username_from_payload_handler',
+    'JWT_PUBLIC_KEY': PUBLIC_KEY,
+    'JWT_ALGORITHM': 'RS256',
+    'JWT_AUDIENCE': API_IDENTIFIER,
+    'JWT_ISSUER': JWT_ISSUER,
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+}
 
 SITE_ID = 1
 
