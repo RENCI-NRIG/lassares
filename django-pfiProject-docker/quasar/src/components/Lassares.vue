@@ -160,6 +160,9 @@
                 <td>{{ rotation }}</td>
               </tr>
               <tr>
+                <th>Event coordinate</th>
+                <td>{{ eventCoordinate }}</td>
+              </tr>              <tr>
                 <th>Device coordinate</th>
                 <td>{{ deviceCoordinate }}</td>
               </tr>
@@ -410,17 +413,7 @@
       <!--// click interactions -->
 
       <!-- geolocation -->
-      <!-- vl-geoloc @update:position="onUpdatePosition">
-        <template slot-scope="geoloc">
-          <vl-feature v-if="geoloc.position" id="position-feature">
-            <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
-            <vl-style-box>
-              <vl-style-icon src="./assets/marker.png" :scale="0.4" :anchor="[0.5, 1]"></vl-style-icon>
-            </vl-style-box>
-          </vl-feature>
-        </template>
-      </vl-geoloc -->
-      <vl-geoloc @update:position="geolocPosition = $event">
+      <vl-geoloc @update:position="onUpdatePosition">
         <template slot-scope="geoloc">
           <vl-feature v-if="geoloc.position" id="position-feature">
             <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
@@ -430,7 +423,17 @@
           </vl-feature>
         </template>
       </vl-geoloc>
-          <!--// geolocation -->
+      <!-- vl-geoloc @update:position="geolocPosition = $event">
+        <template slot-scope="geoloc">
+          <vl-feature v-if="geoloc.position" id="position-feature">
+            <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
+            <vl-style-box>
+              <vl-style-icon src="./assets/marker.png" :scale="0.4" :anchor="[0.5, 1]"></vl-style-icon>
+            </vl-style-box>
+          </vl-feature>
+        </template>
+      </vl-geoloc -->
+      <!--// geolocation -->
 
       <!--// base layers -->
       <vl-layer-tile v-for="layer in baseLayers" :key="layer.name" :id="layer.name" :visible="layer.visible">
@@ -652,6 +655,7 @@ export default {
       selectedFeatures: [],
       selectedFeaturesBarBox: [],
       isBox: undefined,
+      eventCoordinate: undefined,
       deviceCoordinate: undefined,
       boxCoordinate: undefined,
       mapVisible: true,
@@ -950,7 +954,7 @@ export default {
         this.selectedFeatures = []
         this.isBox = 'no'
       } else if (features) {
-        this.deviceCoordinate = event.coordinate
+        this.eventCoordinate = event.coordinate
         let feature = features[0]
         let properties = feature.getProperties()
         if (feature.id_ === undefined) {

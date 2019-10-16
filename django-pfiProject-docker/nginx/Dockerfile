@@ -2,7 +2,7 @@ FROM node:12.8.1-alpine AS build
 
 WORKDIR /app
 
-COPY quasar/package.json quasar/package-lock.json /app/
+COPY quasar/package.json quasar/yarn.lock /app/
 RUN yarn global add @quasar/cli
 
 COPY quasar /app
