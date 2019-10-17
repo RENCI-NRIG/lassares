@@ -19,8 +19,8 @@ export default class AuthService {
     domain: AUTH_CONFIG.domain,
     clientID: AUTH_CONFIG.clientId,
     redirectUri: AUTH_CONFIG.callbackUrl,
-    audience: 'https://dev-chdfm872.auth0.com/api/v2/',
-    // audience: 'https://lassares.drf.com',
+    // audience: 'https://dev-chdfm872.auth0.com/api/v2/',
+    audience: 'https://lassares',
     responseType: 'token id_token',
     scope: 'openid profile'
   })

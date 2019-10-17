@@ -418,7 +418,7 @@
           <vl-feature v-if="geoloc.position" id="position-feature">
             <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
             <vl-style-box>
-              <vl-style-icon src="./assets/marker.png" :scale="0.4" :anchor="[0.5, 1]"></vl-style-icon>
+              <vl-style-icon src="../assets/marker.png" :scale="0.4" :anchor="[0.5, 1]"></vl-style-icon>
             </vl-style-box>
           </vl-feature>
         </template>
@@ -428,7 +428,7 @@
           <vl-feature v-if="geoloc.position" id="position-feature">
             <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
             <vl-style-box>
-              <vl-style-icon src="./assets/marker.png" :scale="0.4" :anchor="[0.5, 1]"></vl-style-icon>
+              <vl-style-icon src="../assets/marker.png" :scale="0.4" :anchor="[0.5, 1]"></vl-style-icon>
             </vl-style-box>
           </vl-feature>
         </template>
