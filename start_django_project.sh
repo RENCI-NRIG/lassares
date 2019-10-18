@@ -46,7 +46,7 @@ echo "RUN_ROOT=1" >> /var/www/django-pfiProject-docker/pfiProject/.env
 
 NGINX_HOST=$LOCALIP docker-compose up -d
 
-sleep 1m
+sleep 3m
 
 docker container exec -i database psql -U postgres -d postgres < /var/www/django-pfiProject-docker/data/drf_fdr_18001_0_11.sql
 docker container exec -i database psql -U postgres -d postgres < /var/www/django-pfiProject-docker/data/meas_web_measurement.sql
