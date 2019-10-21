@@ -35,6 +35,7 @@ services:
     volumes:
       - .:/code
       - ./static:/code/static
+      - ./quasar/src/statics:/code/statics
       - ./media:/code/media
       - ./certs/self.signed.crt:/etc/ssl/SSL.crt
       - ./certs/self.signed.key:/etc/ssl/SSL.key

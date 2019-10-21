@@ -72,12 +72,14 @@ module.exports = function (ctx) {
         'QPageSticky',
         'QFab',
         'QFabAction',
-         'QMarkupTable',
-        'QPagination'
+        'QMarkupTable',
+        'QPagination',
+        'QDialog'
       ],
 
       directives: [
-        'Ripple'
+        'Ripple',
+        'ClosePopup'
       ],
 
       // Quasar plugins

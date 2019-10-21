@@ -55,10 +55,31 @@
                 </q-btn -->
 
                 <q-input color="teal" filled v-model="longitude" id="longitude" label="Longitude *" hint="Longitude of the bore hole" lazy-rules
-                  :rules="[ val => val && val.length > 0 || 'Please type the longitude']"/>
+                  :rules="[ val => val && val.length > 0 || 'Please type the longitude']">
+                  <template v-slot:append>
+                    <q-icon name="fas fa-globe-americas" class="cursor-pointer">
+                      <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
+                        <q-btn label="Curent Location" color="teal" class="text-black" @click="currentLocation">
+                        </q-btn>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
                 <q-input color="teal" filled v-model="latitude" id="latitude" label="Latitude *" hint="Latitude of the bore hole" lazy-rules
-                  :rules="[ val => val && val.length > 0 || 'Please type the latitude']"/>
-
+                  :rules="[ val => val && val.length > 0 || 'Please type the latitude']">
+                  <template v-slot:append>
+                    <q-icon name="fas fa-globe-americas" class="cursor-pointer">
+                      <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
+                        <q-card color="white">
+                          <q-btn label="Current Location" color="teal" class="text-black" @click="currentLocation">
+                          </q-btn><br>
+                          <q-btn label="Select Location" color="teal" class="text-black" @click="selectLocation">
+                          </q-btn>
+                        </q-card>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
                 <div>
                   <q-btn label="Submit" type="submit" color="teal" class="text-black" v-if="!this.measurement.id" @click="createMeasurement()" >
                     <span v-if="creating">Creating... Please wait </span>
@@ -165,6 +186,10 @@
               </tr>              <tr>
                 <th>Device coordinate</th>
                 <td>{{ deviceCoordinate }}</td>
+              </tr>
+              <tr>
+                <th>Coordinate accuracy</th>
+                <td>{{ coordinateAccuracy }} meters</td>
               </tr>
               <tr>
                 <th>Selected features</th>
@@ -304,7 +329,7 @@
     <vl-map v-if="mapVisible" class="map" ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true"
       @click="onMapClick" data-projection="EPSG:4326" @mounted="onMapMounted" :controls="false">
        <!--// map view aka ol.View -->
-      <vl-view ref="view" :center.sync="center" :zoom.sync="zoom" :rotation.sync="rotation"></vl-view>
+      <vl-view ref="mapView" :center.sync="center" :zoom.sync="zoom" :rotation.sync="rotation"></vl-view>
 
       <!--// click interactions -->
       <vl-interaction-select ref="selectInteraction" :features.sync="selectedFeatures" v-if="drawType == null">
@@ -413,26 +438,23 @@
       <!--// click interactions -->
 
       <!-- geolocation -->
-      <vl-geoloc @update:position="onUpdatePosition">
+      <vl-geoloc @update:position="onUpdatePosition" enableHighAccuracy="true" >
         <template slot-scope="geoloc">
           <vl-feature v-if="geoloc.position" id="position-feature">
             <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
             <vl-style-box>
-              <vl-style-icon src="../assets/marker.png" :scale="0.4" :anchor="[0.5, 1]"></vl-style-icon>
+              <vl-style-icon src="statics/marker.png" :scale="0.4" :anchor="[0.5, 1]"></vl-style-icon>
             </vl-style-box>
           </vl-feature>
         </template>
       </vl-geoloc>
-      <!-- vl-geoloc @update:position="geolocPosition = $event">
+      <vl-geoloc @update:accuracy="onUpdateAccuracy" enableHighAccuracy="true" >
         <template slot-scope="geoloc">
-          <vl-feature v-if="geoloc.position" id="position-feature">
-            <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
-            <vl-style-box>
-              <vl-style-icon src="../assets/marker.png" :scale="0.4" :anchor="[0.5, 1]"></vl-style-icon>
-            </vl-style-box>
+          <vl-feature v-if="geoloc.accuracy" id="accuracy-feature">
+            <div :accuracy="geoloc.accuracy"></div>
           </vl-feature>
         </template>
-      </vl-geoloc -->
+      </vl-geoloc>
       <!--// geolocation -->
 
       <!--// base layers -->
@@ -633,7 +655,8 @@ export default {
       barplotpoint: undefined,
       powerlinesModel: 'Selected',
       measurementsModel: 'Selected',
-      center: [-73.851271, 40.725070],
+      // center: [-73.851271, 40.725070],
+      center: [-79.0085632, 35.9415808],
       zoom: 15,
       rotation: 0,
       searchtoptions: [],
@@ -657,6 +680,7 @@ export default {
       isBox: undefined,
       eventCoordinate: undefined,
       deviceCoordinate: undefined,
+      coordinateAccuracy: undefined,
       boxCoordinate: undefined,
       mapVisible: true,
       drawControls: [
@@ -792,6 +816,14 @@ export default {
     openURL,
     camelCase,
     pointOnSurface: findPointOnSurface,
+    currentLocation: function () {
+      this.longitude = this.deviceCoordinate[0]
+      this.latitude = this.deviceCoordinate[1]
+    },
+    selectLocation: function () {
+      this.longitude = this.deviceCoordinate[0]
+      this.latitude = this.deviceCoordinate[1]
+    },
     login,
     logout,
     logind: function () {
@@ -805,6 +837,9 @@ export default {
     },
     onUpdatePosition: function (coordinate) {
       this.deviceCoordinate = coordinate
+    },
+    onUpdateAccuracy: function (accuracy) {
+      this.coordinateAccuracy = accuracy
     },
     getPowerlinesStyle: function () {
       let canvas = document.createElement('canvas')
