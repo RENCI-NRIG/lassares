@@ -49,18 +49,24 @@
                   </template>
                 </q-input>
 
-                <!-- q-btn label="Select Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'">
-                </q-btn>
-                <q-btn label="Stop Selection" type="Point" color="teal" class="text-black" @click="drawType = undefined">
-                </q-btn -->
-
                 <q-input color="teal" filled v-model="longitude" id="longitude" label="Longitude *" hint="Longitude of the bore hole" lazy-rules
                   :rules="[ val => val && val.length > 0 || 'Please type the longitude']">
                   <template v-slot:append>
                     <q-icon name="fas fa-globe-americas" class="cursor-pointer">
                       <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
-                        <q-btn label="Curent Location" color="teal" class="text-black" @click="currentLocation">
-                        </q-btn>
+                        <q-card color="white">
+                          <q-card-section>
+                            <q-btn label="Current Location" color="teal" class="text-black" @click="currentLocation">
+                            </q-btn>
+                          </q-card-section>
+                          <q-separator />
+                          <q-card-section>
+                            <q-btn label="Select Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'">
+                            </q-btn><br />
+                             <q-btn label="Enter Selection" color="teal" class="text-black" @click="selectLocation">
+                            </q-btn>
+                          </q-card-section>
+                        </q-card>
                       </q-popup-proxy>
                     </q-icon>
                   </template>
@@ -71,10 +77,17 @@
                     <q-icon name="fas fa-globe-americas" class="cursor-pointer">
                       <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
                         <q-card color="white">
-                          <q-btn label="Current Location" color="teal" class="text-black" @click="currentLocation">
-                          </q-btn><br>
-                          <q-btn label="Select Location" color="teal" class="text-black" @click="selectLocation">
-                          </q-btn>
+                          <q-card-section>
+                            <q-btn label="Current Location" color="teal" class="text-black" @click="currentLocation">
+                            </q-btn>
+                          </q-card-section>
+                          <q-separator />
+                          <q-card-section>
+                            <q-btn label="Select Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'">
+                            </q-btn><br />
+                             <q-btn label="Enter Selection" color="teal" class="text-black" @click="selectLocation">
+                            </q-btn>
+                          </q-card-section>
                         </q-card>
                       </q-popup-proxy>
                     </q-icon>
@@ -688,6 +701,7 @@ export default {
           type: 'point',
           label: 'Draw Point',
           icon: 'map-marker'
+          // stopClick: true
         },
         {
           type: undefined,
@@ -821,8 +835,9 @@ export default {
       this.latitude = this.deviceCoordinate[1]
     },
     selectLocation: function () {
-      this.longitude = this.deviceCoordinate[0]
-      this.latitude = this.deviceCoordinate[1]
+      this.drawType = undefined
+      this.longitude = this.eventCoordinate[0]
+      this.latitude = this.eventCoordinate[1]
     },
     login,
     logout,
@@ -1201,7 +1216,7 @@ export default {
       let coordinates = [parseFloat(this.longitude), parseFloat(this.latitude)]
       this.measurement.geometry.coordinates = coordinates
       // console.log(JSON.stringify(this.measurement))
-      console.log(this.measurement)
+      // console.log(this.measurement)
       this.creating = true
       apiService.createMeasurement(this.measurement).then((result) => {
         // console.log(result)
