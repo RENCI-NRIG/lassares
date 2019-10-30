@@ -98,10 +98,10 @@ def measurement_list(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def measurement_detail(request, pk):
+def measurement_detail(request, id):
     #Retrieve, update or delete a measurement instance.
     try:
-        measurement = Measurement.objects.get(pk=pk)
+        measurement = Measurement.objects.get(id=id)
     except Measurement.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -110,7 +110,7 @@ def measurement_detail(request, pk):
         return Response(serializer.data)
 
     elif request.method == 'PUT':
-        serializer = Measurement_Serializer(measrement, data=request.data,context={'request': request})
+        serializer = Measurement_Serializer(measurement,data=request.data,context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -147,7 +147,7 @@ class MeasChange(FormMixin, MultipleObjectMixin, View):
         for obj in self.get_queryset():
             if str(obj.id) in list_of_ids:
                 if action == 'delete':
-                    return redirect(reverse_lazy('meas_web:measurement_delete',  kwargs={'pk': obj.id}))
+                    return redirect(reverse_lazy('meas_web:measurement_delete',  kwargs={'id': obj.id}))
         return redirect(self.get_success_url())
 
 class MeasChangeList(LoginRequiredMixin, View):
@@ -175,7 +175,7 @@ class MeasUpdate(LoginRequiredMixin, UpdateView):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
         if 'delete' in self.request.POST:
-            return redirect(reverse_lazy('meas_web:measurement_delete',  kwargs={'pk': self.object.id}))
+            return redirect(reverse_lazy('meas_web:measurement_delete',  kwargs={'id': self.object.id}))
         form.save()
         return super().form_valid(form)
 

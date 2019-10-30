@@ -11,28 +11,36 @@ export class APIService{
   }
   getMeasurements() {
     const url = "https://" + API_URL + "/meas/api/measurements/"
-    return axios.get(url, { headers: { Authorization: `Bearer ${AuthService.getAuthToken()}` }}).then(response => response.data)
+    const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
+    return axios.get(url, { headers: headers }).then(response => response.data)
   }
   getMeasurementsByURL(link) {
     const url = `https://${API_URL}${link}`
-    return axios.get(url, { headers: { Authorization: `Bearer ${AuthService.getAuthToken()}` }}).then(response => response.data)
+    const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
+    return axios.get(url, { headers: headers }).then(response => response.data)
   }
   getMeasurement(id) {
     const url = `https://${API_URL}/meas/api/measurements/${id}`
-    return axios.get(url, { headers: { Authorization: `Bearer ${AuthService.getAuthToken()}` }}).then(response => response.data)
+    const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
+    return axios.get(url, { headers: headers }).then(response => response.data)
   }    
   deleteMeasurement(measurement) {
     const url = `https://${API_URL}/meas/api/measurements/${measurement.id}`
-    return axios.delete(url, { headers: { Authorization: `Bearer ${AuthService.getAuthToken()}` }})
+    const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
+    return axios.delete(url, { headers: headers })
   }
   createMeasurement(measurement) {
     const url = `https://${API_URL}/meas/api/measurements/`
-    const headers = {Authorization: `Bearer ${AuthService.getAuthToken()}`}
-    return axios.post(url,measurement,{headers: headers})
+    const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
+    return axios.post(url, measurement, { headers: headers })
   }
   updateMeasurement(measurement) {
     const url = `https://${API_URL}/meas/api/measurements/${measurement.id}`
-    const headers = {Authorization: `Bearer ${AuthService.getAuthToken()}`}
-    return axios.put(url,measurement,{headers: headers})
+    console.log(url)
+    // delete measurement.id
+    console.log('update measurement ' + JSON.stringify(measurement))
+    // console.log(measurement)
+    const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
+    return axios.put(url, measurement, { headers: headers })
   }    
 } 

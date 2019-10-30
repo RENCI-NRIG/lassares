@@ -1,9 +1,11 @@
 <template>
   <q-layout view="lHr lpr lFr">
-    <!-- left side drawer -->
-    <div v-if="authenticated">
+    <!--// left side drawer -->
+    <div v-if="!authenticated">
+    </div>
+    <div v-else-if="authenticated">
       <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="teal">
-        <!-- measurement-create></measurement-create -->
+        <!--// measurement-create></measurement-create -->
         <div class="q-pa-md" style="max-width: 600px">
           <q-card>
             <div class="q-pa-md" style="max-width: 600px">
@@ -121,13 +123,13 @@
       </q-drawer>
     </div>
 
-    <!-- right side drawer -->
+    <!--// right side drawer -->
     <q-drawer side="right" v-model="rightDrawerOpen" show-if-above bordered content-class="teal">
       <q-list bordered class="rounded-borders">
         <q-expansion-item default-opened expand-separator icon="list" label="Base Layers">
           <div class="q-pa-md" style="min-width: 200px">
             <q-list link>
-              <!--
+              <!--//
                 Rendering a <label> tag (notice tag="label")
                 so QRadios will respond to clicks on QItems to
                 change Toggle state.
@@ -342,7 +344,7 @@
     <vl-map v-if="mapVisible" class="map" ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true"
       @click="onMapClick" data-projection="EPSG:4326" @mounted="onMapMounted" :controls="false">
        <!--// map view aka ol.View -->
-      <vl-view ref="mapView" :center.sync="center" :zoom.sync="zoom" :rotation.sync="rotation"></vl-view>
+      <vl-view ref="view" :center.sync="center" :zoom.sync="zoom" :rotation.sync="rotation" :extent.sync="extent" constrainOnlyCenter="true" ></vl-view>
 
       <!--// click interactions -->
       <vl-interaction-select ref="selectInteraction" :features.sync="selectedFeatures" v-if="drawType == null">
@@ -414,7 +416,7 @@
           <!--// selected feature popup -->
 
           <!--// selected feature bar plot -->
-          <div v-if="isBox === 'yes'">
+          <div v-else-if="isBox === 'yes'">
             <vl-overlay class="barchart-popup" v-for="feature in select.features" :key="feature.id" :id="feature.id"
               :position="pointOnSurface(barplotpoint)" :auto-pan="true" :auto-pan-animation="{ duration: 300 }">
               <q-card class="barchart-popup">
@@ -450,7 +452,7 @@
       </vl-interaction-select>
       <!--// click interactions -->
 
-      <!-- geolocation -->
+      <!--// geolocation -->
       <vl-geoloc @update:position="onUpdatePosition" enableHighAccuracy="true" >
         <template slot-scope="geoloc">
           <vl-feature v-if="geoloc.position" id="position-feature">
@@ -491,7 +493,7 @@
       <!-- eslint-enable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
       <!--// other layers -->
 
-      <!-- draw components -->
+      <!--// draw components -->
       <vl-layer-vector id="draw-pane">
         <vl-source-vector ident="draw-target" :features.sync="drawnFeatures"></vl-source-vector>
       </vl-layer-vector>
@@ -503,13 +505,13 @@
     </vl-map>
     <!--// app map -->
 
-    <!-- left side drawer buttons -->
+    <!--// left side drawer buttons -->
     <div v-if="!authenticated">
       <q-page-sticky position="top-left" :offset="[22, 18]">
         <q-btn flat dense round icon="fas fa-sign-in-alt" class="bg-teal text-black" aria-label="Login" v-if="!authenticated" @click="logind"></q-btn>
       </q-page-sticky>
     </div>
-    <div v-if="authenticated">
+    <div v-else-if="authenticated">
       <q-page-sticky position="top-left" :offset="[58, 18]">
         <q-btn flat dense round icon="fas fa-sign-out-alt" class="bg-teal text-black" aria-label="Logout" v-if="authenticated" @click="logoutd"></q-btn>
       </q-page-sticky>
@@ -518,14 +520,14 @@
       </q-page-sticky>
     </div>
 
-    <div class="container">
+    <!--// div class="container">
       <router-view
         :auth="auth"
         :authenticated="authenticated">
       </router-view>
-    </div>
+    </div -->
 
-    <!-- map controls -->
+    <!--// map controls -->
     <q-page-sticky position="top-left" :offset="[18, 58]">
       <div id="ZoomTarget"></div>
     </q-page-sticky>
@@ -535,23 +537,22 @@
     <q-page-sticky position="bottom-left" :offset="[15, 8]">
       <div id="ScaleTarget"></div>
     </q-page-sticky>
-    <!-- right side drawer buttons -->
+    <!--// right side drawer buttons -->
     <q-page-sticky position="top-right" :offset="[18, 18]">
       <q-btn flat dense round icon="menu" class="bg-teal text-black" @click="rightDrawerOpen = !rightDrawerOpen" aria-label="Menu"></q-btn>
     </q-page-sticky>
     <q-page-sticky position="top-right" :offset="[18, 58]">
       <div id="FullScreenTarget"></div>
     </q-page-sticky>
-    <!-- q-page-sticky examnple -->
+    <!--// q-page-sticky examnple -->
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab icon="keyboard_arrow_up" direction="up" color="teal text-black">
-        <q-fab-action color="teal" @click="leftDrawerOpen = !leftDrawerOpen" icon="fas fa-object-group" class="text-black" />
-        <q-fab-action color="teal" @click="rightDrawerOpen = !rightDrawerOpen" icon="fas fa-object-group" class="text-black" />
+        <q-fab-action color="teal" class="text-black" @click="$q.fullscreen.toggle()" :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'" />
       </q-fab>
     </q-page-sticky>
-    <!--/ q-page-sticky examnple -->
+    <!--// q-page-sticky examnple -->
 
-    <!-- div>Built with <a href="https://quasar.dev/" target="_blank" style="color:black; text-decoration:none;">Quasar</a>,
+    <!--// div>Built with <a href="https://quasar.dev/" target="_blank" style="color:black; text-decoration:none;">Quasar</a>,
     <a href="https://vuejs.org/" target="_blank" style="color:black; text-decoration:none;">Vue.js</a>,
     <a href="https://vuelayers.github.io" target="_blank" style="color:black; text-decoration:none;">Vuelayers</a>,
     <a href="https://openlayers.org/" target="_blank" style="color:black; text-decoration:none;">Openlayers</a>,
@@ -587,7 +588,9 @@ const auth = new AuthService()
 const { login, logout, authenticated, authNotifier } = auth
 
 import MeasurementList from './MeasurementList'
-import MeasurementCreate from './MeasurementCreate'
+
+// Import the EventBus.
+import { EventBus } from '../mixins/event-bus.js'
 
 import pubhost from '../assets/pubhost.json'
 import mbtoken from '../assets/mbtoken.json'
@@ -623,8 +626,7 @@ export default {
   components: {
     d3Barchart,
     Treeselect,
-    MeasurementList,
-    MeasurementCreate
+    MeasurementList
   },
   data () {
     auth.handleAuthentication()
@@ -672,6 +674,7 @@ export default {
       // center: [-79.0085632, 35.9415808],
       zoom: 15,
       rotation: 0,
+      extent: [-8224590.80228509, -8217582.482254192, 4970119.505701471, 4973626.054374054],
       searchtoptions: [],
       searchjoptions: [],
       starttimestamp: undefined,
@@ -831,6 +834,7 @@ export default {
     camelCase,
     pointOnSurface: findPointOnSurface,
     currentLocation: function () {
+      // console.log(this.$refs.view)
       this.longitude = this.deviceCoordinate[0]
       this.latitude = this.deviceCoordinate[1]
     },
@@ -980,7 +984,7 @@ export default {
       }
     },
     showMapPanelLayer: function (layers) {
-      console.log(layers)
+      // console.log(layers)
       let mlayer = this.layers[1]
       if (this.measurementsModel === 'Selected') {
         mlayer.visible = true
@@ -998,7 +1002,6 @@ export default {
     onMapClick: function (event) {
       let pixel = event.pixel
       let features = this.$refs.map.$map.getFeaturesAtPixel(pixel)
-      // console.log(view)
       if (!features) {
         this.selectedFeaturesBarBox = []
         this.selectedFeatures = []
@@ -1215,7 +1218,7 @@ export default {
     createMeasurement: function () {
       let coordinates = [parseFloat(this.longitude), parseFloat(this.latitude)]
       this.measurement.geometry.coordinates = coordinates
-      // console.log(JSON.stringify(this.measurement))
+      console.log('created measurement ' + JSON.stringify(this.measurement))
       // console.log(this.measurement)
       this.creating = true
       apiService.createMeasurement(this.measurement).then((result) => {
@@ -1231,10 +1234,13 @@ export default {
       })
     },
     updateMeasurement: function () {
+      let coordinates = [parseFloat(this.longitude), parseFloat(this.latitude)]
+      this.measurement.geometry.coordinates = coordinates
+      console.log('update measurement ' + JSON.stringify(this.measurement))
+      // console.log(this.measurement)
       this.updating = true
-      console.log('update measurement' + JSON.stringify(this.measurement))
       apiService.updateMeasurement(this.measurement).then((result) => {
-        console.log(result)
+        // console.log(result)
         // success
         if (result.status === 200) {
           // this.measurement = {}
@@ -1244,9 +1250,18 @@ export default {
           })
         }
       })
+    },
+    editMeasurement: function (measurement) {
+      this.measurement = measurement
+      this.longitude = measurement.geometry.coordinates[0]
+      this.latitude = measurement.geometry.coordinates[1]
     }
   },
   mounted () {
+    // Listen for the edit-measurement event and its payload.
+    EventBus.$on('edit-measurement', measurement => {
+      this.editMeasurement(measurement)
+    })
     if (this.$route.params.id) {
       console.log(this.$route.params.id)
       apiService.getMeasurement(this.$route.params.id).then((measurement) => {
@@ -1274,8 +1289,16 @@ export default {
     position: relative
 
   .map
-    full-height
-    full-width
+    margin: 0
+    padding: 0
+    width: 100%
+    height: 100%
+
+  .view
+    margin: 0
+    padding: 0
+    width: 100%
+    height: 100%
 
   .feature-popup
     position: absolute

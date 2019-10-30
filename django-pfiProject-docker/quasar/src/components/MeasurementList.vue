@@ -65,7 +65,7 @@
                 <q-icon name="delete" color="teal" class="text-black" @click="deleteMeasurement(measurement)" />
               </td>
               <td class="text-center">
-                <q-icon name="edit" color="teal" class="text-black" v-bind:href="'/need_to_change_this/' + measurement.properties.bore_id" />
+                <q-icon name="edit" color="teal" class="text-black" @click="editMeasurement(measurement)" />
               </td>
             </tr>
           </tbody>
@@ -77,17 +77,6 @@
           </q-pagination>
         </div>
       </q-card-section>
-      <q-card-section v-if="selectedMeasurement">
-        <q-card-section>
-          <div class="text-h6">#{{selectedMeasurement.properties.bore_id}} -- {{selectedMeasurement.properties.job_id}}</div>
-        </q-card-section>
-        <q-card-section>
-          <div class="text-subtitle2">{{selectedMeasurement.properties.bore_id}}</div>
-            {{selectedMeasurement.properties.comment}}
-          <a color="teal" class="text-black" v-bind:href="'/measurement-update/' + selectedMeasurement.properties.bore_id"> &#9998; </a>
-          <q-btn color="teal" class="text-black" @click="deleteMeasurement(selectedMeasurement)"> X</q-btn>
-        </q-card-section>
-      </q-card-section>
     </div>
   </q-card>
   </q-page>
@@ -95,6 +84,7 @@
 </template>
 
 <script>
+import { EventBus } from '../mixins/event-bus.js'
 import { APIService } from '../http/APIService'
 import Loading from './Loading'
 const apiService = new APIService()
@@ -141,6 +131,10 @@ export default {
         this.measurements = page.data.features
         this.loading = false
       })
+    },
+    editMeasurement: function (measurement) {
+      // Send the event (click) on a channel (edit-measurement) with a payload (measurement)
+      EventBus.$emit('edit-measurement', measurement)
     },
     deleteMeasurement: function (measurement) {
       console.log('deleting measurement: ' + JSON.stringify(measurement))
