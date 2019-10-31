@@ -74,7 +74,10 @@ module.exports = function (ctx) {
         'QFabAction',
         'QMarkupTable',
         'QPagination',
-        'QDialog'
+        'QDialog',
+        'QInnerLoading',
+        'QSpinnerGears',
+        'QAvatar'
       ],
 
       directives: [

@@ -36,10 +36,6 @@ export class APIService{
   }
   updateMeasurement(measurement) {
     const url = `https://${API_URL}/meas/api/measurements/${measurement.id}`
-    console.log(url)
-    // delete measurement.id
-    console.log('update measurement ' + JSON.stringify(measurement))
-    // console.log(measurement)
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.put(url, measurement, { headers: headers })
   }    

@@ -5,12 +5,23 @@
     </div>
     <div v-else-if="authenticated">
       <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="teal">
-        <!--// measurement-create></measurement-create -->
+        <!-- // measurement-list -->
+        <q-card class="q-pa-md" style="max-width: 600px">
+          <q-btn label="View List of Measurements" type="viewlist" color="teal" class="text-black">
+            <q-popup-proxy class="measurement-popup" transition-show="flip-up" transition-hide="flip-down">
+              <measurement-list></measurement-list>
+            </q-popup-proxy>
+          </q-btn>
+        </q-card>
+        <!-- // measurement-list -->
+        <q-space />
+        <q-separator />
+        <q-space />
+        <!--// measurement-create -->
         <div class="q-pa-md" style="max-width: 600px">
           <q-card>
             <div class="q-pa-md" style="max-width: 600px">
-              <div class="text-h6">Measurements</div>
-              <div class="text-subtitle2">Input Data</div>
+              <div class="text-subtitle2">Input Measurement Data</div>
 
               <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
                 <q-input color="teal" filled v-model="measurement.properties.bore_id" type="number" id="bore_id" label="Bore ID *" hint="ID of the bore hole" lazy-rules
@@ -57,6 +68,14 @@
                     <q-icon name="fas fa-globe-americas" class="cursor-pointer">
                       <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
                         <q-card color="white">
+                          <q-banner inline-actions>
+                            <div class="text-subtitle2">
+                              Select Method
+                            </div>
+                            <template align="right" v-slot:action>
+                              <q-btn flat round dense icon="close" color="teal" v-close-popup />
+                            </template>
+                          </q-banner>
                           <q-card-section>
                             <q-btn label="Current Location" color="teal" class="text-black" @click="currentLocation">
                             </q-btn>
@@ -79,6 +98,14 @@
                     <q-icon name="fas fa-globe-americas" class="cursor-pointer">
                       <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
                         <q-card color="white">
+                          <q-banner inline-actions>
+                            <div class="text-subtitle2">
+                              Select Method
+                            </div>
+                            <template align="right" v-slot:action>
+                              <q-btn flat round dense icon="close" color="teal" v-close-popup />
+                            </template>
+                          </q-banner>
                           <q-card-section>
                             <q-btn label="Current Location" color="teal" class="text-black" @click="currentLocation">
                             </q-btn>
@@ -108,18 +135,7 @@
             </div>
           </q-card>
         </div>
-        <q-space />
-        <q-separator />
-        <q-space />
-        <q-card>
-          <div class="q-pa-md" style="max-width: 600px">
-            <q-btn label="View List of Measurements" type="viewlist" color="teal" class="text-black">
-              <q-popup-proxy class="measurement-popup" transition-show="flip-up" transition-hide="flip-down">
-                <measurement-list></measurement-list>
-              </q-popup-proxy>
-            </q-btn>
-          </div>
-        </q-card>
+        <!--// /measurement-create -->
       </q-drawer>
     </div>
 
@@ -181,37 +197,38 @@
         </q-expansion-item>
 
         <q-expansion-item expand-separator icon="list" label="State">
-          <div class="q-pa-md q-gutter-y-sm column">
-            <table class="table is-fullwidth">
+          <!-- div class="q-pa-md q-gutter-y-sm column" -->
+            <q-markup-table class="table is-fullwidth" dense>
               <tr>
-                <th>Map center</th>
-                <td>{{ center }}</td>
+                <th class="text-left">Map center</th>
+                <td class="text-left" style="font-size:10px">{{ center[0]}}, {{ center[1] }}</td>
               </tr>
               <tr>
-                <th>Map zoom</th>
-                <td>{{ zoom }}</td>
+                <th class="text-left">Map zoom</th>
+                <td class="text-left" style="font-size:10px">{{ zoom }}</td>
               </tr>
               <tr>
-                <th>Map rotation</th>
-                <td>{{ rotation }}</td>
+                <th class="text-left">Map rotation</th>
+                <td class="text-left" style="font-size:10px">{{ rotation }}</td>
               </tr>
               <tr>
-                <th>Event coordinate</th>
-                <td>{{ eventCoordinate }}</td>
-              </tr>              <tr>
-                <th>Device coordinate</th>
-                <td>{{ deviceCoordinate }}</td>
+                <th class="text-left">Event coordinate</th>
+                <td class="text-left" style="font-size:10px">{{ eventCoordinate[0] }}, {{ eventCoordinate[1] }}</td>
               </tr>
               <tr>
-                <th>Coordinate accuracy</th>
-                <td>{{ coordinateAccuracy }} meters</td>
+                <th class="text-left">Device coordinate</th>
+                <td class="text-left" style="font-size:10px">{{ deviceCoordinate[0] }}, {{ deviceCoordinate[1] }}</td>
               </tr>
               <tr>
-                <th>Selected features</th>
-                <td>{{ pid }}</td>
+                <th class="text-left">Coordinate accuracy</th>
+                <td class="text-left" style="font-size:10px">{{ coordinateAccuracy }} meters</td>
               </tr>
-            </table>
-          </div>
+              <tr>
+                <th class="text-left">Selected features</th>
+                <td class="text-left" style="font-size:10px">{{ pid }}</td>
+              </tr>
+            </q-markup-table>
+          <!-- /div -->
         </q-expansion-item>
 
         <q-expansion-item expand-separator icon="list" label="Legend">
@@ -331,12 +348,6 @@
             </tr>
            </table>
         </q-expansion-item>
-        <q-expansion-item expand-separator icon="list" label="Draw">
-          <q-btn label="Select Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'">
-          </q-btn>
-          <q-btn label="Stop Selection" type="Point" color="teal" class="text-black" @click="drawType = undefined">
-          </q-btn>
-        </q-expansion-item>
       </q-list>
     </q-drawer>
 
@@ -344,7 +355,7 @@
     <vl-map v-if="mapVisible" class="map" ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true"
       @click="onMapClick" data-projection="EPSG:4326" @mounted="onMapMounted" :controls="false">
        <!--// map view aka ol.View -->
-      <vl-view ref="view" :center.sync="center" :zoom.sync="zoom" :rotation.sync="rotation" :extent.sync="extent" constrainOnlyCenter="true" ></vl-view>
+      <vl-view ref="view" :center.sync="center" :zoom.sync="zoom" :rotation.sync="rotation"></vl-view>
 
       <!--// click interactions -->
       <vl-interaction-select ref="selectInteraction" :features.sync="selectedFeatures" v-if="drawType == null">
@@ -520,13 +531,6 @@
       </q-page-sticky>
     </div>
 
-    <!--// div class="container">
-      <router-view
-        :auth="auth"
-        :authenticated="authenticated">
-      </router-view>
-    </div -->
-
     <!--// map controls -->
     <q-page-sticky position="top-left" :offset="[18, 58]">
       <div id="ZoomTarget"></div>
@@ -674,7 +678,6 @@ export default {
       // center: [-79.0085632, 35.9415808],
       zoom: 15,
       rotation: 0,
-      extent: [-8224590.80228509, -8217582.482254192, 4970119.505701471, 4973626.054374054],
       searchtoptions: [],
       searchjoptions: [],
       starttimestamp: undefined,
@@ -694,8 +697,8 @@ export default {
       selectedFeatures: [],
       selectedFeaturesBarBox: [],
       isBox: undefined,
-      eventCoordinate: undefined,
-      deviceCoordinate: undefined,
+      eventCoordinate: [NaN, NaN],
+      deviceCoordinate: [NaN, NaN],
       coordinateAccuracy: undefined,
       boxCoordinate: undefined,
       mapVisible: true,
@@ -1218,8 +1221,7 @@ export default {
     createMeasurement: function () {
       let coordinates = [parseFloat(this.longitude), parseFloat(this.latitude)]
       this.measurement.geometry.coordinates = coordinates
-      console.log('created measurement ' + JSON.stringify(this.measurement))
-      // console.log(this.measurement)
+      // console.log('created measurement ' + JSON.stringify(this.measurement))
       this.creating = true
       apiService.createMeasurement(this.measurement).then((result) => {
         // console.log(result)
@@ -1236,8 +1238,7 @@ export default {
     updateMeasurement: function () {
       let coordinates = [parseFloat(this.longitude), parseFloat(this.latitude)]
       this.measurement.geometry.coordinates = coordinates
-      console.log('update measurement ' + JSON.stringify(this.measurement))
-      // console.log(this.measurement)
+      // console.log('update measurement ' + JSON.stringify(this.measurement))
       this.updating = true
       apiService.updateMeasurement(this.measurement).then((result) => {
         // console.log(result)
