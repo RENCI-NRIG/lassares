@@ -597,9 +597,9 @@ import MeasurementList from './MeasurementList'
 import { EventBus } from '../mixins/event-bus.js'
 
 import pubhost from '../assets/pubhost.json'
-import mbtoken from '../assets/mbtoken.json'
+import secrets from '../assets/secrets.json'
 let gettoken = function () {
-  return mbtoken[0].MB_KEY
+  return secrets[0].MB_KEY
 }
 // color values for measurements concentrations
 let concentration2color = function (concentration) {

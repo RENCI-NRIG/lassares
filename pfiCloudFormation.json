@@ -83,18 +83,31 @@
       "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
       "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
     },
-    "GoogleApiKey" : {
-        "Description" : "Google Map Api Key",
-        "Type": "String",
-        "MinLength": "1",
-        "MaxLength": "64"
-      }, 
     "MBToken" : {
         "Description" : "Map Box Token",
         "Type": "String",
         "MinLength": "1",
         "MaxLength": "255"
+      },
+    "CLIENTID" : {
+        "Description" : "Auth0 Client ID",
+        "Type": "String",
+        "MinLength": "1",
+        "MaxLength": "50"
+      },
+    "AUTH0DOMAIN" : {
+        "Description" : "Auth0 Domain",
+        "Type": "String",
+        "MinLength": "1",
+        "MaxLength": "30"
+      },
+    "APIIDENTIFIER" : {
+        "Description" : "Auth0 API Identifier",
+        "Type": "String",
+        "MinLength": "1",
+        "MaxLength": "30"
       }
+
 },
 
   "Mappings" : {
@@ -245,7 +258,7 @@
                 "command" : "git clone https://github.com/RENCI-NRIG/lassares.git /root/lassares"
               },
               "02_install_webserver" : {
-                "command" : { "Fn::Join": [ "", ["/root/lassares/start_django_project.sh ", { "Ref": "GoogleApiKey" }, " ", { "Ref": "MBToken" }, " > /var/log/configWebServer.log 2>&1" ] ] }
+                "command" : { "Fn::Join": [ "", ["/root/lassares/start_django_project.sh ", { "Ref": "MBToken" }," ",  { "Ref": "CLIENTID" }," ", { "Ref": "AUTH0DOMAIN" }," ", { "Ref": "APIIDENTIFIER" }, " > /var/log/configWebServer.log 4>&1" ] ] }
               }
             },
             "services" : {

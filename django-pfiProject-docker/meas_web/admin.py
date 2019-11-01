@@ -9,14 +9,10 @@ from django.contrib.admin.sites import AdminSite
 from meas_web.models import Measurement
 
 from django.contrib.gis.db import models
-from mapwidgets.widgets import GooglePointFieldWidget
 
 import os
 
 class MeasurementAdmin(admin.ModelAdmin):
     list_display = ('job_id', 'bore_id', 'device_id', 'chemical_id', 'concentration', 'date', 'time', 'status', 'comment', 'geom')
-    formfield_overrides = {
-        models.PointField: {"widget": GooglePointFieldWidget}
-    }
 
 admin.site.register(Measurement, MeasurementAdmin)

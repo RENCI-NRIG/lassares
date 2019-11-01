@@ -66,7 +66,6 @@ INSTALLED_APPS = [
 
     'django_filters', # new
     'rest_framework_filters', # new
-    'mapwidgets', # new
     'drf', # new
 ]
 
@@ -206,17 +205,6 @@ STATIC_URL = '/static/'
 #new
 STATIC_ROOT = os.path.join(BASE_DIR, 'static') #new
 
-#new
-MAP_WIDGETS = {
-    "GooglePointFieldWidget": (
-        ("zoom", 15),
-        ("mapCenterLocation", [40.723379, -73.848271]),
-        ("markerFitZoom", 11),
-        ("GooglePlaceAutocompleteOptions", {'componentRestrictions': {'country': 'us'}})
-    ),
-    "GOOGLE_MAP_API_KEY": secrets.GOOGLE_MAP_API_KEY,
-}
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -226,8 +214,8 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 
-AUTH0_DOMAIN = os.environ.get('AUTH0_DOMAIN')
-API_IDENTIFIER = os.environ.get('API_IDENTIFIER')
+AUTH0_DOMAIN = secrets.AUTH0_DOMAIN
+API_IDENTIFIER = secrets.API_IDENTIFIER
 PUBLIC_KEY = None
 JWT_ISSUER = None
 
