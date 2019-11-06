@@ -13,11 +13,11 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 
 import textwrap
-import json
-from six.moves.urllib import request
+import json # auth0
+from six.moves.urllib import request # auth0
 
-from cryptography.x509 import load_pem_x509_certificate
-from cryptography.hazmat.backends import default_backend
+from cryptography.x509 import load_pem_x509_certificate # auth0
+from cryptography.hazmat.backends import default_backend # auth0
 
 from dotenv import load_dotenv
 
@@ -25,7 +25,6 @@ load_dotenv('pfiProject/.env')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -35,12 +34,11 @@ DEBUG = os.getenv('DEBUG', True)
 
 ALLOWED_HOSTS = ["*"]
 
-
 # Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
-    'django.contrib.auth',
+    'django.contrib.auth', # auth0
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -48,30 +46,17 @@ INSTALLED_APPS = [
     'django.contrib.sites', # new
     'django.contrib.gis', # new
 
-    'allauth', # new
-    'allauth.account', # new
-    'allauth.socialaccount', # new
-    'allauth.socialaccount.providers.google', # new
-
     'meas_web', #new
-    'users', #new
-    'pages', #new
 
     'corsheaders', # new
     'rest_framework', # new
     'rest_framework_gis', # new
-
-    'rest_framework.authtoken', # test
-    'rest_framework_jwt', # test
+    'rest_framework_jwt', # auth0
 
     'django_filters', # new
     'rest_framework_filters', # new
     'drf', # new
 ]
-
-AUTH_USER_MODEL = 'users.CustomUser' # new
-LOGIN_REDIRECT_URL = 'meas_web:index' #new
-LOGOUT_REDIRECT_URL = 'home' #new
 
 REST_FRAMEWORK = {
    'DEFAULT_RENDERER_CLASSES': [
@@ -85,14 +70,11 @@ REST_FRAMEWORK = {
         'rest_framework_filters.backends.ComplexFilterBackend',
    ],
    'DEFAULT_PERMISSION_CLASSES': [
-        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-        #'rest_framework.permissions.IsAuthenticated',
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        #'rest_framework.permissions.IsAuthenticated', # auth0
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly', # auth0
    ],
    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication', # auth0
    ],
 }
 
@@ -102,10 +84,9 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware', # auth0
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.auth.middleware.RemoteUserMiddleware', # check
 ]
 
 #new
@@ -132,7 +113,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
+                'django.contrib.auth.context_processors.auth', # auth0
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -141,16 +122,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'pfiProject.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#    }
-#}
-#new
 DATABASES = {
     'default': {
         #'ENGINE': 'django.db.backends.postgresql',
@@ -162,26 +133,24 @@ DATABASES = {
         'PORT': os.getenv('POSTGRES_PORT', '5432'),
     }
 }
-#new
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', # auth0
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', # auth0
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', # auth0
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', # auth0
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
@@ -196,7 +165,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
@@ -209,18 +177,18 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTHENTICATION_BACKENDS = (
-    "django.contrib.auth.backends.ModelBackend",
-    "django.contrib.auth.backends.RemoteUserBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
+    "django.contrib.auth.backends.ModelBackend", # check
+    "django.contrib.auth.backends.RemoteUserBackend", # check
+    "allauth.account.auth_backends.AuthenticationBackend", # check
 )
 
-AUTH0_DOMAIN = secrets.AUTH0_DOMAIN
-API_IDENTIFIER = secrets.API_IDENTIFIER
-PUBLIC_KEY = None
-JWT_ISSUER = None
+AUTH0_DOMAIN = secrets.AUTH0_DOMAIN # auth0
+API_IDENTIFIER = secrets.API_IDENTIFIER # auth0
+PUBLIC_KEY = None # auth0
+JWT_ISSUER = None # auth0
 
 # If AUTH0_DOMAIN is defined, load the jwks.json
-if AUTH0_DOMAIN:
+if AUTH0_DOMAIN: # auth0
     jsonurl = request.urlopen('https://' + AUTH0_DOMAIN + '/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
     cert = '-----BEGIN CERTIFICATE-----\n' + jwks['keys'][0]['x5c'][0] + '\n-----END CERTIFICATE-----'
@@ -229,7 +197,7 @@ if AUTH0_DOMAIN:
     JWT_ISSUER = 'https://' + AUTH0_DOMAIN + '/'
 
 
-JWT_AUTH = {
+JWT_AUTH = { # auth0
     'JWT_PAYLOAD_GET_USERNAME_HANDLER': 'meas_web.user.jwt_get_username_from_payload_handler',
     'JWT_PUBLIC_KEY': PUBLIC_KEY,
     'JWT_ALGORITHM': 'RS256',

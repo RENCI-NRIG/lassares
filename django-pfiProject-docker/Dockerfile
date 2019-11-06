@@ -1,5 +1,5 @@
 FROM python:3.7
-MAINTAINER Komal Thareja<komal.thareja@gmail.com>
+MAINTAINER Jim McManus<jmpmcman@renci.org>
 
 RUN apt-get update && apt-get install -y \
   binutils \

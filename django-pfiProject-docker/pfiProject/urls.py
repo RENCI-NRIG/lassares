@@ -15,21 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.conf.urls import url, include
-from django.views.i18n import JavaScriptCatalog
+from django.conf.urls import include
 
 urlpatterns = [
 
-    path('pages/', include('pages.urls')), #new
     path('meas/', include(('meas_web.urls','meas_web'), 'meas_web')), #new
     path('drf/', include(('drf.urls','drf'), 'drf')), #new
 
     # Django Admin
     path('admin/', admin.site.urls),
-    path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
-
-
-    # User management
-    path('users/', include('users.urls')), #new
-    path('accounts/', include('allauth.urls')), # new
 ]
