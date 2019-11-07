@@ -23,7 +23,7 @@
     "node-sass": "^4.12.0",
     "quasar": "^1.0.0",
     "sass-loader": "7.1.0",
-    "vuelayers": "^0.11.4"
+    "vuelayers": "0.11.4"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.0",

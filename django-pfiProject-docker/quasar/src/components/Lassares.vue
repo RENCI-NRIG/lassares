@@ -23,7 +23,7 @@
             <div class="q-pa-md" style="max-width: 600px">
               <div class="text-subtitle2">Input Measurement Data</div>
 
-              <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
+              <q-form class="q-gutter-md">
                 <q-input color="teal" filled v-model="measurement.properties.bore_id" type="number" id="bore_id" label="Bore ID *" hint="ID of the bore hole" lazy-rules
                   :rules="[ val => val !== null && val !== '' || 'Please type id', val => val > 0 && val < 1000 || 'Please type a correct id' ]"/>
 
@@ -46,7 +46,11 @@
                   <template v-slot:append>
                     <q-icon name="event" class="cursor-pointer">
                       <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
-                        <q-date v-model="measurement.properties.date" mask="YYYY-MM-DD" color="teal" text-color="black" />
+                        <q-date v-model="measurement.properties.date" mask="YYYY-MM-DD" color="teal" text-color="black">
+                          <div class="row items-right justify-end q-gutter-sm">
+                            <q-btn icon="close" color="teal" flat v-close-popup />
+                          </div>
+                        </q-date>
                       </q-popup-proxy>
                     </q-icon>
                   </template>
@@ -56,14 +60,17 @@
                   <template v-slot:append>
                     <q-icon name="access_time" class="cursor-pointer">
                       <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
-                        <q-time now-btn v-model="measurement.properties.time" with-seconds format12h color="teal" text-color="black" />
+                        <q-time now-btn v-model="measurement.properties.time" mask="HH:mm:ss" with-seconds format24h color="teal" text-color="black">
+                          <div class="row items-right justify-end q-gutter-sm">
+                            <q-btn icon="close" color="teal" flat v-close-popup />
+                          </div>
+                        </q-time>
                       </q-popup-proxy>
                     </q-icon>
                   </template>
                 </q-input>
 
-                <q-input color="teal" filled v-model="longitude" id="longitude" label="Longitude *" hint="Longitude of the bore hole" lazy-rules
-                  :rules="[ val => val && val.length > 0 || 'Please type the longitude']">
+                <q-input color="teal" filled v-model="longitude" id="longitude" label="Longitude *" hint="Longitude of the bore hole">
                   <template v-slot:append>
                     <q-icon name="fas fa-globe-americas" class="cursor-pointer">
                       <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
@@ -92,8 +99,7 @@
                     </q-icon>
                   </template>
                 </q-input>
-                <q-input color="teal" filled v-model="latitude" id="latitude" label="Latitude *" hint="Latitude of the bore hole" lazy-rules
-                  :rules="[ val => val && val.length > 0 || 'Please type the latitude']">
+                <q-input color="teal" filled v-model="latitude" id="latitude" label="Latitude *" hint="Latitude of the bore hole">
                   <template v-slot:append>
                     <q-icon name="fas fa-globe-americas" class="cursor-pointer">
                       <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
@@ -127,7 +133,7 @@
                     <span v-if="creating">Creating... Please wait </span>
                   </q-btn>
                   <q-btn label="Ubdate" type="submit" color="teal" class="text-black" v-if="this.measurement.id" @click="updateMeasurement()" >
-                    <span v-if="creating">Creating... Please wait </span>
+                    <span v-if="updating">Updating... Please wait </span>
                   </q-btn>
                   <q-btn label="Reset" type="reset" color="teal" flat class="q-ml-sm" @click="onReset()" />
                 </div>
@@ -248,7 +254,7 @@
                   <q-card-section>
                     <table class="table is-fullwidth">
                       <tr>
-                        <td><hr style=getNYC_PowerlinesStyle() /></td>
+                        <td><hr style=getPowerlinesStyle /></td>
                         <td>Powerlines</td>
                       </tr>
                       <tr>
@@ -650,8 +656,8 @@ export default {
           'device_id': null,
           'chemical_id': null,
           'concentration': null,
-          'date': null,
-          'time': null,
+          'date': this.currentDate(),
+          'time': this.currentTime(),
           'status': 'd',
           'comment': null
         },
@@ -1194,16 +1200,8 @@ export default {
     },
     currentTime: function () {
       let timeStamp = Date.now()
-      let formattedString = date.formatDate(timeStamp, 'HH:mm:ss.SSSZ')
+      let formattedString = date.formatDate(timeStamp, 'HH:mm:ss')
       return formattedString
-    },
-    onSubmit: function () {
-      this.$q.notify({
-        color: 'red-5',
-        textColor: 'black',
-        icon: 'warning',
-        message: this.currentTime()
-      })
     },
     onReset: function () {
       this.measurement.properties.bore_id = null
@@ -1212,8 +1210,8 @@ export default {
       this.measurement.properties.chemical_id = null
       this.measurement.properties.concentration = null
       this.measurement.properties.comment = null
-      this.measurement.properties.date = null
-      this.measurement.properties.time = null
+      this.measurement.properties.date = this.currentDate()
+      this.measurement.properties.time = this.currentTime()
       this.longitude = null
       this.latitude = null
       this.measurement.geometry.coordinates = null
@@ -1282,6 +1280,14 @@ export default {
   .ol-control button:focus
     text-decoration: none
     background-color: rgb(0,128,128)
+
+  .ol-control button:hover,
+  .ol-control button:focus
+    text-decoration: none
+    background-color: rgba(0,128,128,0.8)
+
+  .ol-scale-line
+    background: rgba(0,128,128,0.8)
 
   a:hover
     font-weight:bold
@@ -1374,7 +1380,7 @@ export default {
   .dot
     height: 15px;
     width: 15px;
-    background-color: #f56f4270;
+    background-color: #84f542;
     border-radius: 50%;
     display: inline-block
 
