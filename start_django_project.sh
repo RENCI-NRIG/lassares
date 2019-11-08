@@ -22,7 +22,8 @@ CLIENTID=$2
 AUTH0DOMAIN=$3
 APIIDENTIFIER=$4
 
-sed -i 's/CN=your.domain.com/CN='$PUBHOSTURL'/g' /var/www/django-pfiProject-docker/generate-certificates.sh
+sed -i 's/CN=your.domain.address/CN='$PUBHOSTURL'/g' /var/www/django-pfiProject-docker/generate-certificates.sh
+sed -i 's/subjectAltName=DNS.1=your.local.ip.address/subjectAltName=DNS.1='$LOCALIP'/g' /var/www/django-pfiProject-docker/generate-certificates.sh
 /var/www/django-pfiProject-docker/generate-certificates.sh
 
 echo "enable for docker service"
