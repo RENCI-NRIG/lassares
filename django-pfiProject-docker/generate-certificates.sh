@@ -9,10 +9,10 @@ else
 fi
 
 cd $ROOT_DIR/certs
-openssl req -newkey rsa:2048 -days 365 -nodes -x509 -sha256 \
-  -subj "/C=US/ST=North Carolina/L=Chapel Hill/O=RENCI/OU=NRIG/CN=your.domain.address/subjectAltName=DNS.1=your.local.ip.address/emailAddress=jmpmcman@renci.org" \
-  -keyout self.signed.key \
-  -out self.signed.crt
+openssl req -x509 -newkey rsa:2048 -sha256 -days 3650 -nodes \
+  -keyout self.signed.key -out self.signed.crt \
+  -subj "/C=US/ST=North Carolina/L=Chapel Hill/O=RENCI/OU=NRIG/CN=example.com/emailAddress=jmpmcman@renci.org/" \
+  -addext subjectAltName=DNS:example.com,DNS:example.com,IP:10.0.0.1
 cd -
 
 exit 0;
