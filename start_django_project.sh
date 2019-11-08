@@ -14,7 +14,6 @@ cp -R /root/lassares/django-pfiProject-docker /var/www
 chown -R root:root /var/www/
 chmod -R g+w /var/www/
 cd /var/www/django-pfiProject-docker/
-/var/www/django-pfiProject-docker/generate-certificates.sh
 
 LOCALIP=`/opt/aws/bin/ec2-metadata -o|cut -d' ' -f2`
 PUBHOSTURL=`/opt/aws/bin/ec2-metadata -p|cut -d' ' -f2`
@@ -22,6 +21,9 @@ MBTOKEN=$1
 CLIENTID=$2
 AUTH0DOMAIN=$3
 APIIDENTIFIER=$4
+
+sed -i 's/CN=your.domain.com/CN='$PUBHOSTURL'/g' /var/www/django-pfiProject-docker/generate-certificates.sh
+/var/www/django-pfiProject-docker/generate-certificates.sh
 
 echo "enable for docker service"
 chkconfig --add docker
