@@ -44,7 +44,6 @@ services:
     volumes:
       - .:/code
       - ./static:/code/static
-      - ./quasar/src/statics:/code/statics
       - ./media:/code/media
       - ./nginx/pfiProject_nginx_ssl_dev.conf:/etc/nginx/nginx.conf:ro
       - ./certs/self.signed.crt:/etc/ssl/SSL.crt

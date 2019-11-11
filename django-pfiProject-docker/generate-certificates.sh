@@ -9,10 +9,8 @@ else
 fi
 
 cd $ROOT_DIR/certs
-openssl req -x509 -newkey rsa:2048 -sha256 -days 3650 -nodes \
-  -keyout self.signed.key -out self.signed.crt -config $ROOT_DIR/req.cnf \
-#  -subj "/C=US/ST=North Carolina/L=Chapel Hill/O=RENCI/OU=NRIG/CN=example.com/emailAddress=jmpmcman@renci.org" 
-#  -addext "subjectAltName=DNS:example.com,DNS:example.com,IP:10.0.0.1"
+openssl req -x509 -newkey rsa:2048 -sha256 -days 365 -nodes \
+  -keyout self.signed.key -out self.signed.crt -config $ROOT_DIR/req.cnf 
 cd -
 
 exit 0;
