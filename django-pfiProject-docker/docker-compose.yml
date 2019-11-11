@@ -20,6 +20,8 @@ services:
       - .:/code
       - ./static:/code/static
       - ./media:/code/media
+      - ./certs/self.signed.crt:/etc/ssl/SSL.crt
+      - ./certs/self.signed.key:/etc/ssl/SSL.key
 
   nginx:
     build:
