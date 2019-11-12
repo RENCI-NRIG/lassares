@@ -22,10 +22,6 @@ CLIENTID=$2
 AUTH0DOMAIN=$3
 APIIDENTIFIER=$4
 
-sed -i 's/example.com/'$PUBHOSTDOMAIN'/g' /var/www/django-pfiProject-docker/req.cnf
-sed -i 's/10.0.0.1/'$LOCALIP'/g' /var/www/django-pfiProject-docker/req.cnf
-/var/www/django-pfiProject-docker/generate-certificates.sh
-
 echo "enable for docker service"
 chkconfig --add docker
 echo "start docker service"
@@ -57,6 +53,10 @@ echo "RUN_ROOT=1" >> /var/www/django-pfiProject-docker/pfiProject/.env
 
 #NGINX_HOST=$LOCALIP docker-compose up -d
 NGINX_HOST=$PUBHOSTDOMAIN docker-compose up -d
+
+sed -i 's/example.com/'$PUBHOSTDOMAIN'/g' /var/www/django-pfiProject-docker/init-letsencrypt.sh
+#sed -i 's/10.0.0.1/'$LOCALIP'/g' /var/www/django-pfiProject-docker/init-letsencrypt.sh
+/var/www/django-pfiProject-docker/init-letsencrypt.sh
 
 sleep 3m
 
