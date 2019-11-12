@@ -9,7 +9,7 @@ COPY quasar /app
 RUN yarn
 RUN quasar build
 
-FROM nginx:alpine
+FROM nginx:1.16-alpine
 
 COPY nginx/pfiProject_nginx_ssl.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist/spa /dist/
