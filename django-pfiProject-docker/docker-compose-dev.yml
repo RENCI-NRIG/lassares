@@ -37,7 +37,7 @@ services:
     restart: on-failure
 
   nginx:
-    image: nginx:alpine
+    image: nginx:1.16-alpine
     container_name: nginx-dev
     ports:
       - 8443:443
