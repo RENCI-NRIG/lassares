@@ -16,13 +16,13 @@ chmod -R g+w /var/www/
 cd /var/www/django-pfiProject-docker/
 
 LOCALIP=`/opt/aws/bin/ec2-metadata -o|cut -d' ' -f2`
-PUBHOSTURL=`/opt/aws/bin/ec2-metadata -p|cut -d' ' -f2`
+PUBHOSTDOMAIN=`/opt/aws/bin/ec2-metadata -p|cut -d' ' -f2`
 MBTOKEN=$1
 CLIENTID=$2
 AUTH0DOMAIN=$3
 APIIDENTIFIER=$4
 
-sed -i 's/example.com/'$PUBHOSTURL'/g' /var/www/django-pfiProject-docker/req.cnf
+sed -i 's/example.com/'$PUBHOSTDOMAIN'/g' /var/www/django-pfiProject-docker/req.cnf
 sed -i 's/10.0.0.1/'$LOCALIP'/g' /var/www/django-pfiProject-docker/req.cnf
 /var/www/django-pfiProject-docker/generate-certificates.sh
 
@@ -38,7 +38,7 @@ ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 echo "" > /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 SECRET=`uuidgen`
 echo "SECRET_KEY='$SECRET'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
-echo "PUBHOST_URL='$PUBHOSTURL'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
+echo "PUBHOST_URL='$PUBHOSTDOMAIN'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 echo "AUTH0_DOMAIN='$AUTH0DOMAIN'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 echo "API_IDENTIFIER='$APIIDENTIFIER'" >> /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 
@@ -51,11 +51,12 @@ cat $SECRETSFILE | APIIDENTIFIER="$APIIDENTIFIER" jq 'map(if .API_IDENTIFIER == 
 
 PUBHOSTFILE="/var/www/django-pfiProject-docker/quasar/src/assets/pubhost.json"
 PUBHOSTTMP="/var/www/django-pfiProject-docker/quasar/src/assets/pubhosttmp.json"
-cat $PUBHOSTFILE | PUBHOSTURL="$PUBHOSTURL" jq 'map(if .PUBHOST_URL == "127.0.0.1:8443" then . + {"PUBHOST_URL":env.PUBHOSTURL} else . end)' > $PUBHOSTTMP && mv $PUBHOSTTMP $PUBHOSTFILE
+cat $PUBHOSTFILE | PUBHOSTDOMAIN="$PUBHOSTDOMAIN" jq 'map(if .PUBHOST_URL == "127.0.0.1:8443" then . + {"PUBHOST_URL":env.PUBHOSTDOMAIN} else . end)' > $PUBHOSTTMP && mv $PUBHOSTTMP $PUBHOSTFILE
 
 echo "RUN_ROOT=1" >> /var/www/django-pfiProject-docker/pfiProject/.env
 
-NGINX_HOST=$LOCALIP docker-compose up -d
+#NGINX_HOST=$LOCALIP docker-compose up -d
+NGINX_HOST=$PUBHOSTDOMAIN docker-compose up -d
 
 sleep 3m
 
