@@ -51,6 +51,7 @@ cat $PUBHOSTFILE | PUBHOSTDOMAIN="$PUBHOSTDOMAIN" jq 'map(if .PUBHOST_URL == "12
 
 echo "RUN_ROOT=1" >> /var/www/django-pfiProject-docker/pfiProject/.env
 
+sed -i 's/example.com/'$PUBHOSTDOMAIN'/g' /var/www/django-pfiProject-docker/nginx/pfiProject_nginx_ssl.conf
 sed -i 's/example.com/'$PUBHOSTDOMAIN'/g' /var/www/django-pfiProject-docker/init-letsencrypt.sh
 #sed -i 's/10.0.0.1/'$LOCALIP'/g' /var/www/django-pfiProject-docker/init-letsencrypt.sh
 /var/www/django-pfiProject-docker/init-letsencrypt.sh
