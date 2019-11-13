@@ -41,5 +41,4 @@ services:
       - ./certs/self.signed.key:/etc/ssl/SSL.key
     environment:
       - NGINX_HOST:${NGINX_HOST:-127.0.0.1}
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
