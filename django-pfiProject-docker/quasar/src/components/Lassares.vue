@@ -84,14 +84,14 @@
                             </template>
                           </q-banner>
                           <q-card-section>
-                            <q-btn label="Current Location" color="teal" class="text-black" @click="currentLocation">
+                            <q-btn label="Current Location" color="teal" class="text-black" @click="currentLocation" v-close-popup>
                             </q-btn>
                           </q-card-section>
                           <q-separator />
                           <q-card-section>
                             <q-btn label="Select Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'">
                             </q-btn><br />
-                             <q-btn label="Enter Selection" color="teal" class="text-black" @click="selectLocation">
+                             <q-btn label="Enter Selection" color="teal" class="text-black" @click="selectLocation" v-close-popup>
                             </q-btn>
                           </q-card-section>
                         </q-card>
@@ -113,14 +113,14 @@
                             </template>
                           </q-banner>
                           <q-card-section>
-                            <q-btn label="Current Location" color="teal" class="text-black" @click="currentLocation">
+                            <q-btn label="Current Location" color="teal" class="text-black" @click="currentLocation" v-close-popup>
                             </q-btn>
                           </q-card-section>
                           <q-separator />
                           <q-card-section>
                             <q-btn label="Select Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'">
                             </q-btn><br />
-                             <q-btn label="Enter Selection" color="teal" class="text-black" @click="selectLocation">
+                             <q-btn label="Enter Selection" color="teal" class="text-black" @click="selectLocation" v-close-popup>
                             </q-btn>
                           </q-card-section>
                         </q-card>
@@ -203,38 +203,36 @@
         </q-expansion-item>
 
         <q-expansion-item expand-separator icon="list" label="State">
-          <!-- div class="q-pa-md q-gutter-y-sm column" -->
-            <q-markup-table class="table is-fullwidth" dense>
-              <tr>
-                <th class="text-left">Map center</th>
-                <td class="text-left" style="font-size:10px">{{ center[0]}}, {{ center[1] }}</td>
-              </tr>
-              <tr>
-                <th class="text-left">Map zoom</th>
-                <td class="text-left" style="font-size:10px">{{ zoom }}</td>
-              </tr>
-              <tr>
-                <th class="text-left">Map rotation</th>
-                <td class="text-left" style="font-size:10px">{{ rotation }}</td>
-              </tr>
-              <tr>
-                <th class="text-left">Event coordinate</th>
-                <td class="text-left" style="font-size:10px">{{ eventCoordinate[0] }}, {{ eventCoordinate[1] }}</td>
-              </tr>
-              <tr>
-                <th class="text-left">Device coordinate</th>
-                <td class="text-left" style="font-size:10px">{{ deviceCoordinate[0] }}, {{ deviceCoordinate[1] }}</td>
-              </tr>
-              <tr>
-                <th class="text-left">Coordinate accuracy</th>
-                <td class="text-left" style="font-size:10px">{{ coordinateAccuracy }} meters</td>
-              </tr>
-              <tr>
-                <th class="text-left">Selected features</th>
-                <td class="text-left" style="font-size:10px">{{ pid }}</td>
-              </tr>
-            </q-markup-table>
-          <!-- /div -->
+          <q-markup-table class="table is-fullwidth" dense>
+            <tr>
+              <th class="text-left">Map center</th>
+              <td class="text-left" style="font-size:10px">{{ center[0]}}, {{ center[1] }}</td>
+            </tr>
+            <tr>
+              <th class="text-left">Map zoom</th>
+              <td class="text-left" style="font-size:10px">{{ zoom }}</td>
+            </tr>
+            <tr>
+              <th class="text-left">Map rotation</th>
+              <td class="text-left" style="font-size:10px">{{ rotation }}</td>
+            </tr>
+            <tr>
+              <th class="text-left">Event coordinate</th>
+              <td class="text-left" style="font-size:10px">{{ eventCoordinate[0] }}, {{ eventCoordinate[1] }}</td>
+            </tr>
+            <tr>
+              <th class="text-left">Device coordinate</th>
+              <td class="text-left" style="font-size:10px">{{ deviceCoordinate[0] }}, {{ deviceCoordinate[1] }}</td>
+            </tr>
+            <tr>
+              <th class="text-left">Coordinate accuracy</th>
+              <td class="text-left" style="font-size:10px">{{ coordinateAccuracy }} meters</td>
+            </tr>
+            <tr>
+              <th class="text-left">Selected features</th>
+              <td class="text-left" style="font-size:10px">{{ pid }}</td>
+            </tr>
+          </q-markup-table>
         </q-expansion-item>
 
         <q-expansion-item expand-separator icon="list" label="Legend">
@@ -364,7 +362,7 @@
       <vl-view ref="view" :center.sync="center" :zoom.sync="zoom" :rotation.sync="rotation"></vl-view>
 
       <!--// click interactions -->
-      <vl-interaction-select ref="selectInteraction" :features.sync="selectedFeatures" v-if="drawType == null">
+      <vl-interaction-select ref="selectInteraction" :features.sync="selectedFeatures" v-if="drawType === undefined">
         <template slot-scope="select">
           <!--// select styles -->
           <vl-style-box>
@@ -387,21 +385,11 @@
           <div v-if="isBox === 'no'">
             <vl-overlay class="feature-popup" v-for="feature in select.features" :key="feature.id" :id="feature.id"
               :position="pointOnSurface(feature.geometry)" :auto-pan="true" :auto-pan-animation="{ duration: 300 }">
-              <q-card class="feature-popup">
-                <q-card-section>
-                  <div v-if="feature.id == undefined">
-                    <q-banner inline-actions class="text-black bg-white">
-                      <div class="text-h7">
-                        New Feature Coordinates
-                      </div>
-                      <template v-slot:action>
-                        <q-btn flat round dense icon="close" @click="selectedFeatures = selectedFeatures.filter(f => f.id !== feature.id)" />
-                      </template>
-                    </q-banner>
-                    Longitude: {{ coordinates[0] }}<br>
-                    Latitude: {{ coordinates[1] }}<br>
-                  </div>
-                  <div v-else>
+              <div v-if="feature.id == undefined">
+              </div>
+              <div v-else>
+                <q-card class="feature-popup">
+                  <q-card-section>
                     <q-banner inline-actions class="text-black bg-white">
                       <div class="text-h6">
                         Feature ID {{ feature.id }}
@@ -425,9 +413,9 @@
                       status: {{ feature.properties['status'] }}<br>
                       comment: {{ feature.properties['comment'] }}<br>
                     </div>
-                  </div>
-                </q-card-section>
-              </q-card>
+                  </q-card-section>
+                </q-card>
+              </div>
             </vl-overlay>
           </div>
           <!--// selected feature popup -->
@@ -512,7 +500,7 @@
 
       <!--// draw components -->
       <vl-layer-vector id="draw-pane">
-        <vl-source-vector ident="draw-target" :features.sync="drawnFeatures"></vl-source-vector>
+        <vl-source-vector ref="drawSource" ident="draw-target" :features.sync="drawnFeatures"></vl-source-vector>
       </vl-layer-vector>
 
       <vl-interaction-draw v-if="drawType" source="draw-target" :type="drawType"></vl-interaction-draw>
@@ -558,6 +546,31 @@
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab icon="keyboard_arrow_up" direction="up" color="teal text-black">
         <q-fab-action color="teal" class="text-black" @click="$q.fullscreen.toggle()" :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'" />
+        <q-fab-action color="teal" class="text-black" icon="fas fa-vector-square">
+          <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
+            <q-card color="white">
+              <q-banner inline-actions>
+                <div class="text-subtitle2">
+                  Create Bar Plot of Selected Features
+                </div>
+                <template align="right" v-slot:action>
+                  <q-btn flat round dense icon="close" color="teal" v-close-popup />
+                </template>
+              </q-banner>
+              <q-separator />
+              <q-card-section>
+                <div v-if="drawnFeatures.length === 0">
+                  <q-btn label="Draw Polygon to Select Features" type="Point" color="teal" class="text-black" @click="drawType = 'polygon'">
+                  </q-btn>
+                </div>
+                <div v-else>
+                  <q-btn label="Create Bar Plot of Features" color="teal" class="text-black" @click="selectInDrawnPolygon">
+                  </q-btn>
+                </div>
+              </q-card-section>
+            </q-card>
+          </q-popup-proxy>
+        </q-fab-action>
       </q-fab>
     </q-page-sticky>
     <!--// q-page-sticky examnple -->
@@ -712,8 +725,14 @@ export default {
         {
           type: 'point',
           label: 'Draw Point',
-          icon: 'map-marker'
-          // stopClick: true
+          icon: 'map-marker',
+          stopClick: true
+        },
+        {
+          type: 'polygon',
+          label: 'Draw Polygon',
+          icon: 'map-marker',
+          stopClick: true
         },
         {
           type: undefined,
@@ -980,6 +999,31 @@ export default {
         this.isBox = 'no'
       })
     },
+    selectInDrawnPolygon: function () {
+      this.drawnFeatures = []
+      this.selectedFeaturesBarBox = []
+      this.isBox = 'yes'
+      // only use source that have chemical_id
+      let vectorSource
+      let i
+      for (i = 0; i < this.$refs.layerSource.length; i++) {
+        let features = this.$refs.layerSource[i].getFeatures()
+        if (features[0].values_.chemical_id) {
+          vectorSource = this.$refs.layerSource[i].$source
+        }
+      }
+      const drawSource = this.$refs.drawSource.$source
+      const extent = drawSource.getExtent()
+      // console.log(extent)
+      vectorSource.forEachFeatureIntersectingExtent(extent, feature => {
+        feature = writeGeoJsonFeature(feature)
+        this.selectedFeatures.push(feature)
+        this.selectedFeaturesBarBox.push({ x: feature.properties['timestamp'], y: feature.properties['concentration'] })
+        this.chemical_id = feature.properties['chemical_id']
+        this.pid = this.chemical_id
+      })
+      this.drawType = undefined
+    },
     // base layers
     showBaseLayer: function () {
       let layer = this.baseLayers.find(layer => layer.visible)
@@ -1018,12 +1062,9 @@ export default {
       } else if (features) {
         this.eventCoordinate = event.coordinate
         let feature = features[0]
-        let properties = feature.getProperties()
-        if (feature.id_ === undefined) {
-          this.coordinates = toLonLat([properties.geometry.flatCoordinates[0], properties.geometry.flatCoordinates[1]])
-          this.selectedFeaturesBarBox = []
-          this.isBox = 'no'
-        } else {
+        if (feature.id_ !== undefined) {
+          let properties = feature.getProperties()
+          // alert('click')
           if (properties['chemical_id']) {
             this.pid = properties['chemical_id']
             this.chemical_id = this.pid
@@ -1039,6 +1080,8 @@ export default {
             this.selectedFeaturesBarBox = []
             this.isBox = 'no'
           }
+        } else {
+          // console.log(features)
         }
       }
     },
