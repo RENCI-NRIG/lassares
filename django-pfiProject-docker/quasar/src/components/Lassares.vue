@@ -236,76 +236,38 @@
         </q-expansion-item>
 
         <q-expansion-item expand-separator icon="list" label="Legend">
-          <table class="table is-fullwidth">
+          <q-markup-table>
             <tr>
-              <q-expansion-item
-                group="powerlines"
-                label="Powerlines"
-                default-opened
-                header-class="text-black"
-                class="text-black"
-              >
-                <div slot="trigger">
-                  <th>NYC Powerlines</th>
-                </div>
-                <q-card>
-                  <q-card-section>
-                    <table class="table is-fullwidth">
-                      <tr>
-                        <td><hr style=getPowerlinesStyle /></td>
-                        <td>Powerlines</td>
-                      </tr>
-                      <tr>
-                        <td><b>Source</b></td>
-                        <td>This data was derived from nothing.</td>
-                      </tr>
-                    </table>
-                  </q-card-section>
-                </q-card>
-              </q-expansion-item>
+              <td><hr style=getPowerlinesStyle /></td>
+              <td>Powerlines</td>
             </tr>
             <tr>
-              <q-expansion-item group="measurements" label="Measurements" default-opened header-class="text-black">
-                <div slot="trigger">
-                  <th>PFC 1 Bubbles</th>
-                </div>
-                <q-card>
-                  <q-card-section>
-                    <table class="table is-fullwidth">
-                      <tr>
-                        <td><span class="dot"></span></td>
-                        <td>Test Measurments</td>
-                      </tr>
-                      <tr>
-                        <td><b>Source</b></td>
-                        <td>This data was derived from nothing.</td>
-                      </tr>
-                    </table>
-                  </q-card-section>
-                </q-card>
-              </q-expansion-item>
+              <td><b>Source</b></td>
+              <td>This data was derived from nothing.</td>
             </tr>
-          </table>
+            <tr>
+              <td><span class="dot"></span></td>
+              <td>Test Measurments</td>
+            </tr>
+            <tr>
+              <td><b>Source</b></td>
+              <td>This data was derived from nothing.</td>
+            </tr>
+          </q-markup-table>
         </q-expansion-item>
 
         <q-expansion-item expand-separator icon="list" label="Filter">
-          <table class="table is-fullwidth">
-            <tr>
-              <th>Select Start Timestamp</th>
-            </tr>
+          <q-markup-table class="table is-fullwidth">
             <tr>
               <td>
-                <treeselect :load-options="loadFilterOptions" :options="toptions" v-model="starttimestamp"
-                  :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
+                <q-datetime-picker today-btn now-btn outlined label="Select Start DateTime" mode="datetime" color="teal"
+                  v-model="starttimestamp" format24h clearable></q-datetime-picker>
               </td>
             </tr>
             <tr>
-              <th>Select End Timestamp</th>
-            </tr>
-            <tr>
               <td>
-                <treeselect :load-options="loadFilterOptions" :options="toptions" v-model="endtimestamp"
-                  :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
+                <q-datetime-picker today-btn now-btn outlined label="Select End DateTime" mode="datetime" color="teal"
+                  v-model="endtimestamp" format24h clearable></q-datetime-picker>
               </td>
             </tr>
             <tr>
@@ -313,36 +275,27 @@
                 <q-btn color="teal" class="text-black" @click="filterMeasurements">Filter Measurements</q-btn>
               </td>
             </tr>
-          </table>
+          </q-markup-table>
         </q-expansion-item>
 
         <q-expansion-item expand-separator icon="list" label="Search">
-          <table class="table is-fullwidth">
-            <tr>
-              <th>Select Start Timestamp</th>
-            </tr>
+          <q-markup-table class="table is-fullwidth">
             <tr>
               <td>
-                <treeselect :options="searchtoptions" v-model="starttimestampx"
-                  :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
+                <q-datetime-picker today-btn now-btn outlined label="Select Start DateTime" mode="datetime" color="teal"
+                  v-model="starttimestampx" format24h clearable></q-datetime-picker>
               </td>
             </tr>
             <tr>
-              <th>Select End Timestamp</th>
-            </tr>
-            <tr>
               <td>
-                <treeselect :options="searchtoptions" v-model="endtimestampx"
-                  :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
+                <q-datetime-picker today-btn now-btn outlined label="Select End DateTime" mode="datetime" color="teal"
+                  v-model="endtimestampx" format24h clearable></q-datetime-picker>
               </td>
             </tr>
             <tr>
-              <th>Select Job ID</th>
-            </tr>
-            <tr>
               <td>
-                <treeselect :options="searchjoptions" v-model="jobidsx"
-                  :auto-load-root-options="false" :multiple="false" placeholder="Open the menu..." />
+                <treeselect v-model="jobidsx" class="treeinput" :auto-load-root-options="false" :clearable="clearable"
+                  :options="searchjoptions"  :multiple="true" placeholder="Select Job ID" />
               </td>
             </tr>
             <tr>
@@ -350,7 +303,7 @@
                 <q-btn color="teal" class="text-black" @click="searchMeasurements">Search Measurements</q-btn>
               </td>
             </tr>
-           </table>
+           </q-markup-table>
         </q-expansion-item>
       </q-list>
     </q-drawer>
@@ -386,6 +339,7 @@
             <vl-overlay class="feature-popup" v-for="feature in select.features" :key="feature.id" :id="feature.id"
               :position="pointOnSurface(feature.geometry)" :auto-pan="true" :auto-pan-animation="{ duration: 300 }">
               <div v-if="feature.id == undefined">
+                <!--// Interactions drawing polygon to select measurements for bar plot -->
               </div>
               <div v-else>
                 <q-card class="feature-popup">
@@ -542,7 +496,7 @@
     <q-page-sticky position="top-right" :offset="[18, 58]">
       <div id="FullScreenTarget"></div>
     </q-page-sticky>
-    <!--// q-page-sticky examnple -->
+    <!--// q-page-sticky tools -->
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab icon="keyboard_arrow_up" direction="up" color="teal text-black">
         <q-fab-action color="teal" class="text-black" @click="$q.fullscreen.toggle()" :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'" />
@@ -573,7 +527,7 @@
         </q-fab-action>
       </q-fab>
     </q-page-sticky>
-    <!--// q-page-sticky examnple -->
+    <!--// q-page-sticky tools -->
 
     <!--// div>Built with <a href="https://quasar.dev/" target="_blank" style="color:black; text-decoration:none;">Quasar</a>,
     <a href="https://vuejs.org/" target="_blank" style="color:black; text-decoration:none;">Vue.js</a>,
@@ -699,10 +653,10 @@ export default {
       rotation: 0,
       searchtoptions: [],
       searchjoptions: [],
-      starttimestamp: undefined,
-      endtimestamp: undefined,
-      starttimestampx: undefined,
-      endtimestampx: undefined,
+      starttimestamp: this.currentDate() + 'T' + this.currentTime(),
+      endtimestamp: this.currentDate() + 'T' + this.currentTime(),
+      starttimestampx: this.currentDate() + 'T' + this.currentTime(),
+      endtimestampx: this.currentDate() + 'T' + this.currentTime(),
       toptions: null,
       jobids: undefined,
       jobidsx: undefined,
@@ -861,16 +815,6 @@ export default {
     openURL,
     camelCase,
     pointOnSurface: findPointOnSurface,
-    currentLocation: function () {
-      // console.log(this.$refs.view)
-      this.longitude = this.deviceCoordinate[0]
-      this.latitude = this.deviceCoordinate[1]
-    },
-    selectLocation: function () {
-      this.drawType = undefined
-      this.longitude = this.eventCoordinate[0]
-      this.latitude = this.eventCoordinate[1]
-    },
     login,
     logout,
     logind: function () {
@@ -881,12 +825,6 @@ export default {
     },
     handleAuthentication: function () {
       auth.handleAuthentication()
-    },
-    onUpdatePosition: function (coordinate) {
-      this.deviceCoordinate = coordinate
-    },
-    onUpdateAccuracy: function (accuracy) {
-      this.coordinateAccuracy = accuracy
     },
     getPowerlinesStyle: function () {
       let canvas = document.createElement('canvas')
@@ -1023,6 +961,7 @@ export default {
         this.pid = this.chemical_id
       })
       this.drawType = undefined
+      // console.log(this.$refs)
     },
     // base layers
     showBaseLayer: function () {
@@ -1246,6 +1185,22 @@ export default {
       let formattedString = date.formatDate(timeStamp, 'HH:mm:ss')
       return formattedString
     },
+    currentLocation: function () {
+      // console.log(this.$refs.view)
+      this.longitude = this.deviceCoordinate[0]
+      this.latitude = this.deviceCoordinate[1]
+    },
+    selectLocation: function () {
+      this.drawType = undefined
+      this.longitude = this.eventCoordinate[0]
+      this.latitude = this.eventCoordinate[1]
+    },
+    onUpdatePosition: function (coordinate) {
+      this.deviceCoordinate = coordinate
+    },
+    onUpdateAccuracy: function (accuracy) {
+      this.coordinateAccuracy = accuracy
+    },
     onReset: function () {
       this.measurement.properties.bore_id = null
       this.measurement.properties.job_id = null
@@ -1432,5 +1387,61 @@ export default {
     width: 700px
     height: 200px
     margin-top: 0em
+
+  .treeinput
+    color: #025c5c
+
+  .vue-treeselect:not(.vue-treeselect--disabled):not(.vue-treeselect--focused)
+    border-color: #383838;
+
+  .vue-treeselect__control:hover
+    border-color: #383838;
+
+  .vue-treeselect--focused:not(.vue-treeselect--open) .vue-treeselect__control
+    border-color: #008080;
+    box-shadow: 0 0 0 3px rgba(3, 155, 229, 0.1);
+
+  .vue-treeselect--open .vue-treeselect__control
+    border-color: #383838;
+
+  .vue-treeselect__multi-value-item
+    background: #6bcfcf;
+    color: #025c5c;
+
+  .vue-treeselect:not(.vue-treeselect--disabled) .vue-treeselect__multi-value-item:not(.vue-treeselect__multi-value-item- disabled):hover .vue-treeselect__multi-value-item:not(.vue-treeselect__multi-value-item-new) .vue-treeselect__multi-    value-item:not(.vue-treeselect__multi-value-item-new):hover
+    background: #6bcfcf;
+    color: #025c5c;
+
+  .vue-treeselect__value-remove
+    color: #025c5c;
+
+  .vue-treeselect__label-container:hover .vue-treeselect__checkbox--unchecked
+    border-color: #025c5c;
+    background: #fff;
+
+  .vue-treeselect__checkbox--indeterminate
+    border-color: #025c5c;
+    background: #025c5c;
+
+  .vue-treeselect__label-container:hover .vue-treeselect__checkbox--indeterminate
+    border-color: #025c5c;
+    background: #025c5c;
+
+  .vue-treeselect__checkbox--checked
+    border-color: #025c5c;
+    background: #025c5c;
+
+  .vue-treeselect__label-container:hover .vue-treeselect__checkbox--checked
+    border-color: #025c5c;
+    background: #025c5c;
+
+  .vue-treeselect__error-tip .vue-treeselect__retry
+    color: #025c5c;
+
+  .vue-treeselect:not(.vue-treeselect--disabled):not(.vue-treeselect--focused) .vue-treeselect__control:hover
+    border-color: #919191;
+
+  .vue-treeselect--open .vue-treeselect__control
+    border-color: #2e2e2e;
 
 </style>
