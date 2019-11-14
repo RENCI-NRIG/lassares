@@ -268,12 +268,12 @@ export default {
     min () {
       let dom = this.opts.domain
       let data = this.mappedData
-      return (dom.min === null) ? d3.min(data) : dom.min
+      return (dom.min === null) ? d3.min(data.map(Number)) : dom.min
     },
     max () {
       let dom = this.opts.domain
       let data = this.mappedData
-      return (dom.max === null) ? d3.max(data) : dom.max
+      return (dom.max === null) ? d3.max(data.map(Number)) : dom.max
     },
     mappedData () {
       let data = this.pdata.map((d) => {
