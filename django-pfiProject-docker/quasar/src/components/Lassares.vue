@@ -170,7 +170,7 @@
                   <q-radio v-on:input="showBaseLayer" val="mapbox" v-model="baselayer" color="teal" />
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>MapBock Satellite</q-item-label>
+                  <q-item-label>MapBox Satellite</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -282,6 +282,12 @@
           <q-markup-table class="table is-fullwidth">
             <tr>
               <td>
+                <treeselect v-model="jobidsx" class="treeinput" :auto-load-root-options="false"
+                  :options="searchjoptions"  :multiple="true" placeholder="Select Job ID" />
+              </td>
+            </tr>
+            <tr>
+              <td>
                 <q-datetime-picker today-btn now-btn outlined label="Select Start DateTime" mode="datetime" color="teal"
                   v-model="starttimestampx" format24h clearable></q-datetime-picker>
               </td>
@@ -290,12 +296,6 @@
               <td>
                 <q-datetime-picker today-btn now-btn outlined label="Select End DateTime" mode="datetime" color="teal"
                   v-model="endtimestampx" format24h clearable></q-datetime-picker>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <treeselect v-model="jobidsx" class="treeinput" :auto-load-root-options="false" :clearable="clearable"
-                  :options="searchjoptions"  :multiple="true" placeholder="Select Job ID" />
               </td>
             </tr>
             <tr>
@@ -939,6 +939,7 @@ export default {
     },
     selectInDrawnPolygon: function () {
       this.drawnFeatures = []
+      this.selectedFeatures = []
       this.selectedFeaturesBarBox = []
       this.isBox = 'yes'
       // only use source that have chemical_id
@@ -1010,6 +1011,7 @@ export default {
             this.concentration = properties['concentration']
             this.timestamp = properties['timestamp']
             this.selectedFeaturesBarBox = []
+            this.selectedFeatures = []
             this.isBox = 'no'
           } else if (properties['powerline']) {
             this.pid = properties['powerline']
@@ -1017,9 +1019,13 @@ export default {
             this.concentration = undefined
             this.timestamp = undefined
             this.selectedFeaturesBarBox = []
+            this.selectedFeatures = []
             this.isBox = 'no'
           }
         } else {
+          // this.selectedFeaturesBarBox = []
+          // this.selectedFeatures = []
+          // this.isBox = 'no'
           // console.log(features)
         }
       }
@@ -1391,18 +1397,20 @@ export default {
   .treeinput
     color: #025c5c
 
-  .vue-treeselect:not(.vue-treeselect--disabled):not(.vue-treeselect--focused)
-    border-color: #383838;
+  .vue-treeselect__control
+    height: 46px;
+    border: 1px solid #b8b8b8;
+    border-radius: 8px;
 
-  .vue-treeselect__control:hover
-    border-color: #383838;
+  .vue-treeselect:not(.vue-treeselect--disabled):not(.vue-treeselect--focused) .vue-treeselect__control:hover
+    border-color: #919191;
+
+  .vue-treeselect--open .vue-treeselect__control
+    border-color: #2e2e2e;
 
   .vue-treeselect--focused:not(.vue-treeselect--open) .vue-treeselect__control
     border-color: #008080;
     box-shadow: 0 0 0 3px rgba(3, 155, 229, 0.1);
-
-  .vue-treeselect--open .vue-treeselect__control
-    border-color: #383838;
 
   .vue-treeselect__multi-value-item
     background: #6bcfcf;
@@ -1435,13 +1443,7 @@ export default {
     border-color: #025c5c;
     background: #025c5c;
 
-  .vue-treeselect__error-tip .vue-treeselect__retry
-    color: #025c5c;
-
-  .vue-treeselect:not(.vue-treeselect--disabled):not(.vue-treeselect--focused) .vue-treeselect__control:hover
-    border-color: #919191;
-
-  .vue-treeselect--open .vue-treeselect__control
-    border-color: #2e2e2e;
+  .vue-treeselect__placeholder
+    color: #787878;
 
 </style>
