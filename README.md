@@ -16,7 +16,7 @@ User is prompted to provide following information:
 - MBTOKEN - Map Box Token
 - CLIENTID - Auth0 Client ID
 - AUTH0DOMAIN - Auth0 Domain
-- APIIDENTIFIER -
+- APIIDENTIFIER - Auth0 API Identifier
 ### Production mode on Vmware cluster
 1. Clone the git repo as root user:
 ```
