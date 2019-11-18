@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 yum update -y
 yum -y install jq
-yum -y install java-1.8.0-openjdk
-yum -y install java-1.8.0-openjdk-devel
-yum -y install git
-yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-yum -y install docker-ce
 
 set -e
 
@@ -20,9 +15,8 @@ chown -R root:root /var/www/
 chmod -R g+w /var/www/
 cd /var/www/django-pfiProject-docker/
 
-#LOCALIP=`/opt/aws/bin/ec2-metadata -o|cut -d' ' -f2`
-#PUBHOSTDOMAIN=`/opt/aws/bin/ec2-metadata -p|cut -d' ' -f2`
-PUBHOSTDOMAIN=`hostname`
+LOCALIP=`/opt/aws/bin/ec2-metadata -o|cut -d' ' -f2`
+PUBHOSTDOMAIN=`/opt/aws/bin/ec2-metadata -p|cut -d' ' -f2`
 MBTOKEN=$1
 CLIENTID=$2
 AUTH0DOMAIN=$3
@@ -30,23 +24,16 @@ APIIDENTIFIER=$4
 
 sed -i 's/example.com/'$PUBHOSTDOMAIN'/g' /var/www/django-pfiProject-docker/req.cnf
 #sed -i 's/10.0.0.1/'$LOCALIP'/g' /var/www/django-pfiProject-docker/req.cnf
-#/var/www/django-pfiProject-docker/generate-certificates.sh
-mkdir -p /var/www/django-pfiProject-docker/certs
-cp -f /root/ssl/lassaress_renci_org.* /var/www/django-pfiProject-docker/certs
+/var/www/django-pfiProject-docker/generate-certificates.sh
 
 echo "enable for docker service"
-systemctl enable docker
+chkconfig --add docker
 echo "start docker service"
-systemctl start docker
+service docker start
 
-curl -L "https://github.com/docker/compose/releases/download/1.25.0-rc4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
-FILE="/usr/bin/docker-compose"
-if [ -f "$FILE" ]; then
-   echo "$FILE already exists"
-else
-   ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-fi
+ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 echo "" > /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 SECRET=`uuidgen`
@@ -74,7 +61,7 @@ echo "RUN_ROOT=1" >> /var/www/django-pfiProject-docker/pfiProject/.env
 #/var/www/django-pfiProject-docker/init-letsencrypt.sh
 
 #NGINX_HOST=$LOCALIP docker-compose up -d
-NGINX_HOST=$PUBHOSTDOMAIN docker-compose up -d
+NGINX_HOST=$PUBHOSTDOMAIN docker-compose -f docker-compose_dev.yml up -d
 
 sleep 3m
 

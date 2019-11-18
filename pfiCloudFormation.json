@@ -258,7 +258,7 @@
                 "command" : "git clone https://github.com/RENCI-NRIG/lassares.git /root/lassares"
               },
               "02_install_webserver" : {
-                "command" : { "Fn::Join": [ "", ["/root/lassares/start_django_project.sh ", { "Ref": "MBToken" }," ",  { "Ref": "CLIENTID" }," ", { "Ref": "AUTH0DOMAIN" }," ", { "Ref": "APIIDENTIFIER" }, " > /var/log/configWebServer.log 4>&1" ] ] }
+                "command" : { "Fn::Join": [ "", ["/root/lassares/start_django_project_dev.sh ", { "Ref": "MBToken" }," ",  { "Ref": "CLIENTID" }," ", { "Ref": "AUTH0DOMAIN" }," ", { "Ref": "APIIDENTIFIER" }, " > /var/log/configWebServer.log 4>&1" ] ] }
               }
             },
             "services" : {
