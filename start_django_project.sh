@@ -4,7 +4,8 @@ yum -y install jq
 yum -y install java-1.8.0-openjdk
 yum -y install java-1.8.0-openjdk-devel
 yum -y install git
-yum -y install docker
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+yum -y install docker-ce
 
 set -e
 
@@ -21,7 +22,7 @@ cd /var/www/django-pfiProject-docker/
 
 #LOCALIP=`/opt/aws/bin/ec2-metadata -o|cut -d' ' -f2`
 #PUBHOSTDOMAIN=`/opt/aws/bin/ec2-metadata -p|cut -d' ' -f2`
-PUBHOSTDOMAIN=lassaress.renci.org
+PUBHOSTDOMAIN=`hostname`
 MBTOKEN=$1
 CLIENTID=$2
 AUTH0DOMAIN=$3
@@ -34,13 +35,18 @@ mkdir -p /var/www/django-pfiProject-docker/certs
 cp -f /root/ssl/lassaress_renci_org.* /var/www/django-pfiProject-docker/certs
 
 echo "enable for docker service"
-chkconfig --add docker
+systemctl enable docker
 echo "start docker service"
-service docker start
+systemctl start docker
 
-curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+curl -L "https://github.com/docker/compose/releases/download/1.25.0-rc4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
-ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+FILE="/usr/bin/docker-compose"
+if [ -f "$FILE" ]; then
+   echo "$FILE already exists"
+else
+   ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+fi
 
 echo "" > /var/www/django-pfiProject-docker/pfiProject/secrets/secrets.py
 SECRET=`uuidgen`
