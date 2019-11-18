@@ -1,6 +1,5 @@
 <template>
-  <q-layout view="lHr lpr lFr">
-    <!--// left side drawer -->
+  <q-layout view="lhr lpr lfr">
     <div v-if="!authenticated">
     </div>
     <div v-else-if="authenticated">
@@ -89,9 +88,9 @@
                           </q-card-section>
                           <q-separator />
                           <q-card-section>
-                            <q-btn label="Select Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'">
+                            <q-btn label="Select Map Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'">
                             </q-btn><br />
-                             <q-btn label="Enter Selection" color="teal" class="text-black" @click="selectLocation" v-close-popup>
+                             <q-btn label="Enter Map Selection" color="teal" class="text-black" @click="selectLocation" v-close-popup>
                             </q-btn>
                           </q-card-section>
                         </q-card>
@@ -118,9 +117,9 @@
                           </q-card-section>
                           <q-separator />
                           <q-card-section>
-                            <q-btn label="Select Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'">
+                            <q-btn label="Select Map Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'">
                             </q-btn><br />
-                             <q-btn label="Enter Selection" color="teal" class="text-black" @click="selectLocation" v-close-popup>
+                             <q-btn label="Enter Map Selection" color="teal" class="text-black" @click="selectLocation" v-close-popup>
                             </q-btn>
                           </q-card-section>
                         </q-card>
@@ -308,9 +307,11 @@
       </q-list>
     </q-drawer>
 
+    <!--// left side drawer -->
+
     <!--// app map -->
     <vl-map v-if="mapVisible" class="map" ref="map" :load-tiles-while-animating="true" :load-tiles-while-interacting="true"
-      @click="onMapClick" data-projection="EPSG:4326" @mounted="onMapMounted" :controls="false">
+      @click="onMapClick" data-projection="EPSG:4326" @mounted="onMapMounted" :controls="false" style="height:1200px">
        <!--// map view aka ol.View -->
       <vl-view ref="view" :center.sync="center" :zoom.sync="zoom" :rotation.sync="rotation"></vl-view>
 
@@ -514,7 +515,7 @@
               <q-separator />
               <q-card-section>
                 <div v-if="drawnFeatures.length === 0">
-                  <q-btn label="Draw Polygon to Select Features" type="Point" color="teal" class="text-black" @click="drawType = 'polygon'">
+                  <q-btn label="Draw Polygon Around Features" type="Point" color="teal" class="text-black" @click="drawType = 'polygon'">
                   </q-btn>
                 </div>
                 <div v-else>
@@ -528,14 +529,9 @@
       </q-fab>
     </q-page-sticky>
     <!--// q-page-sticky tools -->
-
-    <!--// div>Built with <a href="https://quasar.dev/" target="_blank" style="color:black; text-decoration:none;">Quasar</a>,
-    <a href="https://vuejs.org/" target="_blank" style="color:black; text-decoration:none;">Vue.js</a>,
-    <a href="https://vuelayers.github.io" target="_blank" style="color:black; text-decoration:none;">Vuelayers</a>,
-    <a href="https://openlayers.org/" target="_blank" style="color:black; text-decoration:none;">Openlayers</a>,
-    <a href="https://d3js.org/" target="_blank" style="color:black; text-decoration:none;">D3.js</a>,
-    <a href="https://www.openstreetmap.org" target="_blank" style="color:black; text-decoration:none;">OSM</a>,
-    and <a href="https://www.mapbox.com/" target="_blank" style="color:black; text-decoration:none;">MapBox</a></div -->
+    <q-page-sticky position="bottom-left" :offset="[200, 38]">
+      <div id="AttributionTarget"></div>
+    </q-page-sticky>
   </q-layout>
 </template>
 
@@ -547,6 +543,7 @@ import ScaleLine from 'ol/control/ScaleLine'
 import FullScreen from 'ol/control/FullScreen'
 import OverviewMap from 'ol/control/OverviewMap'
 import Zoom from 'ol/control/Zoom'
+import Attribution from 'ol/control/Attribution'
 import { Style, Stroke, Fill, Circle } from 'ol/style'
 import { DEVICE_PIXEL_RATIO } from 'ol/has.js'
 import DragBox from 'ol/interaction/DragBox'
@@ -894,6 +891,11 @@ export default {
         }),
         new Zoom({
           target: 'ZoomTarget'
+        }),
+        new Attribution({
+          collapsed: false,
+          collapsible: false,
+          target: 'AttributionTarget'
         })
       ])
 
