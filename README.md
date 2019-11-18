@@ -9,5 +9,25 @@ Using Django, a high-level Python Web framework that encourages rapid developmen
 
 ![Block-Diagram](../master/images/block-diagram.png)
 
-## Open Items
-- Domain name for webserver
+## Installtion
+### Development mode on AWS
+Lassaress web server can be hosted on AWS for development purposes by using the Cloud Formation file: pfiCloudFormation.json
+User is prompted to provide following information:
+- MBTOKEN -
+- CLIENTID - 
+- AUTH0DOMAIN -
+- APIIDENTIFIER -
+### Production mode on Vmware cluster
+1. Clone the git repo as root user:
+```
+git clone https://github.com/RENCI-NRIG/lassares.git
+cd /root/lassares
+```
+2. Run the start script
+```
+./start_django_project.sh [MBTOKEN] [CLIENTID] [AUTH0DOMAIN] [APIIDENTIFIER]
+```
+- MBTOKEN -
+- CLIENTID - 
+- AUTH0DOMAIN -
+- APIIDENTIFIER -
