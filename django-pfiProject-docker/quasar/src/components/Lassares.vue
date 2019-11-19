@@ -495,12 +495,11 @@
       <q-btn flat dense round icon="menu" class="bg-teal text-black" @click="rightDrawerOpen = !rightDrawerOpen" aria-label="Menu"></q-btn>
     </q-page-sticky>
     <q-page-sticky position="top-right" :offset="[18, 58]">
-      <div id="FullScreenTarget"></div>
+      <q-btn color="teal" class="text-black" @click="$q.fullscreen.toggle()" round :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'" />
     </q-page-sticky>
     <!--// q-page-sticky tools -->
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab icon="keyboard_arrow_up" direction="up" color="teal text-black">
-        <q-fab-action color="teal" class="text-black" @click="$q.fullscreen.toggle()" :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'" />
         <q-fab-action color="teal" class="text-black" icon="fas fa-vector-square">
           <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
             <q-card color="white">
@@ -540,7 +539,6 @@ import { openURL, date } from 'quasar'
 import { camelCase } from 'lodash'
 import { findPointOnSurface, writeGeoJsonFeature } from 'vuelayers/lib/ol-ext'
 import ScaleLine from 'ol/control/ScaleLine'
-import FullScreen from 'ol/control/FullScreen'
 import OverviewMap from 'ol/control/OverviewMap'
 import Zoom from 'ol/control/Zoom'
 import Attribution from 'ol/control/Attribution'
@@ -880,9 +878,6 @@ export default {
       this.$refs.map.$map.getControls().extend([
         new ScaleLine({
           target: 'ScaleTarget'
-        }),
-        new FullScreen({
-          target: 'FullScreenTarget'
         }),
         new OverviewMap({
           collapsed: false,
