@@ -19,13 +19,18 @@ Django is a high-level Python Web framework that encourages rapid development an
      ```python
      # SECURITY WARNING: keep the secret key used in production secret!
      SECRET_KEY = 'xxxxxxxxxxxxxxxxxx'  # generate a secret key
-     GOOGLE_MAP_API_KEY = 'xxxxxxxxxxxxxxxx'
+     PUBHOST_URL = '127.0.0.1:8443' # URL of you website, for auth0
+     AUTH0_DOMAIN= 'xxxxxxxxxx.auth0.com' # auth0 domain name
+     API_IDENTIFIER= 'https://xxxxxxxx' # auth0 API Identifier
      ```
- 1. Update `quasar/src/assets/mbtoken.json` file
+ 1. Update `quasar/src/assets/secrets.json` file
 
-     ```python
+     ```quasar
      "MB_KEY":"YOU NEED TO REPLACE THIS WITH A MAP BOX TOKEN"
-
+     "CLIENT_ID":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", # auth0 client ID
+     "AUTH0_DOMAIN":"xxxxxxxxxx.auth0.com", # auth0 domain name
+     "API_IDENTIFIER":"https://xxxxxxxx" # auth0 API identifier
+    ```
  3. Update `pfiProject/.env` file as per your need 
 
      ```
@@ -86,45 +91,9 @@ Django is a high-level Python Web framework that encourages rapid development an
  Naviage to [https://127.0.0.1:8443/](https://127.0.0.1:8443/) (or whatever you've configured your host to be).
  
 ## <a name="auth"></a>Authentication
-Configure Admin site with following info to enable GMAIL authentication.
 
-1. Configure GMAIL API Cloud credentials
-To allow users to log in with their Gmail credentials we need to register our new website with Google. Go to the Google Developers Console and enter the name of your new project. I’ve called this one “Django Login Mega-Tutorial.” The click on the “Create” button.
+The Lassaress application uses auth0.com for authentication. The frontend of this application has a sign in button ![sign-in](../../master/images/sign-in.png) which when used will bring up a auth0 login screen that gives you the choice of using your gmail account to login or to use a login provided by Lassares. Signing in will authenticate you for the frontend (quasar) of the application, giving you access to the data entry drawer on the left side of the app. Signing in will also authenticate you on the backend (django) of the app enabling you to entire data into the backend database through the frontend data entry drawer. 
 
-Google console
-![Console](../../master/images/google-console.png)
+To enable this authentication system you will first need to get an auth0 account, which you can learn more about getting an auth0 account by going to auth0.com. When you have an account you can create an auth0 custom API, which will provide you with an API_IDENTIFIER for both the secrets.py and secrets.json files described above. You then need to create a auth0 single page application. This will provide you with a CLIENT_ID and AUTH0_DOMAIN, which you will use as described above.
 
-You’ll be sent to the Google “API & Services” page. We want to use Gmail so click on it.
-![Dashboard](../../master/images/google-dashboard.png)
-
-The next screen shows all the details of the Gmail API. Click on the “Enable” button.
-![GmailApi](../../master/images/gmail-api.png)
-
-You may be asked for credentials at this point.
-![credentials](../../master/images/credentials.png)
-
-If so click on the “Create credentials” button. Make sure the fields are correct that we’re using the “Gmail API” with a “Web server” and accessing “User data.” Then click “What credentials do I need?”
-![add-credentials](../../master/images/add-credentials.png)
-
-Step 2 is to add a Name and Authorized Redirect URLs. The name I’ve just repeated the name of my overall project here. The redirect URL should be http://<domainname>/accounts/google/login/callback/. Then click on the “Create client ID” button.
-  ![consent](../master/images/consent.png)  
-  
-Third and final step is to configure the consent screen. This is the information shown to users after they click on the login button. They’ll be redirected to a Google site that shows the Product name and asks if the site has permission to access their Google account.
-![oauth-client-id](../../master/images/oauth-client-id.png)  
-
-Now we have what we want: a client ID (I’ve hidden mine in red). I recommend downloading it and storing somewhere secure. You don’t want this information public.
-![api-keys](../../master/images/api-keys.png) 
-  
-2. Configure Site and Social Apps
-  Go to the Admin site http://<domainname>/admin and notice Allauth has added a number of new sections for us.
-  Go into “Sites” on this page.
-  ![site](../../master/images/site.png) 
-  
-  Click on the existing Domain Name of “example.com”. Update it so the “Domain name” is <domainname>.
-  Click save.
-  ![site-edit](../../master/images/site-edit.png) 
-  
-  Now for each third-party application we want to add we just need to click on the “Add” button next to “Social applications” under “Social Accounts.”
-  ![social-app](../../master/images/social-app.png) 
-   
-On this page we need to select the provider (Google), provide a Name (Gmail), a Client ID, and a Secret Key. If you downloaded your API keys previously and open the file with a text editor you’ll see it is in JSON format and has both your Client ID and Client Secret. Enter both in here. Finally on the bottom of the page under “Sites” select “domainname” and click the -> arrow to add it to the Chosen Sites section. Now click on the “Save” button in the lower right of the screen.
+For a deeper read into this subject check out [Building Modern Applications with Django and Vue.js by Ahmed Bouchefra](https://auth0.com/blog/building-modern-applications-with-django-and-vuejs/).
