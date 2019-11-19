@@ -93,11 +93,11 @@ Django is a high-level Python Web framework that encourages rapid development an
 ## <a name="auth"></a>Authentication
 
 The Lassaress application uses auth0.com for authentication. The frontend of this application has a sign in button ![sign-in](../../master/images/sign-in.png) which when used will bring up a auth0 login screen that gives you the choice of using your gmail account to login or to use a login provided by Lassares. 
-[auth0-sign-in](../../master/images/auth0-sign-in.png)
+![auth0-sign-in](../../master/images/auth0-sign-in.png)
 Signing in will authenticate you for the frontend (quasar) of the application, giving you access to the data entry drawer on the left side of the app. Signing in will also authenticate you on the backend (django) of the app enabling you to entire data into the backend database through the frontend data entry drawer. 
 
 To enable this authentication system you will first need to get an auth0 account, which you can learn more about getting an auth0 account by going to auth0.com. When you have an account you can create an auth0 custom API, which will enable you to create an API_IDENTIFIER for both the secrets.py and secrets.json files described above. You then need to create a auth0 single page application. 
-[auth0-client](../../master/images/auth0-client.png)
+![auth0-client](../../master/images/auth0-client.png)
 This will provide you with a CLIENT_ID and AUTH0_DOMAIN, which you will use as described above. Finally, in the auth0 application you need to put the url, where the lassress app will be accesible, in "Allowed Callback URLs", "Allowed Web Origins", and "Allowed Logout URLs". 
 
 For a deeper read into this subject check out [Building Modern Applications with Django and Vue.js by Ahmed Bouchefra](https://auth0.com/blog/building-modern-applications-with-django-and-vuejs/).
