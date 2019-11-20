@@ -1,8 +1,11 @@
 <template>
   <q-layout view="lhr lpr lfr">
+    <!--// Left Drawer, check to see if authenticated -->
     <div v-if="!authenticated">
+      <!-- If not authenticated do nothing -->
     </div>
     <div v-else-if="authenticated">
+      <!-- If authenticated show drawer -->
       <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="teal">
         <!-- // measurement-list -->
         <q-card class="q-pa-md" style="max-width: 600px">
@@ -41,6 +44,7 @@
                 <q-input color="teal" filled v-model="measurement.properties.comment" id="comment" label="Comment *" hint="Comment" lazy-rules
                   :rules="[ val => val && val.length > 0 || 'Please type something']"/>
 
+                <!-- // date selection -->
                 <q-input color="teal" filled v-model="measurement.properties.date" id="date" label="Date *" hint="Date of measurement">
                   <template v-slot:append>
                     <q-icon name="event" class="cursor-pointer">
@@ -54,7 +58,9 @@
                     </q-icon>
                   </template>
                 </q-input>
+                <!-- // date selection -->
 
+                <!-- // time selection -->
                 <q-input color="teal" filled v-model="measurement.properties.time" id="time" label="Time *" hint="Time of measurement" mask="fulltime" :rules="['fulltime']">
                   <template v-slot:append>
                     <q-icon name="access_time" class="cursor-pointer">
@@ -68,7 +74,9 @@
                     </q-icon>
                   </template>
                 </q-input>
+                <!-- // time selection -->
 
+                <!-- // longitude selection -->
                 <q-input color="teal" filled v-model="longitude" id="longitude" label="Longitude *" hint="Longitude of the bore hole">
                   <template v-slot:append>
                     <q-icon name="fas fa-globe-americas" class="cursor-pointer">
@@ -98,6 +106,9 @@
                     </q-icon>
                   </template>
                 </q-input>
+                <!-- // longitude selection -->
+
+                <!-- // latitude selection -->
                 <q-input color="teal" filled v-model="latitude" id="latitude" label="Latitude *" hint="Latitude of the bore hole">
                   <template v-slot:append>
                     <q-icon name="fas fa-globe-americas" class="cursor-pointer">
@@ -127,6 +138,9 @@
                     </q-icon>
                   </template>
                 </q-input>
+                <!-- // latitude selection -->
+
+                <!-- // submit, update, and reset -->
                 <div>
                   <q-btn label="Submit" type="submit" color="teal" class="text-black" v-if="!this.measurement.id" @click="createMeasurement()" >
                     <span v-if="creating">Creating... Please wait </span>
@@ -136,6 +150,7 @@
                   </q-btn>
                   <q-btn label="Reset" type="reset" color="teal" flat class="q-ml-sm" @click="onReset()" />
                 </div>
+                <!-- // submit, update, and reset -->
               </q-form>
             </div>
           </q-card>
@@ -147,6 +162,7 @@
     <!--// right side drawer -->
     <q-drawer side="right" v-model="rightDrawerOpen" show-if-above bordered content-class="teal">
       <q-list bordered class="rounded-borders">
+        <!-- // baselayers -->
         <q-expansion-item default-opened expand-separator icon="list" label="Base Layers">
           <div class="q-pa-md" style="min-width: 200px">
             <q-list link>
@@ -175,7 +191,9 @@
             </q-list>
           </div>
         </q-expansion-item>
+        <!-- // baselayers -->
 
+        <!-- // measurement, and powerlines layer -->
         <q-expansion-item default-opened expand-separator icon="list" label="Layers">
           <div class="q-pa-md q-gutter-y-sm column">
             <q-toggle
@@ -200,7 +218,9 @@
             />
           </div>
         </q-expansion-item>
+        <!-- // measurement, and powerlines layer -->
 
+        <!-- // state -->
         <q-expansion-item expand-separator icon="list" label="State">
           <q-markup-table class="table is-fullwidth" dense>
             <tr>
@@ -233,7 +253,9 @@
             </tr>
           </q-markup-table>
         </q-expansion-item>
+        <!-- // state -->
 
+        <!-- // legend -->
         <q-expansion-item expand-separator icon="list" label="Legend">
           <q-markup-table>
             <tr>
@@ -254,7 +276,9 @@
             </tr>
           </q-markup-table>
         </q-expansion-item>
+        <!-- // legend -->
 
+        <!-- // filter -->
         <q-expansion-item expand-separator icon="list" label="Filter">
           <q-markup-table class="table is-fullwidth">
             <tr>
@@ -276,7 +300,9 @@
             </tr>
           </q-markup-table>
         </q-expansion-item>
+        <!-- // filter -->
 
+        <!-- // search -->
         <q-expansion-item expand-separator icon="list" label="Search">
           <q-markup-table class="table is-fullwidth">
             <tr>
@@ -304,9 +330,9 @@
             </tr>
            </q-markup-table>
         </q-expansion-item>
+        <!-- // search -->
       </q-list>
     </q-drawer>
-
     <!--// left side drawer -->
 
     <!--// app map -->
@@ -479,8 +505,9 @@
         <q-btn flat dense round icon="menu" class="bg-teal text-black" @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu"></q-btn>
       </q-page-sticky>
     </div>
+    <!--// left side drawer buttons -->
 
-    <!--// map controls -->
+    <!--// ol map controls -->
     <q-page-sticky position="top-left" :offset="[18, 58]">
       <div id="ZoomTarget"></div>
     </q-page-sticky>
@@ -490,14 +517,18 @@
     <q-page-sticky position="bottom-left" :offset="[15, 8]">
       <div id="ScaleTarget"></div>
     </q-page-sticky>
-    <!--// right side drawer buttons -->
+    <!--// ol map controls -->
+
+    <!--// right side drawer button -->
     <q-page-sticky position="top-right" :offset="[18, 18]">
       <q-btn flat dense round icon="menu" class="bg-teal text-black" @click="rightDrawerOpen = !rightDrawerOpen" aria-label="Menu"></q-btn>
     </q-page-sticky>
     <q-page-sticky position="top-right" :offset="[18, 58]">
       <q-btn color="teal" class="text-black" @click="$q.fullscreen.toggle()" round :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'" />
     </q-page-sticky>
-    <!--// q-page-sticky tools -->
+    <!--// right side drawer button -->
+
+    <!--// select bar plot tool -->
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-fab icon="keyboard_arrow_up" direction="up" color="teal text-black">
         <q-fab-action color="teal" class="text-black" icon="fas fa-vector-square">
@@ -527,48 +558,67 @@
         </q-fab-action>
       </q-fab>
     </q-page-sticky>
-    <!--// q-page-sticky tools -->
+    <!--// select bar plot tool -->
+
+    <!--// base layer map attribution -->
     <q-page-sticky position="bottom-left" :offset="[200, 38]">
       <div id="AttributionTarget"></div>
     </q-page-sticky>
+    <!--// base layer map attribution -->
   </q-layout>
 </template>
 
 <script>
+// quasar and vuelayers import
 import { openURL, date } from 'quasar'
-import { camelCase } from 'lodash'
 import { findPointOnSurface, writeGeoJsonFeature } from 'vuelayers/lib/ol-ext'
+import { camelCase } from 'lodash'
+
+// ol controls import
 import ScaleLine from 'ol/control/ScaleLine'
 import OverviewMap from 'ol/control/OverviewMap'
 import Zoom from 'ol/control/Zoom'
 import Attribution from 'ol/control/Attribution'
+
+// other ol imports
 import { Style, Stroke, Fill, Circle } from 'ol/style'
 import { DEVICE_PIXEL_RATIO } from 'ol/has.js'
 import DragBox from 'ol/interaction/DragBox'
 import { platformModifierKeyOnly } from 'ol/events/condition.js'
 import { toLonLat } from 'ol/proj.js'
+
+// d3 barchart import
 import d3Barchart from '../mixins/vue-d3-barchart'
+
+// treeselect import
 import { Treeselect, LOAD_ROOT_OPTIONS } from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
+// axios import
 import axios from 'axios'
 
+// API service import
 import { APIService } from '../http/APIService'
 const apiService = new APIService()
 
+// auth service import
 import AuthService from '../auth/AuthService'
 const auth = new AuthService()
 const { login, logout, authenticated, authNotifier } = auth
 
+// measurement import
 import MeasurementList from './MeasurementList'
 
-// Import the EventBus.
+// EventBus import
 import { EventBus } from '../mixins/event-bus.js'
 
+// pubhost and secrets import
 import pubhost from '../assets/pubhost.json'
 import secrets from '../assets/secrets.json'
 let gettoken = function () {
   return secrets[0].MB_KEY
 }
+
 // color values for measurements concentrations
 let concentration2color = function (concentration) {
   let r = 0
@@ -606,10 +656,23 @@ export default {
       this.authenticated = authState.authenticated
     })
     return {
-      geolocPosition: undefined,
+      // map parameters
+      center: [-73.851271, 40.725070],
+      // center: [-79.0085632, 35.9415808],
+      zoom: 15,
+      rotation: 0,
+      mapVisible: true,
+      // authentication and drawers
+      auth,
+      authenticated,
+      leftDrawerOpen: false,
+      rightDrawerOpen: false,
+      // data input attributes
       showCreateMessage: false,
       showUpdateMessage: false,
-      showError: false,
+      creating: false,
+      updating: false,
+      // measurement data structure and associate attributs
       measurement: {
         'type': 'Feature',
         'properties': {
@@ -631,21 +694,8 @@ export default {
       longitude: null,
       latitude: null,
       measurements: '',
-      creating: false,
-      updating: false,
-      auth,
-      authenticated,
-      dialog: false,
-      leftDrawerOpen: false,
-      rightDrawerOpen: false,
-      baselayer: 'osm',
-      barplotpoint: undefined,
-      powerlinesModel: 'Selected',
       measurementsModel: 'Selected',
-      center: [-73.851271, 40.725070],
-      // center: [-79.0085632, 35.9415808],
-      zoom: 15,
-      rotation: 0,
+      // measurement search and popup attributes
       searchtoptions: [],
       searchjoptions: [],
       starttimestamp: this.currentDate() + 'T' + this.currentTime(),
@@ -658,18 +708,22 @@ export default {
       joptions: null,
       pid: undefined,
       chemical_id: undefined,
-      powerline: undefined,
       concentration: undefined,
       timestamp: undefined,
+      // powerline attributes
+      powerlinesModel: 'Selected',
+      powerline: undefined,
+      // stored and selected features
       storeFeatures: [],
       selectedFeatures: [],
       selectedFeaturesBarBox: [],
       isBox: undefined,
+      // state attributes
       eventCoordinate: [NaN, NaN],
       deviceCoordinate: [NaN, NaN],
       coordinateAccuracy: undefined,
       boxCoordinate: undefined,
-      mapVisible: true,
+      // draw controls
       drawControls: [
         {
           type: 'point',
@@ -692,6 +746,8 @@ export default {
       drawType: undefined,
       drawnFeatures: [],
       coordinates: [],
+      // bar plot options
+      barplotpoint: undefined,
       baroptions: {
         colors: ['red', 'lightgreen'],
         rules: true,
@@ -717,6 +773,8 @@ export default {
           h: 150
         }
       },
+      // baselayers config
+      baselayer: 'osm',
       baseLayers: [
         {
           name: 'osm',
@@ -770,6 +828,7 @@ export default {
     }
   },
   created: function () {
+    // search timestamp
     let that = this
     let turl = 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/timestamp/?format=json'
     axios.get(turl)
@@ -779,7 +838,7 @@ export default {
       .catch(function (error) {
         console.log(error)
       })
-
+    // search jobid
     let jurl = 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/jobid/?format=json'
     axios.get(jurl)
       .then(function (response) {
@@ -790,6 +849,7 @@ export default {
       })
   },
   watch: {
+    // watch for selected features
     selectedFeatures: function (features) {
       let i
       let geometries = []
@@ -1064,6 +1124,53 @@ export default {
         this.joptions = this.getFilterFields()[1].map(id => ({ id, label: `${id}` }))
       }
     },
+    // filter data only on the client side. Dependent on data available from the DRF server
+    filterMeasurements: function () {
+      // check to see if there are stored features, and if there are then add them
+      // to the layerSource features,so all features are available for filtering.
+      let i
+      if (this.storeFeatures.length > 0) {
+        for (i = 0; i < this.storeFeatures.length; i++) {
+          let j
+          for (j = 0; j < this.$refs.layerSource.length; j++) {
+            let features = this.$refs.layerSource[j].getFeatures()
+            if (features[0].values_.chemical_id) {
+              this.$refs.layerSource[j].addFeature(this.storeFeatures[i])
+            }
+          }
+        }
+        this.storeFeatures = []
+      }
+      // if there are two timestamps, and if they are in order than filter
+      if (this.starttimestamp && this.endtimestamp) {
+        if (this.endtimestamp < this.starttimestamp) {
+          this.$notification.open('You have to pick end timestep later than the start timestamp')
+        } else {
+          for (i = 0; i < this.$refs.layerSource.length; i++) {
+            let features = this.$refs.layerSource[i].getFeatures()
+            if (features[0].values_.chemical_id) {
+              let j
+              for (j = 0; j < features.length; j++) {
+                let id = features[j].id_
+                let feature = this.$refs.layerSource[i].getFeatureById(id)
+                if (feature.values_.timestamp < this.starttimestamp) {
+                  this.$refs.layerSource[i].removeFeature(feature)
+                  this.storeFeatures.push(feature)
+                } else if (feature.values_.timestamp > this.endtimestamp) {
+                  this.$refs.layerSource[i].removeFeature(feature)
+                  this.storeFeatures.push(feature)
+                }
+              }
+            }
+          }
+        }
+      // other wise tell user they have to refine their search
+      } else if (this.starttimestamp && !this.endtimestamp) {
+        this.$notification.open('You have to select a end timestep')
+      } else if (!this.starttimestamp && this.endtimestamp) {
+        this.$notification.open('You have to select a start timestep')
+      }
+    },
     searchMeasurements: function () {
       if (this.starttimestampx && this.endtimestampx) {
         if (this.endtimestampx < this.starttimestampx) {
@@ -1131,53 +1238,6 @@ export default {
         }
       }
     },
-    // filter data only on the client side. Dependent on data available from the DRF server
-    filterMeasurements: function () {
-      // check to see if there are stored features, and if there are then add them
-      // to the layerSource features,so all features are available for filtering.
-      let i
-      if (this.storeFeatures.length > 0) {
-        for (i = 0; i < this.storeFeatures.length; i++) {
-          let j
-          for (j = 0; j < this.$refs.layerSource.length; j++) {
-            let features = this.$refs.layerSource[j].getFeatures()
-            if (features[0].values_.chemical_id) {
-              this.$refs.layerSource[j].addFeature(this.storeFeatures[i])
-            }
-          }
-        }
-        this.storeFeatures = []
-      }
-      // if there are two timestamps, and if they are in order than filter
-      if (this.starttimestamp && this.endtimestamp) {
-        if (this.endtimestamp < this.starttimestamp) {
-          this.$notification.open('You have to pick end timestep later than the start timestamp')
-        } else {
-          for (i = 0; i < this.$refs.layerSource.length; i++) {
-            let features = this.$refs.layerSource[i].getFeatures()
-            if (features[0].values_.chemical_id) {
-              let j
-              for (j = 0; j < features.length; j++) {
-                let id = features[j].id_
-                let feature = this.$refs.layerSource[i].getFeatureById(id)
-                if (feature.values_.timestamp < this.starttimestamp) {
-                  this.$refs.layerSource[i].removeFeature(feature)
-                  this.storeFeatures.push(feature)
-                } else if (feature.values_.timestamp > this.endtimestamp) {
-                  this.$refs.layerSource[i].removeFeature(feature)
-                  this.storeFeatures.push(feature)
-                }
-              }
-            }
-          }
-        }
-      // other wise tell user they have to refine their search
-      } else if (this.starttimestamp && !this.endtimestamp) {
-        this.$notification.open('You have to select a end timestep')
-      } else if (!this.starttimestamp && this.endtimestamp) {
-        this.$notification.open('You have to select a start timestep')
-      }
-    },
     currentDate: function () {
       let timeStamp = Date.now()
       let formattedString = date.formatDate(timeStamp, 'YYYY-MM-DD')
@@ -1220,7 +1280,6 @@ export default {
     createMeasurement: function () {
       let coordinates = [parseFloat(this.longitude), parseFloat(this.latitude)]
       this.measurement.geometry.coordinates = coordinates
-      // console.log('created measurement ' + JSON.stringify(this.measurement))
       this.creating = true
       apiService.createMeasurement(this.measurement).then((result) => {
         // console.log(result)
@@ -1228,6 +1287,15 @@ export default {
         if (result.status === 201) {
           this.measurement = result.data
           this.showCreateMessage = true
+          let i
+          for (i = 0; i < this.$refs.layerSource.length; i++) {
+            let features = this.$refs.layerSource[i].getFeatures()
+            if (features[0].values_.chemical_id) {
+              this.$refs.layerSource[i].addFeature(this.measurement)
+              this.$refs.drawSource.clearFeatures()
+            }
+          }
+          // console.log(this.$refs.layerSource)
         }
         sleep(1000).then(() => {
           this.creating = false
@@ -1240,11 +1308,19 @@ export default {
       // console.log('update measurement ' + JSON.stringify(this.measurement))
       this.updating = true
       apiService.updateMeasurement(this.measurement).then((result) => {
-        // console.log(result)
         // success
         if (result.status === 200) {
-          // this.measurement = {}
+          this.measurement = result.data
           this.showUpdateMessage = true
+          let i
+          for (i = 0; i < this.$refs.layerSource.length; i++) {
+            let features = this.$refs.layerSource[i].getFeatures()
+            if (features[0].values_.chemical_id) {
+              let feature = this.$refs.layerSource[i].getFeatureById(this.measurement.id)
+              this.$refs.layerSource[i].removeFeature(feature)
+              this.$refs.layerSource[i].addFeature(this.measurement)
+            }
+          }
           sleep(1000).then(() => {
             this.updating = false
           })
