@@ -8,7 +8,7 @@
       <!-- If authenticated show drawer -->
       <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="teal">
         <!-- // measurement-list -->
-        <q-card class="q-pa-md" style="max-width: 600px">
+        <q-card class="q-pa-md" style="max-width: 300px">
           <q-btn label="View List of Measurements" type="viewlist" color="teal" class="text-black">
             <q-popup-proxy class="measurement-popup" transition-show="flip-up" transition-hide="flip-down">
               <measurement-list></measurement-list>
@@ -20,9 +20,9 @@
         <q-separator />
         <q-space />
         <!--// measurement-create -->
-        <div class="q-pa-md" style="max-width: 600px">
+        <div class="q-pa-md" style="max-width: 300px">
           <q-card>
-            <div class="q-pa-md" style="max-width: 600px">
+            <div class="q-pa-md" style="max-width: 300px">
               <div class="text-subtitle2">Input Measurement Data</div>
 
               <q-form class="q-gutter-md">
@@ -156,6 +156,18 @@
           </q-card>
         </div>
         <!--// /measurement-create -->
+        <q-space />
+        <q-separator />
+        <q-space />
+        <!-- // upload-file -->
+        <q-card class="q-pa-md" style="max-width: 300px">
+          <q-uploader label="Upload json data file" color="teal" text-color="black" flat bordered style="max-width: 250px"
+            ref="uploader"
+            accept=".json"
+            :factory="uploadFile"
+          />
+        </q-card>
+        <!-- // upload-file -->
       </q-drawer>
     </div>
 
@@ -597,6 +609,8 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 // axios import
 import axios from 'axios'
 
+// const fs = require('fs')
+
 // API service import
 import { APIService } from '../http/APIService'
 const apiService = new APIService()
@@ -656,6 +670,8 @@ export default {
       this.authenticated = authState.authenticated
     })
     return {
+      loading: undefined,
+      caption: undefined,
       // map parameters
       center: [-73.851271, 40.725070],
       // center: [-79.0085632, 35.9415808],
@@ -1265,6 +1281,7 @@ export default {
       this.coordinateAccuracy = accuracy
     },
     onReset: function () {
+      this.measurement.id = null
       this.measurement.properties.bore_id = null
       this.measurement.properties.job_id = null
       this.measurement.properties.device_id = null
@@ -1319,6 +1336,7 @@ export default {
               let feature = this.$refs.layerSource[i].getFeatureById(this.measurement.id)
               this.$refs.layerSource[i].removeFeature(feature)
               this.$refs.layerSource[i].addFeature(this.measurement)
+              this.$refs.drawSource.clearFeatures()
             }
           }
           sleep(1000).then(() => {
@@ -1331,6 +1349,43 @@ export default {
       this.measurement = measurement
       this.longitude = measurement.geometry.coordinates[0]
       this.latitude = measurement.geometry.coordinates[1]
+    },
+    uploadFile: function (files) {
+      let that = this
+      that.loading = true
+      let Uploader = this.$refs.uploader
+      let reader = new FileReader()
+      let file = files[0]
+      reader.readAsText(file)
+      reader.onerror = err => console.error(`Failed to read file: ${err}`)
+      reader.onload = function () {
+        let geojson = JSON.parse(reader.result)
+        that.creating = true
+        let i
+        for (i = 0; i < geojson.features.length; i++) {
+          apiService.createMeasurement(geojson.features[i]).then((result) => {
+            if (result.status === 201) {
+              that.measurement = result.data
+              that.showCreateMessage = true
+              let j
+              for (j = 0; j < that.$refs.layerSource.length; j++) {
+                let features = that.$refs.layerSource[j].getFeatures()
+                if (features[0].values_.chemical_id) {
+                  that.$refs.layerSource[j].addFeature(that.measurement)
+                  that.$refs.drawSource.clearFeatures()
+                }
+              }
+            }
+            sleep(1000).then(() => {
+              that.creating = false
+            })
+          })
+        }
+        Uploader.removeFile(file)
+        sleep(2000).then(() => {
+          that.loading = false
+        })
+      }
     }
   },
   mounted () {

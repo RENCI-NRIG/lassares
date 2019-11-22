@@ -32,15 +32,11 @@ module.exports = function (ctx) {
 
       components: [
         'QLayout',
-        'QHeader',
-        'QFooter',
+        'QPageContainer',
+        'QPage',
         'QSeparator',
         'QSpace',
         'QDrawer',
-        'QPageContainer',
-        'QPage',
-        'QToolbar',
-        'QToolbarTitle',
         'QBtn',
         'QBtnDropdown',
         'QInput',
@@ -54,14 +50,7 @@ module.exports = function (ctx) {
         'QItem',
         'QItemSection',
         'QItemLabel',
-        'QTabs',
-        'QTab',
-        'QRouteTab',
-        'QTabPanels',
-        'QTabPanel',
         'QOptionGroup',
-        'QBtn',
-        'QMenu',
         'QRadio',
         'QToggle',
         'QExpansionItem',
@@ -77,7 +66,8 @@ module.exports = function (ctx) {
         'QDialog',
         'QInnerLoading',
         'QSpinnerGears',
-        'QAvatar'
+        'QAvatar',
+        'QUploader'
       ],
 
       directives: [
