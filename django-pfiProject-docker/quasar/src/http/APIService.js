@@ -38,5 +38,10 @@ export class APIService{
     const url = `https://${API_URL}/meas/api/measurements/${measurement.id}`
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.put(url, measurement, { headers: headers })
-  }    
+  }
+  createPowerline(powerline) {
+    const url = `https://${API_URL}/drf/api/powerlines/`
+    const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
+    return axios.post(url, powerline, { headers: headers })
+  }
 } 

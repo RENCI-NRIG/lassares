@@ -5,7 +5,7 @@ class drf_Measurement_Filter(filters.FilterSet):
    class Meta:
         model = drf_Measurement
         fields = {
-            'fid': ['exact'],
+            'id': ['exact'],
             'bore_id': ['exact'],
             'job_id': ['exact'],
             'device_id': ['exact'],

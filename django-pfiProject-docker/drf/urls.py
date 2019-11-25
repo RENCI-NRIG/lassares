@@ -18,11 +18,13 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register(r'fdr_18001_0_11', views.fdr_18001_0_11_View)
+router.register(r'powerline', views.drf_Powerline_View)
 router.register(r'meas', views.drf_Measurement_View)
 router.register(r'timestamp', views.drf_Timestamp_View)
 router.register(r'jobid', views.drf_Jobid_View)
 
 urlpatterns = [
+    url(r'^api/powerlines/$', views.powerline_list),
+    url(r'^api/powerlines/(?P<id>[0-9]+)$', views.powerline_detail),
     url(r'^api/', include(router.urls)),
 ]

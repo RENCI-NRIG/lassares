@@ -9,23 +9,24 @@ STATUS_CHOICES = (
 )
 
 # Create your models here.
-class fdr_18001_0_11(models.Model):
-    fid = models.IntegerField(primary_key=True)
+class Powerline(models.Model):
+    #id = models.IntegerField(primary_key=True)
     geom = models.MultiLineStringField(null=False)
-    title = models.TextField(20,null=False)
-    powerline = models.TextField(50,null=False)
+    title = models.TextField(50,null=False)
+    powerline = models.TextField(20,null=False)
     voltage = models.IntegerField(null=False)
-    MONTH_DAY_YEAR = '%m/%d/%Y'
-    MONTH_YEAR = '%m/%Y'
-    DATE_CHOICE= (
-                  (MONTH_DAY_YEAR, 'Month Day Year'),
-                  (MONTH_YEAR, 'Month Year')
-                 )
-    service_date = models.CharField('Date Choice', choices=DATE_CHOICE,  max_length=10, null=False)
+    service_date = models.TextField(10,null=True)
+    #MONTH_DAY_YEAR = '%m/%d/%Y'
+    #MONTH_YEAR = '%m/%Y'
+    #DATE_CHOICE= (
+    #              (MONTH_DAY_YEAR, 'Month Day Year'),
+    #              (MONTH_YEAR, 'Month Year')
+    #             )
+    #service_date = models.CharField('Date Choice', choices=DATE_CHOICE,  max_length=10, null=False)
 
 
 class drf_Measurement(models.Model):
-    fid = models.IntegerField(primary_key=True)
+    id = models.IntegerField(primary_key=True)
     bore_id = models.CharField(max_length=20)
     job_id = models.CharField(max_length=20)
     device_id = models.CharField(max_length=20)

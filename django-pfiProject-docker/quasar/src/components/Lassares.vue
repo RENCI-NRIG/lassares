@@ -392,6 +392,7 @@
                       </template>
                     </q-banner>
                     <div v-if="pid == feature.properties['powerline']">
+                      Title: {{ ptitle }}<br>
                       Powerline: {{ powerline }}<br>
                       Voltage: {{ feature.properties['voltage'] }}<br>
                       Service Date: {{ feature.properties['service_date'] }}
@@ -727,7 +728,21 @@ export default {
       concentration: undefined,
       timestamp: undefined,
       // powerline attributes
+      powerlines: {
+        'type': 'Feature',
+        'properties': {
+          'title': undefined,
+          'powerline': undefined,
+          'voltage': undefined,
+          'service_date': undefined
+        },
+        'geometry': {
+          'type': 'MultiLineString',
+          'coordinates': [null, null]
+        }
+      },
       powerlinesModel: 'Selected',
+      ptitle: undefined,
       powerline: undefined,
       // stored and selected features
       storeFeatures: [],
@@ -815,7 +830,7 @@ export default {
           visible: true,
           source: {
             cmp: 'vl-source-vector',
-            url: 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/fdr_18001_0_11/?format=json'
+            url: 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/powerline/?format=json'
           },
           style: [
             {
@@ -1088,6 +1103,7 @@ export default {
             this.isBox = 'no'
           } else if (properties['powerline']) {
             this.pid = properties['powerline']
+            this.ptitle = properties['title']
             this.powerline = this.pid
             this.concentration = undefined
             this.timestamp = undefined
@@ -1356,30 +1372,53 @@ export default {
       let Uploader = this.$refs.uploader
       let reader = new FileReader()
       let file = files[0]
+      Uploader.removeFile(files)
       reader.readAsText(file)
       reader.onerror = err => console.error(`Failed to read file: ${err}`)
       reader.onload = function () {
         let geojson = JSON.parse(reader.result)
         that.creating = true
         let i
-        for (i = 0; i < geojson.features.length; i++) {
-          apiService.createMeasurement(geojson.features[i]).then((result) => {
-            if (result.status === 201) {
-              that.measurement = result.data
-              that.showCreateMessage = true
-              let j
-              for (j = 0; j < that.$refs.layerSource.length; j++) {
-                let features = that.$refs.layerSource[j].getFeatures()
-                if (features[0].values_.chemical_id) {
-                  that.$refs.layerSource[j].addFeature(that.measurement)
-                  that.$refs.drawSource.clearFeatures()
+        if (geojson.features[0].properties.chemical_id) {
+          for (i = 0; i < geojson.features.length; i++) {
+            apiService.createMeasurement(geojson.features[i]).then((result) => {
+              if (result.status === 201) {
+                that.measurement = result.data
+                that.showCreateMessage = true
+                let j
+                for (j = 0; j < that.$refs.layerSource.length; j++) {
+                  let features = that.$refs.layerSource[j].getFeatures()
+                  if (features[0].values_.chemical_id) {
+                    that.$refs.layerSource[j].addFeature(that.measurement)
+                  }
                 }
               }
-            }
-            sleep(1000).then(() => {
-              that.creating = false
+              sleep(1000).then(() => {
+                that.creating = false
+              })
             })
-          })
+          }
+        } else if (geojson.features[0].properties.powerline) {
+          for (i = 0; i < geojson.features.length; i++) {
+            apiService.createPowerline(geojson.features[i]).then((result) => {
+              if (result.status === 201) {
+                that.powerlines = result.data
+                that.showCreateMessage = true
+                let j
+                for (j = 0; j < that.$refs.layerSource.length; j++) {
+                  let features = that.$refs.layerSource[j].getFeatures()
+                  if (features[0].values_.powerline) {
+                    that.$refs.layerSource[j].addFeature(that.powerlines)
+                  }
+                }
+              }
+              sleep(1000).then(() => {
+                that.creating = false
+              })
+            })
+          }
+        } else {
+          alert('Incorrect data in your file.')
         }
         Uploader.removeFile(file)
         sleep(2000).then(() => {
