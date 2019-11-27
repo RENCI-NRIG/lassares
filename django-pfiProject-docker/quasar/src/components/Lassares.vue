@@ -296,13 +296,13 @@
             <tr>
               <td>
                 <q-datetime-picker today-btn now-btn outlined label="Select Start DateTime" mode="datetime" color="teal"
-                  v-model="starttimestamp" format24h clearable></q-datetime-picker>
+                  v-model="starttimestamp" default-standard="iso" format24h clearable></q-datetime-picker>
               </td>
             </tr>
             <tr>
               <td>
                 <q-datetime-picker today-btn now-btn outlined label="Select End DateTime" mode="datetime" color="teal"
-                  v-model="endtimestamp" format24h clearable></q-datetime-picker>
+                  v-model="endtimestamp" default-standard="iso" format24h clearable></q-datetime-picker>
               </td>
             </tr>
             <tr>
@@ -326,13 +326,13 @@
             <tr>
               <td>
                 <q-datetime-picker today-btn now-btn outlined label="Select Start DateTime" mode="datetime" color="teal"
-                  v-model="starttimestampx" format24h clearable></q-datetime-picker>
+                  v-model="starttimestampx" default-standard="iso" format24h clearable></q-datetime-picker>
               </td>
             </tr>
             <tr>
               <td>
                 <q-datetime-picker today-btn now-btn outlined label="Select End DateTime" mode="datetime" color="teal"
-                  v-model="endtimestampx" format24h clearable></q-datetime-picker>
+                  v-model="endtimestampx" default-standard="iso" format24h clearable></q-datetime-picker>
               </td>
             </tr>
             <tr>
@@ -846,7 +846,7 @@ export default {
           visible: true,
           source: {
             cmp: 'vl-source-vector',
-            url: this.MeasurementsURL('2019-05-12T00:00:00', '2019-12-20T17:43:30')
+            url: this.MeasurementsURL('2019-05-12 00:00:00', '2019-12-20 17:43:30')
           },
           style: [
             {
@@ -1208,6 +1208,8 @@ export default {
         if (this.endtimestampx < this.starttimestampx) {
           this.$notification.open('You have to pick end timestep later than the start timestamp!')
         } else {
+          this.starttimestampx = this.starttimestampx.replace('T', ' ')
+          this.endtimestampx = this.endtimestampx.replace('T', ' ')
           let i
           for (i = 0; i < this.$refs.layerSource.length; i++) {
             let features = this.$refs.layerSource[i].getFeatures()
@@ -1247,6 +1249,8 @@ export default {
         if (!this.jobidsx) {
           this.$notification.open('You have to select something!')
         } else if (this.jobidsx) {
+          this.starttimestampx = this.starttimestampx.replace('T', ' ')
+          this.endtimestampx = this.endtimestampx.replace('T', ' ')
           let i
           for (i = 0; i < this.$refs.layerSource.length; i++) {
             let features = this.$refs.layerSource[i].getFeatures()

@@ -15,8 +15,8 @@ from cryptography.x509 import load_pem_x509_certificate
 from cryptography.hazmat.backends import default_backend
 from .serializers import Powerline_Serializer, drf_Measurement_Serializer, drf_Timestamp_Serializer, drf_Jobid_Serializer
 from .models import Powerline, drf_Measurement, drf_Timestamp, drf_Jobid
-from .filters import drf_Measurement_Filter, drf_Timestamp_Filter, drf_Jobid_Filter
-#from rest_framework_gis.filters import InBBoxFilter
+from url_filter.integrations.drf import DjangoFilterBackend
+from rest_framework_gis.filters import InBBoxFilter
 
 def get_token_auth_header(request):
     #Obtains the access token from the Authorization Header
@@ -117,19 +117,20 @@ class drf_Powerline_View(viewsets.ModelViewSet):
 class drf_Measurement_View(viewsets.ModelViewSet):
     queryset = drf_Measurement.objects.all()
     serializer_class = drf_Measurement_Serializer
-    filter_class = drf_Measurement_Filter
-    #bbox_filter_field = 'point'
-    #filter_backends = (InBBoxFilter, )
-    #bbox_filter_include_overlapping = True # Optional
+    bbox_filter_field = 'geom'
+    filter_backends = [DjangoFilterBackend, InBBoxFilter]
+    filter_fields = ['id','bore_id','job_id','device_id','chemical_id','concentration','timestamp','status','comment']
+    bbox_filter_include_overlapping = True
 
 class drf_Timestamp_View(viewsets.ModelViewSet):
     queryset = drf_Timestamp.objects.all()
     serializer_class = drf_Timestamp_Serializer
-    filter_class = drf_Timestamp_Filter
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['id','label']
 
 class drf_Jobid_View(viewsets.ModelViewSet):
     queryset = drf_Jobid.objects.all()
     serializer_class = drf_Jobid_Serializer
-    filter_class = drf_Jobid_Filter
-
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['id','label']
 

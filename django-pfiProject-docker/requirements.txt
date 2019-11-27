@@ -2,7 +2,7 @@ Django==2.2.4
 djangorestframework==3.9.1
 djangorestframework-gis==0.14.0
 django-filter==2.2
-djangorestframework-filters>=0.11.1.dev0
+django-url-filter==0.3.14
 djangorestframework-queryfields==1.0.0
 djangorestframework-jwt==1.11.0
 django-cors-headers==3.1.1

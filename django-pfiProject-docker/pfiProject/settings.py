@@ -53,8 +53,6 @@ INSTALLED_APPS = [
     'rest_framework_gis', # new
     'rest_framework_jwt', # auth0
 
-    'django_filters', # new
-    'rest_framework_filters', # new
     'drf', # new
 ]
 
@@ -67,7 +65,8 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
    ],
    'DEFAULT_FILTER_BACKENDS': [
-        'rest_framework_filters.backends.ComplexFilterBackend',
+        #'rest_framework_filters.backends.ComplexFilterBackend',
+        'url_filter.integrations.drf.DjangoFilterBackend',
    ],
    'DEFAULT_PERMISSION_CLASSES': [
         #'rest_framework.permissions.IsAuthenticated', # auth0
