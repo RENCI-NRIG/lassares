@@ -1124,9 +1124,23 @@ export default {
         return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx
       } else if (jobidsx) {
         if (starttimestampx) {
-          return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id=' + jobidsx
+          if (jobidsx.length === 1) {
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id=' + jobidsx
+          } else if (jobidsx.length > 1) {
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id__in=' + jobidsx
+          } else if (jobidsx.length === 0) {
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx
+          } else {
+            alert('this should not happen!')
+          }
         } else if (!starttimestampx) {
-          return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&job_id=' + jobidsx
+          if (jobidsx.length === 1) {
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&job_id=' + jobidsx
+          } else if (jobidsx.length > 1) {
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&job_id__in=' + jobidsx
+          } else {
+            alert('this should not happen, too!')
+          }
         }
       }
     },
