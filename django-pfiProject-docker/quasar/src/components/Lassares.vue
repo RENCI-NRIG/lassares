@@ -584,7 +584,7 @@
 <script>
 // quasar and vuelayers import
 import { openURL, date } from 'quasar'
-import { findPointOnSurface, writeGeoJsonFeature } from 'vuelayers/lib/ol-ext'
+import { findPointOnSurface, writeGeoJsonFeature, loadingBBox } from 'vuelayers/lib/ol-ext'
 import { camelCase } from 'lodash'
 
 // ol controls import
@@ -675,7 +675,7 @@ export default {
       caption: undefined,
       // map parameters
       center: [-73.851271, 40.725070],
-      // center: [-79.0085632, 35.9415808],
+      // center: [this.deviceCoordinate[0], this.deviceCoordinate[1]],
       zoom: 15,
       rotation: 0,
       mapVisible: true,
@@ -715,10 +715,10 @@ export default {
       // measurement search and popup attributes
       searchtoptions: [],
       searchjoptions: [],
-      starttimestamp: this.currentDate() + 'T' + this.currentTime(),
-      endtimestamp: this.currentDate() + 'T' + this.currentTime(),
-      starttimestampx: this.currentDate() + 'T' + this.currentTime(),
-      endtimestampx: this.currentDate() + 'T' + this.currentTime(),
+      starttimestamp: this.startDate() + 'T00:00:00',
+      endtimestamp: this.endDate() + 'T00:00:00',
+      starttimestampx: this.startDate() + 'T00:00:00',
+      endtimestampx: this.endDate() + 'T00:00:00',
       toptions: null,
       jobids: undefined,
       jobidsx: undefined,
@@ -846,7 +846,15 @@ export default {
           visible: true,
           source: {
             cmp: 'vl-source-vector',
-            url: this.MeasurementsURL('2019-05-12 00:00:00', '2019-12-20 17:43:30')
+            url (extent, starttimestampx, endtimestampx) {
+              starttimestampx = '2018-10-01 00:00:00'
+              endtimestampx = '2020-01-01 00:00:00'
+              return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' +
+                starttimestampx.replace('T', ' ') + '&timestamp__lte=' + endtimestampx.replace('T', ' ') + '&in_bbox=' + extent.join(',').toString()
+            },
+            strategyFactory () {
+              return loadingBBox
+            }
           },
           style: [
             {
@@ -1092,7 +1100,6 @@ export default {
         let feature = features[0]
         if (feature.id_ !== undefined) {
           let properties = feature.getProperties()
-          // alert('click')
           if (properties['chemical_id']) {
             this.pid = properties['chemical_id']
             this.chemical_id = this.pid
@@ -1119,25 +1126,25 @@ export default {
         }
       }
     },
-    MeasurementsURL: function (starttimestampx, endtimestampx, jobidsx) {
+    MeasurementsURL: function (extent, starttimestampx, endtimestampx, jobidsx) {
       if (!jobidsx) {
-        return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx
+        return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&in_bbox=' + extent.join(',').toString()
       } else if (jobidsx) {
         if (starttimestampx) {
           if (jobidsx.length === 1) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id=' + jobidsx
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
           } else if (jobidsx.length > 1) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id__in=' + jobidsx
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id__in=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
           } else if (jobidsx.length === 0) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&in_bbox=' + extent.join(',').toString()
           } else {
             alert('this should not happen!')
           }
         } else if (!starttimestampx) {
           if (jobidsx.length === 1) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&job_id=' + jobidsx
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&job_id=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
           } else if (jobidsx.length > 1) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&job_id__in=' + jobidsx
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&job_id__in=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
           } else {
             alert('this should not happen, too!')
           }
@@ -1228,8 +1235,12 @@ export default {
           for (i = 0; i < this.$refs.layerSource.length; i++) {
             let features = this.$refs.layerSource[i].getFeatures()
             if (features[0].values_.chemical_id) {
+              let extent = this.$refs.layerSource[1].$source.getExtent()
+              let sw = toLonLat([extent[0], extent[1]])
+              let ne = toLonLat([extent[2], extent[3]])
+              extent = [sw[0], sw[1], ne[0], ne[1]]
               // url to get data from
-              let url = this.MeasurementsURL(this.starttimestampx, this.endtimestampx, this.jobidsx)
+              let url = this.MeasurementsURL(extent, this.starttimestampx, this.endtimestampx, this.jobidsx)
               // the that is used to deal with this scope
               var that = this
               // eye is used for i to deal with the async effects of axios
@@ -1269,7 +1280,12 @@ export default {
           for (i = 0; i < this.$refs.layerSource.length; i++) {
             let features = this.$refs.layerSource[i].getFeatures()
             if (features[0].values_.chemical_id) {
-              let url = this.MeasurementsURL(this.starttimestampx, this.endtimestampx, this.jobidsx)
+              let extent = this.$refs.layerSource[1].$source.getExtent()
+              let sw = toLonLat([extent[0], extent[1]])
+              let ne = toLonLat([extent[2], extent[3]])
+              extent = [sw[0], sw[1], ne[0], ne[1]]
+
+              let url = this.MeasurementsURL(extent, this.starttimestampx, this.endtimestampx, this.jobidsx)
               this.layers[i].source.url = url
               this.$refs.layerSource[i].removeFeatures(features)
               // the that is used to deal with this scope
@@ -1287,6 +1303,26 @@ export default {
           }
         }
       }
+    },
+    startDate: function () {
+      let date = new Date()
+      let year = date.getFullYear() - 1
+      let month = date.getMonth()
+      month = (month < 10 ? '0' : '') + month
+      let day = date.getDate()
+      day = (day < 10 ? '0' : '') + day
+      let startDate = year.toString() + '-' + month.toString() + '-' + day.toString()
+      return startDate
+    },
+    endDate: function () {
+      let date = new Date()
+      let year = date.getFullYear() + 1
+      let month = date.getMonth()
+      month = (month < 10 ? '0' : '') + month
+      let day = date.getDate()
+      day = (day < 10 ? '0' : '') + day
+      let endDate = year.toString() + '-' + month.toString() + '-' + day.toString()
+      return endDate
     },
     currentDate: function () {
       let timeStamp = Date.now()
