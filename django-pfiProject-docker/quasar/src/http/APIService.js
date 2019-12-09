@@ -9,8 +9,8 @@ export class APIService{
   constructor(){
       
   }
-  getMeasurements() {
-    const url = "https://" + API_URL + "/meas/api/measurements/"
+  getMeasurements(param) {
+    const url = `https://${API_URL}/meas/api/${param}/`
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.get(url, { headers: headers }).then(response => response.data)
   }
@@ -19,23 +19,23 @@ export class APIService{
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.get(url, { headers: headers }).then(response => response.data)
   }
-  getMeasurement(id) {
-    const url = `https://${API_URL}/meas/api/measurements/${id}`
+  getMeasurement(param,id) {
+    const url = `https://${API_URL}/meas/api/${param}/${id}`
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.get(url, { headers: headers }).then(response => response.data)
   }    
-  deleteMeasurement(measurement) {
-    const url = `https://${API_URL}/meas/api/measurements/${measurement.id}`
+  deleteMeasurement(param,measurement) {
+    const url = `https://${API_URL}/meas/api/${param}/${measurement.id}`
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.delete(url, { headers: headers })
   }
-  createMeasurement(measurement) {
-    const url = `https://${API_URL}/meas/api/measurements/`
+  createMeasurement(param,measurement) {
+    const url = `https://${API_URL}/meas/api/${param}/`
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.post(url, measurement, { headers: headers })
   }
-  updateMeasurement(measurement) {
-    const url = `https://${API_URL}/meas/api/measurements/${measurement.id}`
+  updateMeasurement(param,measurement) {
+    const url = `https://${API_URL}/meas/api/${param}/${measurement.id}`
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.put(url, measurement, { headers: headers })
   }

@@ -5,7 +5,7 @@
         <div class="q-pa-md" style="max-width: 1200px; max-height: 750px;">
           <q-banner inline-actions class="bg-teal-1">
             <div class="text-subtitle2">
-             Mass Spectrometer Measurements ({{ numberOfMeasurements }})
+             Gas Chromatograph Measurements ({{ numberOfMeasurements }})
             </div>
             <template align="right" v-slot:action>
               <q-btn flat round dense icon="close" color="teal" v-close-popup />
@@ -32,7 +32,7 @@
                   <th style="font-size:10px">Bore ID</th>
                   <th style="font-size:10px">Instrument</th>
                   <th style="font-size:10px">Chemical ID</th>
-                  <th style="font-size:10px">Count</th>
+                  <th style="font-size:10px">MilliVolt</th>
                   <th style="font-size:10px">Units</th>
                   <th style="font-size:10px">Date</th>
                   <th style="font-size:10px">Time</th>
@@ -130,7 +130,7 @@ export default {
   methods: {
     getMeasurements: function () {
       this.loading = true
-      apiService.getMeasurements('mscnt').then((page) => {
+      apiService.getMeasurements('gcmv').then((page) => {
         this.measurements = page.data.features
         // console.log(this.measurements)
         // console.log(page)
@@ -139,7 +139,7 @@ export default {
         this.numberOfPages = page.numpages
         if (this.numberOfPages) {
           for (var i = 1; i <= this.numberOfPages; i++) {
-            const link = `/meas/api/mscnt/?page=${i} `
+            const link = `/meas/api/gcmv/?page=${i} `
             this.pages.push({ pageNumber: i, link: link })
           }
         }
@@ -148,7 +148,7 @@ export default {
     },
     getPage: function () {
       this.loading = true
-      apiService.getMeasurementsByURL('/meas/api/mscnt/?page=' + this.current).then((page) => {
+      apiService.getMeasurementsByURL('/meas/api/gcmv/?page=' + this.current).then((page) => {
         this.measurements = page.data.features
         this.loading = false
       })
@@ -158,7 +158,7 @@ export default {
       EventBus.$emit('edit-measurement', measurement)
     },
     deleteMeasurement: function (measurement) {
-      apiService.deleteMeasurement('mscnt', measurement).then((r) => {
+      apiService.deleteMeasurement('gcmv', measurement).then((r) => {
         if (r.status === 204) {
           this.$router.go()
         }

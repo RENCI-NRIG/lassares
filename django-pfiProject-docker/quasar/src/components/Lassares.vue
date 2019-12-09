@@ -6,14 +6,32 @@
     </div>
     <div v-else-if="authenticated">
       <!-- If authenticated show drawer -->
-      <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="teal">
+      <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="teal bg-teal-1">
         <!-- // measurement-list -->
-        <q-card class="q-pa-md" style="max-width: 300px">
-          <q-btn label="View List of Measurements" type="viewlist" color="teal" class="text-black">
-            <q-popup-proxy class="measurement-popup" transition-show="flip-up" transition-hide="flip-down">
-              <measurement-list></measurement-list>
-            </q-popup-proxy>
-          </q-btn>
+        <q-card class="q-pa-md bg-teal-1" style="max-width: 300px">
+          <!-- q-select bg-color="teal" filled v-model="measurement.properties.instrument" id="measurement-list" label="Measurement List *" hint="View list of measurements" :options="devoptions" emit-value / -->
+          <q-btn-dropdown label="View List of Measurements" type="viewlist" color="teal" class="text-black">
+            <q-list class="bg-teal-1">
+              <q-item>
+                <q-item-section>
+                  <q-btn label="Mass Spectrometer" type="viewgcmv" color="teal" class="text-black">
+                    <q-popup-proxy class="measurement-popup" transition-show="flip-up" transition-hide="flip-down">
+                      <mscnt-list></mscnt-list>
+                    </q-popup-proxy>
+                  </q-btn>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section>
+                  <q-btn label="Gas Chromatograph" type="viewgcmv" color="teal" class="text-black">
+                    <q-popup-proxy class="measurement-popup" transition-show="flip-up" transition-hide="flip-down">
+                      <gcmv-list></gcmv-list>
+                    </q-popup-proxy>
+                  </q-btn>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </q-card>
         <!-- // measurement-list -->
         <q-space />
@@ -21,25 +39,30 @@
         <q-space />
         <!--// measurement-create -->
         <div class="q-pa-md" style="max-width: 300px">
-          <q-card>
+          <q-card class="bg-teal-1">
             <div class="q-pa-md" style="max-width: 300px">
               <div class="text-subtitle2">Input Measurement Data</div>
 
               <q-form class="q-gutter-md">
-                <q-input color="teal" filled v-model="measurement.properties.bore_id" type="number" id="bore_id" label="Bore ID *" hint="ID of the bore hole" lazy-rules
-                  :rules="[ val => val !== null && val !== '' || 'Please type id', val => val > 0 && val < 1000 || 'Please type a correct id' ]"/>
-
                 <q-input color="teal" filled v-model="measurement.properties.job_id" type="number" id="job_id" label="Job ID *" hint="ID of the job" lazy-rules
                   :rules="[ val => val !== null && val !== '' || 'Please type id', val => val > 0 && val < 1000 || 'Please type a correct id' ]"/>
 
-                <q-input color="teal" filled v-model="measurement.properties.device_id" id="device_id" label="Device ID *" hint="ID of the device" lazy-rules
-                  :rules="[ val => val && val.length > 0 || 'Please type something']"/>
+                <q-input color="teal" filled v-model="measurement.properties.bore_id" type="number" id="bore_id" label="Bore ID *" hint="ID of the bore hole" lazy-rules
+                  :rules="[ val => val !== null && val !== '' || 'Please type id', val => val > 0 && val < 1000 || 'Please type a correct id' ]"/>
 
                 <q-input color="teal" filled v-model="measurement.properties.chemical_id" id="chemical_id" label="Chemical ID *" hint="ID of chemical" lazy-rules
                   :rules="[ val => val && val.length > 0 || 'Please type something']"/>
 
-                <q-input color="teal" filled v-model="measurement.properties.concentration" id="concentration" type="number" label="Concentration *" hint="Concentration of chemical" lazy-rules
-                  :rules="[ val => val !== null && val !== '' || 'Please type concentration', val => val > 0 && val < 30 || 'Please type correct chemical concentration' ]"/>
+                <q-select color="teal" filled v-model="measurement.properties.instrument" id="instrument" label="Instrument *" hint="Instrument being used" :options="devoptions" />
+
+                <div v-if="measurement.properties.instrument == 'Mass Spectrometer'">
+                  <q-input color="teal" filled v-model="measurement.properties.measurement_value" id="measurement_value" type="number" label="Count *" hint="Count of chemical" lazy-rules
+                    :rules="[ val => val !== null && val !== '' || 'Please type count', val => val > 0 && val < 30000 || 'Please type correct chemical count' ]"/>
+                </div>
+                <div v-else-if="measurement.properties.instrument == 'Gas Chromatograph'">
+                  <q-input color="teal" filled v-model="measurement.properties.measurement_value" id="measurement_value" type="number" label="Millivolt *" hint="Millivolt of measurement" lazy-rules
+                    :rules="[ val => val !== null && val !== '' || 'Please type millivolt', val => val > 0 && val < 30000 || 'Please type correct millivolt' ]"/>
+                </div>
 
                 <q-input color="teal" filled v-model="measurement.properties.comment" id="comment" label="Comment *" hint="Comment" lazy-rules
                   :rules="[ val => val && val.length > 0 || 'Please type something']"/>
@@ -49,7 +72,7 @@
                   <template v-slot:append>
                     <q-icon name="event" class="cursor-pointer">
                       <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
-                        <q-date v-model="measurement.properties.date" mask="YYYY-MM-DD" color="teal" text-color="black">
+                        <q-date v-model="measurement.properties.date" mask="YYYY-MM-DD" color="teal" text-color="black" class="bg-teal-1">
                           <div class="row items-right justify-end q-gutter-sm">
                             <q-btn icon="close" color="teal" flat v-close-popup />
                           </div>
@@ -65,7 +88,7 @@
                   <template v-slot:append>
                     <q-icon name="access_time" class="cursor-pointer">
                       <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
-                        <q-time now-btn v-model="measurement.properties.time" mask="HH:mm:ss" with-seconds format24h color="teal" text-color="black">
+                        <q-time now-btn v-model="measurement.properties.time" mask="HH:mm:ss" with-seconds format24h color="teal" text-color="black" class="bg-teal-1">
                           <div class="row items-right justify-end q-gutter-sm">
                             <q-btn icon="close" color="teal" flat v-close-popup />
                           </div>
@@ -81,8 +104,8 @@
                   <template v-slot:append>
                     <q-icon name="fas fa-globe-americas" class="cursor-pointer">
                       <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
-                        <q-card color="white">
-                          <q-banner inline-actions>
+                        <q-card class="bg-teal-1">
+                          <q-banner inline-actions class="bg-teal-1">
                             <div class="text-subtitle2">
                               Select Method
                             </div>
@@ -113,8 +136,8 @@
                   <template v-slot:append>
                     <q-icon name="fas fa-globe-americas" class="cursor-pointer">
                       <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
-                        <q-card color="white">
-                          <q-banner inline-actions>
+                        <q-card class="bg-teal-1">
+                          <q-banner inline-actions class="bg-teal-1">
                             <div class="text-subtitle2">
                               Select Method
                             </div>
@@ -160,19 +183,16 @@
         <q-separator />
         <q-space />
         <!-- // upload-file -->
-        <q-card class="q-pa-md" style="max-width: 300px">
+        <q-card class="q-pa-md teal bg-teal-1" style="max-width: 300px">
           <q-uploader label="Upload json data file" color="teal" text-color="black" flat bordered style="max-width: 250px"
-            ref="uploader"
-            accept=".json"
-            :factory="uploadFile"
-          />
+            ref="uploader" accept=".json" :factory="uploadFile" dark />
         </q-card>
         <!-- // upload-file -->
       </q-drawer>
     </div>
 
     <!--// right side drawer -->
-    <q-drawer side="right" v-model="rightDrawerOpen" show-if-above bordered content-class="teal">
+    <q-drawer side="right" v-model="rightDrawerOpen" show-if-above bordered content-class="teal bg-teal-1">
       <q-list bordered class="rounded-borders">
         <!-- // baselayers -->
         <q-expansion-item default-opened expand-separator icon="list" label="Base Layers">
@@ -209,14 +229,24 @@
         <q-expansion-item default-opened expand-separator icon="list" label="Layers">
           <div class="q-pa-md q-gutter-y-sm column">
             <q-toggle
-              :label="`Measurements Layer ${ measurementsModel }`"
+              :label="`Gas Chromatograph Layer ${ gcmvModel }`"
+              :key="layers[2].id"
+              v-on:input="showMapPanelLayer(layers)"
+              :class="{ 'is-active': layers[2].visible }"
+              color="teal"
+              false-value="Not Selected"
+              true-value="Selected"
+              v-model="gcmvModel"
+            />
+            <q-toggle
+              :label="`Mass Spectrometer Layer ${ mscntModel }`"
               :key="layers[1].id"
               v-on:input="showMapPanelLayer(layers)"
               :class="{ 'is-active': layers[1].visible }"
               color="teal"
               false-value="Not Selected"
               true-value="Selected"
-              v-model="measurementsModel"
+              v-model="mscntModel"
             />
             <q-toggle
               :label="`Powerlines Layer ${ powerlinesModel }`"
@@ -234,7 +264,7 @@
 
         <!-- // state -->
         <q-expansion-item expand-separator icon="list" label="State">
-          <q-markup-table class="table is-fullwidth" dense>
+          <q-markup-table class="table is-fullwidth bg-teal-1" dense>
             <tr>
               <th class="text-left">Map center</th>
               <td class="text-left" style="font-size:10px">{{ center[0]}}, {{ center[1] }}</td>
@@ -269,7 +299,7 @@
 
         <!-- // legend -->
         <q-expansion-item expand-separator icon="list" label="Legend">
-          <q-markup-table>
+          <q-markup-table class="bg-teal-1">
             <tr>
               <td><hr style=getPowerlinesStyle /></td>
               <td>Powerlines</td>
@@ -292,7 +322,12 @@
 
         <!-- // filter -->
         <q-expansion-item expand-separator icon="list" label="Filter">
-          <q-markup-table class="table is-fullwidth">
+          <q-markup-table class="table is-fullwidth bg-teal-1">
+            <tr>
+              <td>
+                <q-select color="teal" filled v-model="measurement.properties.instrument" label="Type of Instrument" id="instrument" hint="Instrument being used" :options="devoptions" />
+              </td>
+            </tr>
             <tr>
               <td>
                 <q-datetime-picker today-btn now-btn outlined label="Select Start DateTime" mode="datetime" color="teal"
@@ -316,13 +351,28 @@
 
         <!-- // search -->
         <q-expansion-item expand-separator icon="list" label="Search">
-          <q-markup-table class="table is-fullwidth">
+          <q-markup-table class="table is-fullwidth bg-teal-1">
             <tr>
               <td>
-                <treeselect v-model="jobidsx" class="treeinput" :auto-load-root-options="false"
-                  :options="searchjoptions"  :multiple="true" placeholder="Select Job ID" />
+                <q-select color="teal" filled v-model="measurement.properties.instrument" label="Type of Instrument" id="instrument" hint="Instrument being used" :options="devoptions" />
               </td>
             </tr>
+            <div v-if="measurement.properties.instrument == 'Mass Spectrometer'">
+              <tr>
+                <td>
+                  <treeselect v-model="jobidsx" class="treeinput" :auto-load-root-options="false"
+                    :options="searchmscntjoptions" :multiple="true" placeholder="Select Job ID" />
+                </td>
+              </tr>
+            </div>
+            <div v-else-if="measurement.properties.instrument == 'Gas Chromatograph'">
+              <tr>
+                <td>
+                  <treeselect v-model="jobidsx" class="treeinput" :auto-load-root-options="false"
+                    :options="searchgcmvjoptions" :multiple="true" placeholder="Select Job ID" />
+                </td>
+              </tr>
+            </div>
             <tr>
               <td>
                 <q-datetime-picker today-btn now-btn outlined label="Select Start DateTime" mode="datetime" color="teal"
@@ -398,11 +448,16 @@
                       Service Date: {{ feature.properties['service_date'] }}
                     </div>
                     <div v-else-if="pid == feature.properties['chemical_id']">
-                      Bore ID: {{ feature.properties['bore_id'] }}<br>
                       Job ID: {{ feature.properties['job_id'] }}<br>
-                      Device ID: {{ feature.properties['device_id'] }}<br>
+                      Bore ID: {{ feature.properties['bore_id'] }}<br>
                       Chemical ID: {{ chemical_id }}<br>
-                      Concentration: {{ concentration }}<br>
+                      Device ID: {{ feature.properties['instrument'] }}<br>
+                      <div v-if="feature.properties['instrument'] == 'Mass Spectrometer'">
+                        Count: {{ measurement_value }}<br>
+                      </div>
+                      <div v-else-if="feature.properties['instrument'] == 'Gas Chromatograph'">
+                        Millivolt: {{ measurement_value }}<br>
+                      </div>
                       Timestamp: {{ timestamp }}
                       status: {{ feature.properties['status'] }}<br>
                       comment: {{ feature.properties['comment'] }}<br>
@@ -422,7 +477,12 @@
                 <q-card-section>
                   <q-banner inline-actions class="text-black bg-white">
                     <b>
-                      {{ pid }} concentration
+                      <div v-if="feature.properties['instrument'] == 'Mass Spectrometer'">
+                        {{ pid }} count
+                      </div>
+                      <div v-else-if="feature.properties['instrument'] == 'Gas Chromatograph'">
+                        {{ pid }} millivolt
+                      </div>
                     </b>
                     <template v-slot:action>
                       <q-btn flat round dense icon="close" @click="selectedFeatures = selectedFeatures.filter(f => f.id === 0)" />
@@ -432,7 +492,12 @@
                     <div v-if="pid == chemical_id">
                       <div v-if="Object.keys(selectedFeaturesBarBox).length > 0">
                         <tr>
-                          <td>x = Timestamp, y = Concentration</td>
+                          <div v-if="feature.properties['instrument'] == 'Mass Spectrometer'">
+                            <td>x = Timestamp, y = Count</td>
+                          </div>
+                          <div v-else-if="feature.properties['instrument'] == 'Gas Chromatograph'">
+                            <td>x = Timestamp, y = Millivolt</td>
+                          </div>
                         </tr>
                         <tr>
                           <td>
@@ -546,8 +611,8 @@
       <q-fab icon="keyboard_arrow_up" direction="up" color="teal text-black">
         <q-fab-action color="teal" class="text-black" icon="fas fa-vector-square">
           <q-popup-proxy transition-show="flip-up" transition-hide="flip-down">
-            <q-card color="white">
-              <q-banner inline-actions>
+            <q-card class="bg-teal-1">
+              <q-banner inline-actions class="bg-teal-1">
                 <div class="text-subtitle2">
                   Create Bar Plot of Selected Features
                 </div>
@@ -556,6 +621,9 @@
                 </template>
               </q-banner>
               <q-separator />
+              <q-card-section>
+                <q-select color="teal" filled v-model="measurement.properties.instrument" id="instrument" label="Instrument *" hint="Instrument being used" :options="devoptions" />
+              </q-card-section>
               <q-card-section>
                 <div v-if="drawnFeatures.length === 0">
                   <q-btn label="Draw Polygon Around Features" type="Point" color="teal" class="text-black" @click="drawType = 'polygon'">
@@ -622,7 +690,8 @@ const auth = new AuthService()
 const { login, logout, authenticated, authNotifier } = auth
 
 // measurement import
-import MeasurementList from './MeasurementList'
+import mscntList from './mscntList'
+import gcmvList from './gcmvList'
 
 // EventBus import
 import { EventBus } from '../mixins/event-bus.js'
@@ -634,17 +703,32 @@ let gettoken = function () {
   return secrets[0].MB_KEY
 }
 
-// color values for measurements concentrations
-let concentration2color = function (concentration) {
+// color values for measurement count
+let count2color = function (measurementvalue) {
   let r = 0
   let g = 0
   let b = 0
-  if (concentration < 50) {
+  if (measurementvalue < 50) {
     g = 255
-    b = Math.round(5.1 * concentration)
+    b = Math.round(5.1 * measurementvalue)
   } else {
     b = 255
-    g = Math.round(510 - 5.10 * concentration)
+    g = Math.round(510 - 5.10 * measurementvalue)
+  }
+  let h = r * 0x1 + g * 0x100 + b * 0x10000
+  return '#' + ('000000' + h.toString(16)).slice(-6)
+}
+
+let millivolt2color = function (measurementvalue) {
+  let r = 0
+  let g = 0
+  let b = 0
+  if (measurementvalue < 50) {
+    r = 255
+    g = Math.round(5.1 * measurementvalue)
+  } else {
+    g = 255
+    r = Math.round(510 - 5.10 * measurementvalue)
   }
   let h = r * 0x1 + g * 0x100 + b * 0x10000
   return '#' + ('000000' + h.toString(16)).slice(-6)
@@ -663,7 +747,8 @@ export default {
   components: {
     d3Barchart,
     Treeselect,
-    MeasurementList
+    mscntList,
+    gcmvList
   },
   data () {
     auth.handleAuthentication()
@@ -674,7 +759,7 @@ export default {
       loading: undefined,
       caption: undefined,
       // map parameters
-      center: [-73.851271, 40.725070],
+      center: [-73.845, 40.72],
       // center: [this.deviceCoordinate[0], this.deviceCoordinate[1]],
       zoom: 15,
       rotation: 0,
@@ -690,14 +775,16 @@ export default {
       creating: false,
       updating: false,
       // measurement data structure and associate attributs
+      param: 'mscnt',
       measurement: {
         'type': 'Feature',
         'properties': {
-          'bore_id': null,
           'job_id': null,
-          'device_id': null,
+          'bore_id': null,
+          'instrument': 'Mass Spectrometer',
           'chemical_id': null,
-          'concentration': null,
+          'measurement_value': null,
+          'units': null,
           'date': this.currentDate(),
           'time': this.currentTime(),
           'status': 'd',
@@ -708,13 +795,18 @@ export default {
           'coordinates': [null, null]
         }
       },
+      devoptions: [
+        'Mass Spectrometer',
+        'Gas Chromatograph'
+      ],
       longitude: null,
       latitude: null,
       measurements: '',
-      measurementsModel: 'Selected',
+      mscntModel: 'Selected',
+      gcmvModel: 'Selected',
       // measurement search and popup attributes
-      searchtoptions: [],
-      searchjoptions: [],
+      searchmscntjoptions: [],
+      searchgcmvjoptions: [],
       starttimestamp: this.startDate() + 'T00:00:00',
       endtimestamp: this.endDate() + 'T00:00:00',
       starttimestampx: this.startDate() + 'T00:00:00',
@@ -725,7 +817,8 @@ export default {
       joptions: null,
       pid: undefined,
       chemical_id: undefined,
-      concentration: undefined,
+      measurement_value: undefined,
+      units: undefined,
       timestamp: undefined,
       // powerline attributes
       powerlines: {
@@ -840,16 +933,16 @@ export default {
           ]
         },
         {
-          id: 'measurements',
-          title: 'Measurements',
+          id: 'mscnt',
+          title: 'Mass Spectrometer Count',
           cmp: 'vl-layer-vector',
           visible: true,
           source: {
             cmp: 'vl-source-vector',
             url (extent, starttimestampx, endtimestampx) {
-              starttimestampx = '2018-10-01 00:00:00'
-              endtimestampx = '2020-01-01 00:00:00'
-              return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' +
+              starttimestampx = '2018-10-01T00:00:00'
+              endtimestampx = '2020-01-01T00:00:00'
+              return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/mscnt/?format=json&timestamp__gte=' +
                 starttimestampx.replace('T', ' ') + '&timestamp__lte=' + endtimestampx.replace('T', ' ') + '&in_bbox=' + extent.join(',').toString()
             },
             strategyFactory () {
@@ -859,7 +952,31 @@ export default {
           style: [
             {
               cmp: 'vl-style-func',
-              factory: this.MeasurementsStyle
+              factory: this.mscntStyle
+            }
+          ]
+        },
+        {
+          id: 'gcmv',
+          title: 'Gas Chromatograph Millivolt',
+          cmp: 'vl-layer-vector',
+          visible: true,
+          source: {
+            cmp: 'vl-source-vector',
+            url (extent, starttimestampx, endtimestampx) {
+              starttimestampx = '2018-10-01T00:00:00'
+              endtimestampx = '2020-01-01T00:00:00'
+              return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/gcmv/?format=json&timestamp__gte=' +
+                starttimestampx.replace('T', ' ') + '&timestamp__lte=' + endtimestampx.replace('T', ' ') + '&in_bbox=' + extent.join(',').toString()
+            },
+            strategyFactory () {
+              return loadingBBox
+            }
+          },
+          style: [
+            {
+              cmp: 'vl-style-func',
+              factory: this.gcmvStyle
             }
           ]
         }
@@ -869,19 +986,19 @@ export default {
   created: function () {
     // search timestamp
     let that = this
-    let turl = 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/timestamp/?format=json'
-    axios.get(turl)
+    let sjurl = 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/mscntjobid/?format=json'
+    axios.get(sjurl)
       .then(function (response) {
-        that.searchtoptions = response.data
+        that.searchmscntjoptions = response.data
       })
       .catch(function (error) {
         console.log(error)
       })
     // search jobid
-    let jurl = 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/jobid/?format=json'
-    axios.get(jurl)
+    let cjurl = 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/gcmvjobid/?format=json'
+    axios.get(cjurl)
       .then(function (response) {
-        that.searchjoptions = response.data
+        that.searchgcmvjoptions = response.data
       })
       .catch(function (error) {
         console.log(error)
@@ -956,13 +1073,29 @@ export default {
         ]
       }
     },
-    MeasurementsStyle: function () {
+    mscntStyle: function () {
       return feature => {
         return [
           new Style({
             image: new Circle({
-              radius: (this.zoom / 2.6) + (feature.get('concentration') / 2),
-              fill: new Fill({ color: concentration2color(feature.get('concentration') * 4.54) }), // 'rgba(245, 111, 66, 0.7)'
+              radius: (this.zoom / 2.6) + (feature.get('measurement_value') / 2),
+              fill: new Fill({ color: count2color(feature.get('measurement_value') * 4.54) }), // 'rgba(245, 111, 66, 0.7)'
+              stroke: new Stroke({
+                color: 'rgb(145, 7, 4, 1)',
+                width: 1
+              })
+            })
+          })
+        ]
+      }
+    },
+    gcmvStyle: function () {
+      return feature => {
+        return [
+          new Style({
+            image: new Circle({
+              radius: (this.zoom / 2.6) + (feature.get('measurement_value') / 2),
+              fill: new Fill({ color: millivolt2color(feature.get('measurement_value') * 4.54) }), // 'rgba(245, 111, 66, 0.7)'
               stroke: new Stroke({
                 color: 'rgb(145, 7, 4, 1)',
                 width: 1
@@ -1010,7 +1143,7 @@ export default {
         let i
         for (i = 0; i < this.$refs.layerSource.length; i++) {
           let features = this.$refs.layerSource[i].getFeatures()
-          if (features[0].values_.chemical_id) {
+          if (features[0].values_.instrument === this.measurement.properties.instrument) {
             source = this.$refs.layerSource[i].$source
           }
         }
@@ -1020,7 +1153,7 @@ export default {
         source.forEachFeatureIntersectingExtent(extent, feature => {
           feature = writeGeoJsonFeature(feature)
           this.selectedFeatures.push(feature)
-          this.selectedFeaturesBarBox.push({ x: feature.properties['timestamp'], y: feature.properties['concentration'] })
+          this.selectedFeaturesBarBox.push({ x: feature.properties['timestamp'], y: feature.properties['measurement_value'] })
           this.chemical_id = feature.properties['chemical_id']
           this.pid = this.chemical_id
         })
@@ -1043,7 +1176,7 @@ export default {
       let i
       for (i = 0; i < this.$refs.layerSource.length; i++) {
         let features = this.$refs.layerSource[i].getFeatures()
-        if (features[0].values_.chemical_id) {
+        if (features[0].values_.instrument === this.measurement.properties.instrument) {
           vectorSource = this.$refs.layerSource[i].$source
         }
       }
@@ -1053,7 +1186,7 @@ export default {
       vectorSource.forEachFeatureIntersectingExtent(extent, feature => {
         feature = writeGeoJsonFeature(feature)
         this.selectedFeatures.push(feature)
-        this.selectedFeaturesBarBox.push({ x: feature.properties['timestamp'], y: feature.properties['concentration'] })
+        this.selectedFeaturesBarBox.push({ x: feature.properties['timestamp'], y: feature.properties['measurement_value'] })
         this.chemical_id = feature.properties['chemical_id']
         this.pid = this.chemical_id
       })
@@ -1073,11 +1206,17 @@ export default {
       }
     },
     showMapPanelLayer: function (layers) {
-      // console.log(layers)
+      let glayer = this.layers[2]
+      if (this.gcmvModel === 'Selected') {
+        glayer.visible = true
+      } else if (this.gcmvModel === 'Not Selected') {
+        glayer.visible = false
+      }
+
       let mlayer = this.layers[1]
-      if (this.measurementsModel === 'Selected') {
+      if (this.mscntModel === 'Selected') {
         mlayer.visible = true
-      } else if (this.measurementsModel === 'Not Selected') {
+      } else if (this.mscntModel === 'Not Selected') {
         mlayer.visible = false
       }
 
@@ -1103,7 +1242,8 @@ export default {
           if (properties['chemical_id']) {
             this.pid = properties['chemical_id']
             this.chemical_id = this.pid
-            this.concentration = properties['concentration']
+            this.measurement_value = properties['measurement_value']
+            this.units = properties['units']
             this.timestamp = properties['timestamp']
             this.selectedFeaturesBarBox = []
             this.selectedFeatures = []
@@ -1112,7 +1252,8 @@ export default {
             this.pid = properties['powerline']
             this.ptitle = properties['title']
             this.powerline = this.pid
-            this.concentration = undefined
+            this.measurement_value = undefined
+            this.units = undefined
             this.timestamp = undefined
             this.selectedFeaturesBarBox = []
             this.selectedFeatures = []
@@ -1126,27 +1267,30 @@ export default {
         }
       }
     },
-    MeasurementsURL: function (extent, starttimestampx, endtimestampx, jobidsx) {
+    MeasurementsURL: function (extent, instcode, starttimestampx, endtimestampx, jobidsx) {
       if (!jobidsx) {
-        return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&in_bbox=' + extent.join(',').toString()
+        return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&in_bbox=' + extent.join(',').toString()
       } else if (jobidsx) {
         if (starttimestampx) {
           if (jobidsx.length === 1) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
           } else if (jobidsx.length > 1) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id__in=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id__in=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
           } else if (jobidsx.length === 0) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&in_bbox=' + extent.join(',').toString()
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&in_bbox=' + extent.join(',').toString()
           } else {
             alert('this should not happen!')
+            return 'this should not happen!'
           }
         } else if (!starttimestampx) {
           if (jobidsx.length === 1) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&job_id=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&job_id=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
           } else if (jobidsx.length > 1) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/meas/?format=json&job_id__in=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
+            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&job_id__in=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
           } else {
-            alert('this should not happen, too!')
+            alert(jobidsx.length)
+            // alert('this should not happen, too!')
+            return 'this should not happen, too!'
           }
         }
       }
@@ -1187,7 +1331,7 @@ export default {
           let j
           for (j = 0; j < this.$refs.layerSource.length; j++) {
             let features = this.$refs.layerSource[j].getFeatures()
-            if (features[0].values_.chemical_id) {
+            if (features[0].values_.instrument === this.measurement.properties.instrument) {
               this.$refs.layerSource[j].addFeature(this.storeFeatures[i])
             }
           }
@@ -1201,7 +1345,7 @@ export default {
         } else {
           for (i = 0; i < this.$refs.layerSource.length; i++) {
             let features = this.$refs.layerSource[i].getFeatures()
-            if (features[0].values_.chemical_id) {
+            if (features[0].values_.instrument === this.measurement.properties.instrument) {
               let j
               for (j = 0; j < features.length; j++) {
                 let id = features[j].id_
@@ -1225,6 +1369,18 @@ export default {
       }
     },
     searchMeasurements: function () {
+      let instcode
+      if (this.measurement.properties.instrument === 'Mass Spectrometer') {
+        instcode = 'mscnt'
+      } else if (this.measurement.properties.instrument === 'Gas Chromatograph') {
+        instcode = 'gcmv'
+      }
+
+      let extent = this.$refs.map.$map.getView().calculateExtent(this.$refs.map.$map.getSize())
+      let sw = toLonLat([extent[0], extent[1]])
+      let ne = toLonLat([extent[2], extent[3]])
+      extent = [sw[0], sw[1], ne[0], ne[1]]
+
       if (this.starttimestampx && this.endtimestampx) {
         if (this.endtimestampx < this.starttimestampx) {
           this.$notification.open('You have to pick end timestep later than the start timestamp!')
@@ -1234,13 +1390,9 @@ export default {
           let i
           for (i = 0; i < this.$refs.layerSource.length; i++) {
             let features = this.$refs.layerSource[i].getFeatures()
-            if (features[0].values_.chemical_id) {
-              let extent = this.$refs.layerSource[1].$source.getExtent()
-              let sw = toLonLat([extent[0], extent[1]])
-              let ne = toLonLat([extent[2], extent[3]])
-              extent = [sw[0], sw[1], ne[0], ne[1]]
+            if (features[0].values_.instrument === this.measurement.properties.instrument) {
               // url to get data from
-              let url = this.MeasurementsURL(extent, this.starttimestampx, this.endtimestampx, this.jobidsx)
+              let url = this.MeasurementsURL(extent, instcode, this.starttimestampx, this.endtimestampx, this.jobidsx)
               // the that is used to deal with this scope
               var that = this
               // eye is used for i to deal with the async effects of axios
@@ -1273,19 +1425,14 @@ export default {
       } else if (!this.starttimestampx && !this.endtimestampx) {
         if (!this.jobidsx) {
           this.$notification.open('You have to select something!')
-        } else if (this.jobidsx) {
+        } else if (this.jobidsx.length >= 1) {
           this.starttimestampx = this.starttimestampx.replace('T', ' ')
           this.endtimestampx = this.endtimestampx.replace('T', ' ')
           let i
           for (i = 0; i < this.$refs.layerSource.length; i++) {
             let features = this.$refs.layerSource[i].getFeatures()
-            if (features[0].values_.chemical_id) {
-              let extent = this.$refs.layerSource[1].$source.getExtent()
-              let sw = toLonLat([extent[0], extent[1]])
-              let ne = toLonLat([extent[2], extent[3]])
-              extent = [sw[0], sw[1], ne[0], ne[1]]
-
-              let url = this.MeasurementsURL(extent, this.starttimestampx, this.endtimestampx, this.jobidsx)
+            if (features[0].values_.instrument === this.measurement.properties.instrument) {
+              let url = this.MeasurementsURL(extent, instcode, this.starttimestampx, this.endtimestampx, this.jobidsx)
               this.layers[i].source.url = url
               this.$refs.layerSource[i].removeFeatures(features)
               // the that is used to deal with this scope
@@ -1354,9 +1501,10 @@ export default {
       this.measurement.id = null
       this.measurement.properties.bore_id = null
       this.measurement.properties.job_id = null
-      this.measurement.properties.device_id = null
+      this.measurement.properties.instrument = null
       this.measurement.properties.chemical_id = null
-      this.measurement.properties.concentration = null
+      this.measurement.properties.measurement_value = null
+      this.measurement.properties.units = null
       this.measurement.properties.comment = null
       this.measurement.properties.date = this.currentDate()
       this.measurement.properties.time = this.currentTime()
@@ -1367,8 +1515,19 @@ export default {
     createMeasurement: function () {
       let coordinates = [parseFloat(this.longitude), parseFloat(this.latitude)]
       this.measurement.geometry.coordinates = coordinates
+      if (this.measurement.properties.instrument === 'Mass Spectrometer') {
+        this.measurement.properties.units = 'count'
+        this.param = 'mscnt'
+      } else if (this.measurement.properties.instrument === 'Gas Chromatograph') {
+        this.measurement.properties.units = 'mV'
+        this.param = 'gcmv'
+      } else {
+        this.measurement.properties.units = 'none'
+        this.param = 'none'
+        alert('This will not work because you have an incorrect value for your units.')
+      }
       this.creating = true
-      apiService.createMeasurement(this.measurement).then((result) => {
+      apiService.createMeasurement(this.param, this.measurement).then((result) => {
         // console.log(result)
         // success
         if (result.status === 201) {
@@ -1389,12 +1548,22 @@ export default {
         })
       })
     },
-    updateMeasurement: function () {
+    updateMeasurement: function (param) {
       let coordinates = [parseFloat(this.longitude), parseFloat(this.latitude)]
       this.measurement.geometry.coordinates = coordinates
-      // console.log('update measurement ' + JSON.stringify(this.measurement))
+      if (this.measurement.properties.instrument === 'Mass Spectrometer') {
+        this.measurement.properties.units = 'count'
+        this.param = 'mscnt'
+      } else if (this.measurement.properties.instrument === 'Gas Chromatograph') {
+        this.measurement.properties.units = 'mV'
+        this.param = 'gcmv'
+      } else {
+        this.measurement.properties.units = 'none'
+        this.param = 'none'
+        alert('This will not work because you have an incorrect value for your units.')
+      }
       this.updating = true
-      apiService.updateMeasurement(this.measurement).then((result) => {
+      apiService.updateMeasurement(this.param, this.measurement).then((result) => {
         // success
         if (result.status === 200) {
           this.measurement = result.data
@@ -1434,8 +1603,16 @@ export default {
         that.creating = true
         let i
         if (geojson.features[0].properties.chemical_id) {
+          if (geojson.features[0].properties.instrument === 'Mass Spectrometer') {
+            this.param = 'mscnt'
+          } else if (geojson.features[0].properties.instrument === 'Gas Chromatograph') {
+            this.param = 'gcmv'
+          } else {
+            this.param = 'none'
+            alert('This will not work because you have an incorrect value for your units.')
+          }
           for (i = 0; i < geojson.features.length; i++) {
-            apiService.createMeasurement(geojson.features[i]).then((result) => {
+            apiService.createMeasurement(this.param, geojson.features[i]).then((result) => {
               if (result.status === 201) {
                 that.measurement = result.data
                 that.showCreateMessage = true
@@ -1488,7 +1665,7 @@ export default {
     })
     if (this.$route.params.id) {
       console.log(this.$route.params.id)
-      apiService.getMeasurement(this.$route.params.id).then((measurement) => {
+      apiService.getMeasurement(this.param, this.$route.params.id).then((measurement) => {
         this.measurement = measurement
       })
     }
@@ -1622,6 +1799,7 @@ export default {
     height: 46px;
     border: 1px solid #b8b8b8;
     border-radius: 8px;
+    background: #e0f2f1;
 
   .vue-treeselect:not(.vue-treeselect--disabled):not(.vue-treeselect--focused) .vue-treeselect__control:hover
     border-color: #919191;
@@ -1666,5 +1844,10 @@ export default {
 
   .vue-treeselect__placeholder
     color: #787878;
+
+  .q-datetimepicker.q-card
+    background: #e0f2f1;
+    .q-tab-panels
+      background: #e0f2f1;
 
 </style>
