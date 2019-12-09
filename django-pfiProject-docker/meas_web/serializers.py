@@ -1,11 +1,21 @@
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
-from meas_web.models import Measurement
+from meas_web.models import mscnt, gcmv
 from drf_queryfields import QueryFieldsMixin
 
-class Measurement_Serializer(QueryFieldsMixin, GeoFeatureModelSerializer):
+class mscnt_Serializer(QueryFieldsMixin, GeoFeatureModelSerializer):
     class Meta:
-        model = Measurement
+        model = mscnt
         geo_field = 'geom'
-        fields = ('id','bore_id', 'job_id', 'device_id', 'chemical_id', 'concentration',
-                  'date', 'time', 'status', 'comment')
+        fields = ('id', 'job_id', 'bore_id', 'instrument', 'chemical_id', 'measurement_value',
+                  'units', 'date', 'time', 'status', 'comment')
+
+class gcmv_Serializer(QueryFieldsMixin, GeoFeatureModelSerializer):
+    class Meta:
+        model = gcmv
+        geo_field = 'geom'
+        fields = ('id', 'job_id', 'bore_id', 'instrument', 'chemical_id', 'measurement_value',
+                  'units', 'date', 'time', 'status', 'comment')
+
+
+
 

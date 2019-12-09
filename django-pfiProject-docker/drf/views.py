@@ -13,8 +13,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from six.moves.urllib import request as req
 from cryptography.x509 import load_pem_x509_certificate
 from cryptography.hazmat.backends import default_backend
-from .serializers import Powerline_Serializer, drf_Measurement_Serializer, drf_Timestamp_Serializer, drf_Jobid_Serializer
-from .models import Powerline, drf_Measurement, drf_Timestamp, drf_Jobid
+from .serializers import Powerline_Serializer, drf_mscnt_Serializer, drf_mscnt_Timestamp_Serializer, drf_mscnt_Jobid_Serializer, drf_gcmv_Serializer, drf_gcmv_Timestamp_Serializer, drf_gcmv_Jobid_Serializer
+from .models import Powerline, drf_mscnt, drf_mscnt_Timestamp, drf_mscnt_Jobid, drf_gcmv, drf_gcmv_Timestamp, drf_gcmv_Jobid
 from url_filter.integrations.drf import DjangoFilterBackend
 from rest_framework_gis.filters import InBBoxFilter
 
@@ -114,23 +114,43 @@ class drf_Powerline_View(viewsets.ModelViewSet):
     queryset = Powerline.objects.all()
     serializer_class = Powerline_Serializer
 
-class drf_Measurement_View(viewsets.ModelViewSet):
-    queryset = drf_Measurement.objects.all()
-    serializer_class = drf_Measurement_Serializer
+class drf_mscnt_View(viewsets.ModelViewSet):
+    queryset = drf_mscnt.objects.all()
+    serializer_class = drf_mscnt_Serializer
     bbox_filter_field = 'geom'
     filter_backends = [DjangoFilterBackend, InBBoxFilter]
-    filter_fields = ['id','bore_id','job_id','device_id','chemical_id','concentration','timestamp','status','comment']
+    filter_fields = ['id','job_id','bore_id','instrument','chemical_id','measurement_value','units','timestamp','status','comment']
     bbox_filter_include_overlapping = True
 
-class drf_Timestamp_View(viewsets.ModelViewSet):
-    queryset = drf_Timestamp.objects.all()
-    serializer_class = drf_Timestamp_Serializer
+class drf_mscnt_Timestamp_View(viewsets.ModelViewSet):
+    queryset = drf_mscnt_Timestamp.objects.all()
+    serializer_class = drf_mscnt_Timestamp_Serializer
     filter_backends = [DjangoFilterBackend]
     filter_fields = ['id','label']
 
-class drf_Jobid_View(viewsets.ModelViewSet):
-    queryset = drf_Jobid.objects.all()
-    serializer_class = drf_Jobid_Serializer
+class drf_mscnt_Jobid_View(viewsets.ModelViewSet):
+    queryset = drf_mscnt_Jobid.objects.all()
+    serializer_class = drf_mscnt_Jobid_Serializer
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['id','label']
+
+class drf_gcmv_View(viewsets.ModelViewSet):
+    queryset = drf_gcmv.objects.all()
+    serializer_class = drf_gcmv_Serializer
+    bbox_filter_field = 'geom'
+    filter_backends = [DjangoFilterBackend, InBBoxFilter]
+    filter_fields = ['id','job_id','bore_id','instrument','chemical_id','measurement_value','units','timestamp','status','comment']
+    bbox_filter_include_overlapping = True
+
+class drf_gcmv_Timestamp_View(viewsets.ModelViewSet):
+    queryset = drf_gcmv_Timestamp.objects.all()
+    serializer_class = drf_gcmv_Timestamp_Serializer
+    filter_backends = [DjangoFilterBackend]
+    filter_fields = ['id','label']
+
+class drf_gcmv_Jobid_View(viewsets.ModelViewSet):
+    queryset = drf_gcmv_Jobid.objects.all()
+    serializer_class = drf_gcmv_Jobid_Serializer
     filter_backends = [DjangoFilterBackend]
     filter_fields = ['id','label']
 
