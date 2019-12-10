@@ -724,11 +724,11 @@ let millivolt2color = function (measurementvalue) {
   let g = 0
   let b = 0
   if (measurementvalue < 50) {
-    r = 255
-    g = Math.round(5.1 * measurementvalue)
-  } else {
     g = 255
-    r = Math.round(510 - 5.10 * measurementvalue)
+    r = Math.round(5.1 * measurementvalue)
+  } else {
+    r = 255
+    g = Math.round(510 - 5.10 * measurementvalue)
   }
   let h = r * 0x1 + g * 0x100 + b * 0x10000
   return '#' + ('000000' + h.toString(16)).slice(-6)
