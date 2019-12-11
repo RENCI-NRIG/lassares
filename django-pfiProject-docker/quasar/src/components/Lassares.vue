@@ -45,10 +45,10 @@
 
               <q-form class="q-gutter-md">
                 <q-input color="teal" filled v-model="measurement.properties.job_id" type="number" id="job_id" label="Job ID *" hint="ID of the job" lazy-rules
-                  :rules="[ val => val !== null && val !== '' || 'Please type id', val => val > 0 && val < 1000 || 'Please type a correct id' ]"/>
+                  :rules="[ val => val !== null && val !== '' || 'Please type id', val => val > 0 && val < 100000 || 'Please type a correct id' ]" />
 
                 <q-input color="teal" filled v-model="measurement.properties.bore_id" type="number" id="bore_id" label="Bore ID *" hint="ID of the bore hole" lazy-rules
-                  :rules="[ val => val !== null && val !== '' || 'Please type id', val => val > 0 && val < 1000 || 'Please type a correct id' ]"/>
+                  :rules="[ val => val !== null && val !== '' || 'Please type id', val => val > 0 && val < 100000 || 'Please type a correct id' ]"/>
 
                 <q-input color="teal" filled v-model="measurement.properties.chemical_id" id="chemical_id" label="Chemical ID *" hint="ID of chemical" lazy-rules
                   :rules="[ val => val && val.length > 0 || 'Please type something']"/>
@@ -319,35 +319,6 @@
           </q-markup-table>
         </q-expansion-item>
         <!-- // legend -->
-
-        <!-- // filter -->
-        <q-expansion-item expand-separator icon="list" label="Filter">
-          <q-markup-table class="table is-fullwidth bg-teal-1">
-            <tr>
-              <td>
-                <q-select color="teal" filled v-model="measurement.properties.instrument" label="Type of Instrument" id="instrument" hint="Instrument being used" :options="devoptions" />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <q-datetime-picker today-btn now-btn outlined label="Select Start DateTime" mode="datetime" color="teal"
-                  v-model="starttimestamp" default-standard="iso" format24h clearable></q-datetime-picker>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <q-datetime-picker today-btn now-btn outlined label="Select End DateTime" mode="datetime" color="teal"
-                  v-model="endtimestamp" default-standard="iso" format24h clearable></q-datetime-picker>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <q-btn color="teal" class="text-black" @click="filterMeasurements">Filter Measurements</q-btn>
-              </td>
-            </tr>
-          </q-markup-table>
-        </q-expansion-item>
-        <!-- // filter -->
 
         <!-- // search -->
         <q-expansion-item expand-separator icon="list" label="Search">
@@ -672,7 +643,7 @@ import { toLonLat } from 'ol/proj.js'
 import d3Barchart from '../mixins/vue-d3-barchart'
 
 // treeselect import
-import { Treeselect, LOAD_ROOT_OPTIONS } from '@riophae/vue-treeselect'
+import { Treeselect } from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 // axios import
@@ -736,11 +707,6 @@ let millivolt2color = function (measurementvalue) {
 
 // sleepy time for treeselections
 const sleep = d => new Promise(resolve => setTimeout(resolve, d))
-
-// unique for job ids
-const unique = (value, index, self) => {
-  return self.indexOf(value) === index
-}
 
 export default {
   name: 'Lassares',
@@ -1295,79 +1261,7 @@ export default {
         }
       }
     },
-    getFilterFields: function () {
-      let startTimestamps = []
-      let startJobIds = []
-      let i
-      let j
-      for (i = 0; i < this.$refs.layerSource.length; i++) {
-        let features = this.$refs.layerSource[i].getFeatures()
-        if (features[0].values_.chemical_id) {
-          for (j = 0; j < features.length; j++) {
-            let timestamp = features[j].values_.timestamp
-            startTimestamps.push(timestamp)
-            let jobid = features[j].values_.job_id
-            startJobIds.push(jobid)
-          }
-        }
-      }
-      return [startTimestamps.sort(), startJobIds.filter(unique).sort()]
-    },
-    // You can either use callback or return a Promise.
-    async loadFilterOptions ({ action }) {
-      if (action === LOAD_ROOT_OPTIONS) {
-        await sleep(500)
-        this.toptions = this.getFilterFields()[0].map(id => ({ id, label: `${id}` }))
-        this.joptions = this.getFilterFields()[1].map(id => ({ id, label: `${id}` }))
-      }
-    },
     // filter data only on the client side. Dependent on data available from the DRF server
-    filterMeasurements: function () {
-      // check to see if there are stored features, and if there are then add them
-      // to the layerSource features,so all features are available for filtering.
-      let i
-      if (this.storeFeatures.length > 0) {
-        for (i = 0; i < this.storeFeatures.length; i++) {
-          let j
-          for (j = 0; j < this.$refs.layerSource.length; j++) {
-            let features = this.$refs.layerSource[j].getFeatures()
-            if (features[0].values_.instrument === this.measurement.properties.instrument) {
-              this.$refs.layerSource[j].addFeature(this.storeFeatures[i])
-            }
-          }
-        }
-        this.storeFeatures = []
-      }
-      // if there are two timestamps, and if they are in order than filter
-      if (this.starttimestamp && this.endtimestamp) {
-        if (this.endtimestamp < this.starttimestamp) {
-          this.$notification.open('You have to pick end timestep later than the start timestamp')
-        } else {
-          for (i = 0; i < this.$refs.layerSource.length; i++) {
-            let features = this.$refs.layerSource[i].getFeatures()
-            if (features[0].values_.instrument === this.measurement.properties.instrument) {
-              let j
-              for (j = 0; j < features.length; j++) {
-                let id = features[j].id_
-                let feature = this.$refs.layerSource[i].getFeatureById(id)
-                if (feature.values_.timestamp < this.starttimestamp) {
-                  this.$refs.layerSource[i].removeFeature(feature)
-                  this.storeFeatures.push(feature)
-                } else if (feature.values_.timestamp > this.endtimestamp) {
-                  this.$refs.layerSource[i].removeFeature(feature)
-                  this.storeFeatures.push(feature)
-                }
-              }
-            }
-          }
-        }
-      // other wise tell user they have to refine their search
-      } else if (this.starttimestamp && !this.endtimestamp) {
-        this.$notification.open('You have to select a end timestep')
-      } else if (!this.starttimestamp && this.endtimestamp) {
-        this.$notification.open('You have to select a start timestep')
-      }
-    },
     searchMeasurements: function () {
       let instcode
       if (this.measurement.properties.instrument === 'Mass Spectrometer') {
@@ -1849,5 +1743,11 @@ export default {
     background: #e0f2f1;
     .q-tab-panels
       background: #e0f2f1;
+
+  .q-input
+    height: 4.0em;
+
+  .q-select
+    height: 4.0em;
 
 </style>
