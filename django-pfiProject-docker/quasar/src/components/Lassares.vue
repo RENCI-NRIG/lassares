@@ -9,7 +9,6 @@
       <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="teal bg-teal-1">
         <!-- // measurement-list -->
         <q-card class="q-pa-md bg-teal-1" style="max-width: 300px">
-          <!-- q-select bg-color="teal" filled v-model="measurement.properties.instrument" id="measurement-list" label="Measurement List *" hint="View list of measurements" :options="devoptions" emit-value / -->
           <q-btn-dropdown label="View List of Measurements" type="viewlist" color="teal" class="text-black">
             <q-list class="bg-teal-1">
               <q-item>
@@ -119,10 +118,7 @@
                           </q-card-section>
                           <q-separator />
                           <q-card-section>
-                            <q-btn label="Select Map Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'">
-                            </q-btn><br />
-                             <q-btn label="Enter Map Selection" color="teal" class="text-black" @click="selectLocation" v-close-popup>
-                            </q-btn>
+                            <q-btn label="Select Map Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'" v-close-popup />
                           </q-card-section>
                         </q-card>
                       </q-popup-proxy>
@@ -151,10 +147,7 @@
                           </q-card-section>
                           <q-separator />
                           <q-card-section>
-                            <q-btn label="Select Map Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'">
-                            </q-btn><br />
-                             <q-btn label="Enter Map Selection" color="teal" class="text-black" @click="selectLocation" v-close-popup>
-                            </q-btn>
+                            <q-btn label="Select Map Location" type="Point" color="teal" class="text-black" @click="drawType = 'point'" v-close-popup />
                           </q-card-section>
                         </q-card>
                       </q-popup-proxy>
@@ -321,11 +314,12 @@
         <!-- // legend -->
 
         <!-- // search -->
-        <q-expansion-item expand-separator icon="list" label="Search">
+        <q-expansion-item expand-separator icon="list" label="Search Measurements">
           <q-markup-table class="table is-fullwidth bg-teal-1">
             <tr>
               <td>
-                <q-select color="teal" filled v-model="measurement.properties.instrument" label="Type of Instrument" id="instrument" hint="Instrument being used" :options="devoptions" />
+                <q-select color="teal" filled v-model="measurement.properties.instrument" label="Type of Instrument"
+                  id="instrument" hint="Instrument being used" :options="devoptions" />
               </td>
             </tr>
             <div v-if="measurement.properties.instrument == 'Mass Spectrometer'">
@@ -456,7 +450,7 @@
                       </div>
                     </b>
                     <template v-slot:action>
-                      <q-btn flat round dense icon="close" @click="selectedFeatures = selectedFeatures.filter(f => f.id === 0)" />
+                      <q-btn flat round dense icon="close" @click="closeBarChart" />
                     </template>
                   </q-banner>
                   <table class="table is-fullwidth">
@@ -530,10 +524,10 @@
 
       <!--// draw components -->
       <vl-layer-vector id="draw-pane">
-        <vl-source-vector ref="drawSource" ident="draw-target" :features.sync="drawnFeatures"></vl-source-vector>
+        <vl-source-vector ref="drawSource" ident="draw-target"></vl-source-vector>
       </vl-layer-vector>
 
-      <vl-interaction-draw v-if="drawType" source="draw-target" :type="drawType"></vl-interaction-draw>
+      <vl-interaction-draw v-if="drawType" @drawend="drawEnd" source="draw-target" :type="drawType"></vl-interaction-draw>
       <vl-interaction-modify source="draw-target"></vl-interaction-modify>
       <vl-interaction-snap source="draw-target" :priority="10"></vl-interaction-snap>
       <!--// draw components -->
@@ -596,14 +590,7 @@
                 <q-select color="teal" filled v-model="measurement.properties.instrument" id="instrument" label="Instrument *" hint="Instrument being used" :options="devoptions" />
               </q-card-section>
               <q-card-section>
-                <div v-if="drawnFeatures.length === 0">
-                  <q-btn label="Draw Polygon Around Features" type="Point" color="teal" class="text-black" @click="drawType = 'polygon'">
-                  </q-btn>
-                </div>
-                <div v-else>
-                  <q-btn label="Create Bar Plot of Features" color="teal" class="text-black" @click="selectInDrawnPolygon">
-                  </q-btn>
-                </div>
+                <q-btn label="Draw Polygon Around Features" type="Polygon" color="teal" class="text-black" @click="drawType = 'polygon'" v-close-popup />
               </q-card-section>
             </q-card>
           </q-popup-proxy>
@@ -635,9 +622,8 @@ import Attribution from 'ol/control/Attribution'
 // other ol imports
 import { Style, Stroke, Fill, Circle } from 'ol/style'
 import { DEVICE_PIXEL_RATIO } from 'ol/has.js'
-import DragBox from 'ol/interaction/DragBox'
-import { platformModifierKeyOnly } from 'ol/events/condition.js'
 import { toLonLat } from 'ol/proj.js'
+// import Select from 'ol/interaction/Select.js'
 
 // d3 barchart import
 import d3Barchart from '../mixins/vue-d3-barchart'
@@ -834,7 +820,6 @@ export default {
         }
       ],
       drawType: undefined,
-      drawnFeatures: [],
       coordinates: [],
       // bar plot options
       barplotpoint: undefined,
@@ -1091,49 +1076,15 @@ export default {
           target: 'AttributionTarget'
         })
       ])
-
-      // a DragBox interaction used to select features by drawing boxes
-      const dragBox = new DragBox({
-        condition: platformModifierKeyOnly
-      })
-
-      map.$map.addInteraction(dragBox)
-
-      dragBox.on('boxend', (event) => {
-        this.boxCoordinate = event.coordinate
-        // features that intersect the box are added to the collection of
-        // selected features
-        const extent = dragBox.getGeometry().getExtent()
-        // only use source that have chemical_id
-        let source
-        let i
-        for (i = 0; i < this.$refs.layerSource.length; i++) {
-          let features = this.$refs.layerSource[i].getFeatures()
-          if (features[0].values_.instrument === this.measurement.properties.instrument) {
-            source = this.$refs.layerSource[i].$source
-          }
-        }
-
-        this.isBox = 'yes'
-
-        source.forEachFeatureIntersectingExtent(extent, feature => {
-          feature = writeGeoJsonFeature(feature)
-          this.selectedFeatures.push(feature)
-          this.selectedFeaturesBarBox.push({ x: feature.properties['timestamp'], y: feature.properties['measurement_value'] })
-          this.chemical_id = feature.properties['chemical_id']
-          this.pid = this.chemical_id
-        })
-      })
-
-      // clear selection when drawing a new box and when clicking on the map
-      dragBox.on('boxstart', () => {
-        this.selectedFeatures = []
-        this.selectedFeaturesBarBox = []
-        this.isBox = 'no'
-      })
     },
-    selectInDrawnPolygon: function () {
-      this.drawnFeatures = []
+    drawEnd: function (event) {
+      if (this.drawType === 'point') {
+        this.selectLocation(event)
+      } else if (this.drawType === 'polygon') {
+        this.selectInDrawnPolygon(event)
+      }
+    },
+    selectInDrawnPolygon: function (event) {
       this.selectedFeatures = []
       this.selectedFeaturesBarBox = []
       this.isBox = 'yes'
@@ -1146,9 +1097,7 @@ export default {
           vectorSource = this.$refs.layerSource[i].$source
         }
       }
-      const drawSource = this.$refs.drawSource.$source
-      const extent = drawSource.getExtent()
-      // console.log(extent)
+      const extent = event.feature.values_.geometry.extent_
       vectorSource.forEachFeatureIntersectingExtent(extent, feature => {
         feature = writeGeoJsonFeature(feature)
         this.selectedFeatures.push(feature)
@@ -1157,7 +1106,15 @@ export default {
         this.pid = this.chemical_id
       })
       this.drawType = undefined
+      // console.log(event)
       // console.log(this.$refs)
+      // var selectSource = Select.getLayer(event.feature).getSource()
+      // selectSource.removeFeature(event.feature)
+    },
+    closeBarChart: function () {
+      this.selectedFeatures = this.selectedFeatures.filter(f => f.id === 0)
+      let drawFeatures = this.$refs.drawSource.getFeatures()
+      this.$refs.drawSource.removeFeatures(drawFeatures)
     },
     // base layers
     showBaseLayer: function () {
@@ -1380,10 +1337,11 @@ export default {
       this.longitude = this.deviceCoordinate[0]
       this.latitude = this.deviceCoordinate[1]
     },
-    selectLocation: function () {
+    selectLocation: function (event) {
+      let coordinates = toLonLat(event.feature.values_.geometry.flatCoordinates)
+      this.longitude = coordinates[0]
+      this.latitude = coordinates[1]
       this.drawType = undefined
-      this.longitude = this.eventCoordinate[0]
-      this.latitude = this.eventCoordinate[1]
     },
     onUpdatePosition: function (coordinate) {
       this.deviceCoordinate = coordinate
@@ -1430,9 +1388,20 @@ export default {
           let i
           for (i = 0; i < this.$refs.layerSource.length; i++) {
             let features = this.$refs.layerSource[i].getFeatures()
-            if (features[0].values_.chemical_id) {
-              this.$refs.layerSource[i].addFeature(this.measurement)
-              this.$refs.drawSource.clearFeatures()
+            if (features[0].values_.instrument) {
+              if (features[0].values_.instrument === 'Mass Spectrometer') {
+                if (this.measurement.properties.instrument === 'Mass Spectrometer') {
+                  this.$refs.layerSource[i].addFeature(this.measurement)
+                  let drawFeatures = this.$refs.drawSource.getFeatures()
+                  this.$refs.drawSource.removeFeatures(drawFeatures)
+                }
+              } else if (features[0].values_.instrument === 'Gas Chromatograph') {
+                if (this.measurement.properties.instrument === 'Gas Chromatograph') {
+                  this.$refs.layerSource[i].addFeature(this.measurement)
+                  let drawFeatures = this.$refs.drawSource.getFeatures()
+                  this.$refs.drawSource.removeFeatures(drawFeatures)
+                }
+              }
             }
           }
           // console.log(this.$refs.layerSource)
@@ -1465,11 +1434,24 @@ export default {
           let i
           for (i = 0; i < this.$refs.layerSource.length; i++) {
             let features = this.$refs.layerSource[i].getFeatures()
-            if (features[0].values_.chemical_id) {
-              let feature = this.$refs.layerSource[i].getFeatureById(this.measurement.id)
-              this.$refs.layerSource[i].removeFeature(feature)
-              this.$refs.layerSource[i].addFeature(this.measurement)
-              this.$refs.drawSource.clearFeatures()
+            if (features[0].values_.instrument) {
+              if (features[0].values_.instrument === 'Mass Spectrometer') {
+                if (this.measurement.properties.instrument === 'Mass Spectrometer') {
+                  let feature = this.$refs.layerSource[i].getFeatureById(this.measurement.id)
+                  this.$refs.layerSource[i].removeFeature(feature)
+                  this.$refs.layerSource[i].addFeature(this.measurement)
+                  let drawFeatures = this.$refs.drawSource.getFeatures()
+                  this.$refs.drawSource.removeFeatures(drawFeatures)
+                }
+              } else if (features[0].values_.instrument === 'Gas Chromatograph') {
+                if (this.measurement.properties.instrument === 'Gas Chromatograph') {
+                  let feature = this.$refs.layerSource[i].getFeatureById(this.measurement.id)
+                  this.$refs.layerSource[i].removeFeature(feature)
+                  this.$refs.layerSource[i].addFeature(this.measurement)
+                  let drawFeatures = this.$refs.drawSource.getFeatures()
+                  this.$refs.drawSource.removeFeatures(drawFeatures)
+                }
+              }
             }
           }
           sleep(1000).then(() => {
