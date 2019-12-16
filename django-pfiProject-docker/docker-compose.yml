@@ -1,6 +1,7 @@
 version: '3.7'
 services:
   database:
+    restart: always 
     image: mdillon/postgis:11 
     container_name: database
     ports:
@@ -10,6 +11,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    restart: always 
     image: django
     container_name: django
     ports:
