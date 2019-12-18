@@ -1118,8 +1118,10 @@ export default {
       let i
       for (i = 0; i < this.$refs.layerSource.length; i++) {
         let features = this.$refs.layerSource[i].getFeatures()
-        if (features[0].values_.instrument === this.measurement.properties.instrument) {
-          vectorSource = this.$refs.layerSource[i].$source
+        if (features[0] !== undefined) {
+          if (features[0].values_.instrument === this.measurement.properties.instrument) {
+            vectorSource = this.$refs.layerSource[i].$source
+          }
         }
       }
       const extent = event.feature.values_.geometry.extent_
