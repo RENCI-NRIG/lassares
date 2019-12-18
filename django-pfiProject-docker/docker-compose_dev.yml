@@ -37,6 +37,7 @@ services:
       - .:/code
       - ./static:/code/static
       - ./media:/code/media
+      - ./quasar/src/statics:/code/statics
       - ./certs/self.signed.crt:/etc/ssl/SSL.crt
       - ./certs/self.signed.key:/etc/ssl/SSL.key
     environment:

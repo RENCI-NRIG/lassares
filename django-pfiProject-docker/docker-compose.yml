@@ -38,6 +38,7 @@ services:
     volumes:
       - .:/code
       - ./static:/code/static
+      - ./quasar/src/statics:/code/statics
       - ./media:/code/media
       - ./certs/lassaress_renci_org.crt:/etc/ssl/SSL.crt
       - ./certs/lassaress_renci_org.key:/etc/ssl/SSL.key

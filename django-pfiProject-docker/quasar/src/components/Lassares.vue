@@ -294,7 +294,7 @@
         <q-expansion-item expand-separator icon="list" label="Legend">
           <q-markup-table class="bg-teal-1">
             <tr>
-              <td><img :src="imageSrc"></td>
+              <td><img :src="imageSrc" height="10" width="82"></td>
               <td>Powerlines</td>
             </tr>
             <tr>
