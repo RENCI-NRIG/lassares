@@ -294,20 +294,44 @@
         <q-expansion-item expand-separator icon="list" label="Legend">
           <q-markup-table class="bg-teal-1">
             <tr>
-              <td><hr style=getPowerlinesStyle /></td>
+              <td><img :src="imageSrc"></td>
               <td>Powerlines</td>
             </tr>
             <tr>
               <td><b>Source</b></td>
-              <td>This data was derived from nothing.</td>
+              <td>This data was derived<br/> from nothing.</td>
             </tr>
             <tr>
-              <td><span class="dot"></span></td>
-              <td>Test Measurments</td>
+              <td id="nested">
+                <table class="mtable">
+                  <tr>
+                    <td style="padding:2px"><span class="msdot1"></span></td>
+                    <td style="padding:2px"><span class="msdot2"></span></td>
+                    <td style="padding:2px"><span class="msdot3"></span></td>
+                  </tr>
+                </table>
+              </td>
+              <td>Mass Spectrometer</td>
             </tr>
             <tr>
               <td><b>Source</b></td>
-              <td>This data was derived from nothing.</td>
+              <td>This data was derived<br/> from nothing.</td>
+            </tr>
+            <tr>
+              <td id="nested">
+                <table class="mtable">
+                  <tr>
+                    <td style="padding:2px"><span class="gcdot1"></span></td>
+                    <td style="padding:2px"><span class="gcdot2"></span></td>
+                    <td style="padding:2px"><span class="gcdot3"></span></td>
+                  </tr>
+                </table>
+              </td>
+              <td>Gas Chromatograph </td>
+            </tr>
+            <tr>
+              <td><b>Source</b></td>
+              <td>This data was derived<br/> from nothing.</td>
             </tr>
           </q-markup-table>
         </q-expansion-item>
@@ -789,6 +813,7 @@ export default {
       powerlinesModel: 'Selected',
       ptitle: undefined,
       powerline: undefined,
+      imageSrc: 'statics/Powerline.png',
       // stored and selected features
       storeFeatures: [],
       selectedFeatures: [],
@@ -1655,10 +1680,50 @@ export default {
   .measurement-popup
     window-height: 100em
 
-  .dot
+  .mtable
+    border: 0px
+    border-collapse: collapse
+    border-spacing: 0px
+
+  .msdot1
     height: 15px;
     width: 15px;
     background-color: #84f542;
+    border-radius: 50%;
+    display: inline-block
+
+  .msdot2
+    height: 20px;
+    width: 20px;
+    background-color: #ffff04;
+    border-radius: 50%;
+    display: inline-block
+
+  .msdot3
+    height: 25px;
+    width: 25px;
+    background-color: #f52701;
+    border-radius: 50%;
+    display: inline-block
+
+  .gcdot1
+    height: 15px;
+    width: 15px;
+    background-color: #00ff8c;
+    border-radius: 50%;
+    display: inline-block
+
+  .gcdot2
+    height: 20px;
+    width: 20px;
+    background-color: #00a4ff;
+    border-radius: 50%;
+    display: inline-block
+
+  .gcdot3
+    height: 25px;
+    width: 25px;
+    background-color: #062aff;
     border-radius: 50%;
     display: inline-block
 
