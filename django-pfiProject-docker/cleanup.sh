@@ -1,4 +1,5 @@
 #!/bin/sh
+# this script clean out old docker images and containers
 docker stop $(docker ps -aq)
 docker rm $(docker ps -aq)
 docker rmi -f $(docker images -q)
