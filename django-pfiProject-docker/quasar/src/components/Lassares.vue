@@ -1381,6 +1381,7 @@ export default {
     },
     onUpdatePosition: function (coordinate) {
       this.deviceCoordinate = coordinate
+      this.center = [this.deviceCoordinate[0], this.deviceCoordinate[1]]
     },
     onUpdateAccuracy: function (accuracy) {
       this.coordinateAccuracy = accuracy
