@@ -23,6 +23,7 @@
     "node-sass": "^4.12.0",
     "quasar": "^1.0.0",
     "sass-loader": "7.1.0",
+    "vue-browser-geolocation": "^1.8.0",
     "vuelayers": "0.11.4"
   },
   "devDependencies": {

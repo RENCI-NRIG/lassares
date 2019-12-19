@@ -294,7 +294,7 @@
         <q-expansion-item expand-separator icon="list" label="Legend">
           <q-markup-table class="bg-teal-1">
             <tr>
-              <td><img :src="imageSrc"></td>
+              <td><img :src=" 'statics/Powerline.png' "></td>
               <td>Powerlines</td>
             </tr>
             <tr>
@@ -305,9 +305,9 @@
               <td id="nested">
                 <table class="mtable">
                   <tr>
-                    <td style="padding:2px"><span class="msdot1"></span></td>
-                    <td style="padding:2px"><span class="msdot2"></span></td>
-                    <td style="padding:2px"><span class="msdot3"></span></td>
+                    <td style="padding:5px"><span class="msdot1"></span></td>
+                    <td style="padding:5px"><span class="msdot2"></span></td>
+                    <td style="padding:5px"><span class="msdot3"></span></td>
                   </tr>
                 </table>
               </td>
@@ -321,9 +321,9 @@
               <td id="nested">
                 <table class="mtable">
                   <tr>
-                    <td style="padding:2px"><span class="gcdot1"></span></td>
-                    <td style="padding:2px"><span class="gcdot2"></span></td>
-                    <td style="padding:2px"><span class="gcdot3"></span></td>
+                    <td style="padding:5px"><span class="gcdot1"></span></td>
+                    <td style="padding:5px"><span class="gcdot2"></span></td>
+                    <td style="padding:5px"><span class="gcdot3"></span></td>
                   </tr>
                 </table>
               </td>
@@ -332,6 +332,10 @@
             <tr>
               <td><b>Source</b></td>
               <td>This data was derived<br/> from nothing.</td>
+            </tr>
+            <tr>
+              <td><img :src=" 'statics/marker.png' " height="50" width="50"></td>
+              <td>Current Location</td>
             </tr>
           </q-markup-table>
         </q-expansion-item>
@@ -506,7 +510,7 @@
       <!--// click interactions -->
 
       <!--// geolocation -->
-      <vl-geoloc @update:position="onUpdatePosition" enableHighAccuracy="true" >
+      <vl-geoloc ref="geoloc" @update:position="onUpdatePosition" enableHighAccuracy="true" >
         <template slot-scope="geoloc">
           <vl-feature v-if="geoloc.position" id="position-feature">
             <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
@@ -735,8 +739,8 @@ export default {
       loading: undefined,
       caption: undefined,
       // map parameters
-      center: [-73.845, 40.72],
-      // center: [this.deviceCoordinate[0], this.deviceCoordinate[1]],
+      // center: [-73.845, 40.72],
+      center: [NaN, NaN],
       zoom: 15,
       rotation: 0,
       mapVisible: true,
@@ -813,7 +817,6 @@ export default {
       powerlinesModel: 'Selected',
       ptitle: undefined,
       powerline: undefined,
-      imageSrc: 'statics/Powerline.png',
       // stored and selected features
       storeFeatures: [],
       selectedFeatures: [],
@@ -960,6 +963,12 @@ export default {
     }
   },
   created: function () {
+    // get current location, and use it for map center
+    this.$getLocation()
+      .then(coordinates => {
+        this.center = [coordinates.lng, coordinates.lat]
+      })
+
     // search timestamp
     let that = this
     let sjurl = 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/mscntjobid/?format=json'
@@ -1360,7 +1369,7 @@ export default {
       return formattedString
     },
     currentLocation: function () {
-      // console.log(this.$refs.view)
+      // console.log(this.$refs.geoloc)
       this.longitude = this.deviceCoordinate[0]
       this.latitude = this.deviceCoordinate[1]
     },
