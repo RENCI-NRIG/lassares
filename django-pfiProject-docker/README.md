@@ -103,3 +103,24 @@ To enable this authentication system you will first need to get an auth0 account
 This will provide you with a CLIENT_ID and AUTH0_DOMAIN, which you will use as described above. Finally, in the auth0 application you need to put the url, where the lassress app will be accesible, in "Allowed Callback URLs", "Allowed Web Origins", and "Allowed Logout URLs". 
 
 For a deeper read into this subject check out [Building Modern Applications with Django and Vue.js by Ahmed Bouchefra](https://auth0.com/blog/building-modern-applications-with-django-and-vuejs/).
+
+## <a name="webapp"></a>Web Application
+
+After loging in the left side draw will appear which containes access to lists of measurements, a data entry form, and data upload interface. In addition to these, the image below points out other components for the web interface.
+![web-interface](../../master/images/LassaresApp.png)
+If you click on the "View List of Measurement" button a dropdown menu will appear, where you can select the instrument in which you want to see its measurements.
+![list-choice](../../master/images/LassaresAppListChoice.png)
+When you select an instrument a list of measurements for that instrument will appear, where you will be able to delete a measurement, edit or update the measurement, and change page.
+![list-measurements](../../master/images/LassaresAppListMeasurements.png)
+Inputs in "Input Measurement Data" form that have additional windows are "Instrument" input which has a dropdown menu to select the instrument.
+![instrument-input](../../master/images/LassaresAppInstrument.png)
+In the "Date" and "Time" inputs fields you can select the icon on the right side of the input field to get a calendar or clock popup.
+![calendar-input](../../master/images/LassaresAppCalendar.png)
+In the "Longitude" and "Latitude" fields you can select the globe, on the right side of the fields, to get a popup menu where you can select the longitude and latitude for you current physical location, or you can select a location on the map. When you select a location on the map a blue dot will appear beneath your mouse arrow, which you can move to the location for the measurement and then click. The longitude and latitude for that location will appear
+in the appropriate fields.
+![location-input](../../master/images/LassaresAppLegendSearchLocation.png)
+The image above also shows the "legend" menu, and "search measurement" menu fully opened on the right side drawer.
+The right side drawer also has a "state" menu which shows additional information about the map, including the coordinates of the device you are using, or you physical location, and the coordinates for a feature you select, which also show a popup. You can use the button in the bottom right hand corner to access the barchart selectionn tool, which enables you to create barcharts of data you selected.
+![app-pop-state](../../master/images/LassaresAppAppPopState.png)
+After selecting the barchart selection tool, a window will appear where you can first select the instrument in which you want to chart its data. You then select the "Draw Polygon Around Features" button. The will produce a blue dot beneath you mouse arrow, which you can use to draw a square around the instruments data you want to plot. Double click when you select the last corner of the square, and a popup showing the bargraph will appear.
+![app-pop-up](../../master/images/LassaresAppAppPopUp.png)
