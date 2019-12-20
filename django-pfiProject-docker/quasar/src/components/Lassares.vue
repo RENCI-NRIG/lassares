@@ -510,7 +510,7 @@
       <!--// click interactions -->
 
       <!--// geolocation -->
-      <vl-geoloc ref="geoloc" @update:position="onUpdatePosition" enableHighAccuracy="true" >
+      <vl-geoloc ref="geoloc" @update:position="onUpdatePosition" enableHighAccuracy="true" maximumAge="0" timeout="Infinity" >
         <template slot-scope="geoloc">
           <vl-feature v-if="geoloc.position" id="position-feature">
             <vl-geom-point :coordinates="geoloc.position"></vl-geom-point>
@@ -520,7 +520,7 @@
           </vl-feature>
         </template>
       </vl-geoloc>
-      <vl-geoloc @update:accuracy="onUpdateAccuracy" enableHighAccuracy="true" >
+      <vl-geoloc @update:accuracy="onUpdateAccuracy" enableHighAccuracy="true" maximumAge="0" timeout="Infinity" >
         <template slot-scope="geoloc">
           <vl-feature v-if="geoloc.accuracy" id="accuracy-feature">
             <div :accuracy="geoloc.accuracy"></div>
@@ -1369,6 +1369,7 @@ export default {
       return formattedString
     },
     currentLocation: function () {
+      console.log(this.$refs.geoloc)
       this.longitude = this.deviceCoordinate[0]
       this.latitude = this.deviceCoordinate[1]
     },
