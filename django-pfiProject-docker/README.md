@@ -92,7 +92,9 @@ Django is a high-level Python Web framework that encourages rapid development an
  
 ## <a name="auth"></a>Authentication
 
-The Lassaress application uses auth0.com for authentication. The frontend of this application has a sign in button ![sign-in](../../master/images/sign-in.png) which when used will bring up a auth0 login screen that gives you the choice of using your gmail account to login or to use a login provided by Lassares. 
+The Lassaress application uses auth0.com for authentication. The frontend of this application has a sign in button: 
+![sign-in](../../master/images/LassaresAppNotLoggedIn.png) 
+which when used will bring up a auth0 login screen that gives you the choice of using your gmail account to login or to use a login provided by Lassares. 
 ![auth0-sign-in](../../master/images/auth0-sign-in.png)
 Signing in will authenticate you for the frontend (quasar) of the application, giving you access to the data entry drawer on the left side of the app. Signing in will also authenticate you on the backend (django) of the app enabling you to entire data into the backend database through the frontend data entry drawer. 
 
