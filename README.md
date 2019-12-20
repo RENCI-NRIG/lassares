@@ -2,12 +2,12 @@
 This project involves development and configuration of cloud-based data collection, analysis and visualization pipeline as well as mobile web application. See more details about the project [here!](http://nrig.renci.org/project/lassaress/)
 
 ## Analysis & Visualization Pipeline
-Analysis and visualization pipeline is implemented via PostGis and Vue.
+Analysis and visualization pipeline is implemented via PostgreSQL/PostGIS and Openlayers/D3.js.
 
 ## Web Application
-Using Django, a high-level Python Web framework that encourages rapid development and clean, pragmatic design, Gmail based authenticated web application which allows users to add, update and delete measurements. Once the user is satisfied with the date, the same can be pushed to Analysis & Visualization Pipeline.
+The web application backend uses the Django Rest Framework, accessible through a NGINX server, to serve data extracted from a PostgreSQL/PostGIS database. The web application frontend accesses and displays the data using Openlayers and D3.js, which are wrapped in a Vue/Quasar user interface. Openlayers also accesses OpenStreetMap and MapBox tile map services. The entire web application is packaged into containers using Docker, for easy transport to cloud services such as AWS. 
 
-![Block-Diagram](../master/images/block-diagram.png)
+![Block-Diagram](../master/images/RENCIPropDiagram.png)
 
 ## Installtion
 ### Development mode on AWS

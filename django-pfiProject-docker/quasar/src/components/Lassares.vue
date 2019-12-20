@@ -6,7 +6,7 @@
     </div>
     <div v-else-if="authenticated">
       <!-- If authenticated show drawer -->
-      <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="teal bg-teal-1">
+      <q-drawer v-model="leftDrawerOpen" show-if-above bordered :content-style="{ backgroundColor: 'rgba(199, 235, 235, 0.5)' }">
         <!-- // measurement-list -->
         <q-card class="q-pa-md bg-teal-1" style="max-width: 300px">
           <q-btn-dropdown label="View List of Measurements" type="viewlist" color="teal" class="text-black">
@@ -1369,7 +1369,6 @@ export default {
       return formattedString
     },
     currentLocation: function () {
-      // console.log(this.$refs.geoloc)
       this.longitude = this.deviceCoordinate[0]
       this.latitude = this.deviceCoordinate[1]
     },
