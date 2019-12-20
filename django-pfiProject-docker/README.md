@@ -121,6 +121,6 @@ in the appropriate fields.
 ![location-input](../../master/images/LassaresAppLegendSearchLocation.png)
 The image above also shows the "legend" menu, and "search measurement" menu fully opened on the right side drawer.
 The right side drawer also has a "state" menu which shows additional information about the map, including the coordinates of the device you are using, or you physical location, and the coordinates for a feature you select, which also show a popup. You can use the button in the bottom right hand corner to access the barchart selectionn tool, which enables you to create barcharts of data you selected.
-![app-pop-state](../../master/images/LassaresAppAppPopState.png)
+![app-pop-state](../../master/images/LassaresAppPopState.png)
 After selecting the barchart selection tool, a window will appear where you can first select the instrument in which you want to chart its data. You then select the "Draw Polygon Around Features" button. The will produce a blue dot beneath you mouse arrow, which you can use to draw a square around the instruments data you want to plot. Double click when you select the last corner of the square, and a popup showing the bargraph will appear.
 ![app-pop-up](../../master/images/LassaresAppPopUp.png)
