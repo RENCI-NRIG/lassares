@@ -14,7 +14,7 @@
     "@auth0/auth0-spa-js": "^1.2.4",
     "@quasar/extras": "^1.0.0",
     "@riophae/vue-treeselect": "^0.3.0",
-    "auth0-js": "^9.11.3",
+    "auth0-js": "^9.13.2",
     "axios": "^0.19.0",
     "d3-array": "^2.3.1",
     "d3-scale": "^3.1.0",
