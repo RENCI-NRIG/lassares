@@ -1,5 +1,5 @@
 Django==2.2.4
-djangorestframework==3.9.1
+djangorestframework==3.11.2
 djangorestframework-gis==0.14.0
 django-filter==2.2
 django-url-filter==0.3.14
