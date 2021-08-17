@@ -3,6 +3,7 @@ services:
   database:
     image: mdillon/postgis:11 
     container_name: database
+    network_mode: host
     ports:
       - 5432:${POSTGRES_PORT:-5432}
 
@@ -12,6 +13,7 @@ services:
       dockerfile: Dockerfile
     image: django
     container_name: django
+    network_mode: host
     ports:
       - 8000:8000
     depends_on:
@@ -28,6 +30,7 @@ services:
     restart: unless-stopped
     image: quasar 
     container_name: quasar 
+    network_mode: host
     ports:
       - 80:80
       - 443:443

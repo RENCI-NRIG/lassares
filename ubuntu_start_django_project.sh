@@ -10,7 +10,6 @@ add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu fo
 apt -y update
 apt-cache policy docker-ce
 apt -y install docker-ce
-systemctl status docker
 
 set -e
 
