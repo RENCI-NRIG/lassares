@@ -5,9 +5,9 @@ django-filter==2.2
 django-url-filter==0.3.14
 djangorestframework-queryfields==1.0.0
 djangorestframework-jwt==1.11.0
-django-cors-headers==3.1.1
+django-cors-headers==3.7.0
 asn1crypto==0.24.0
-cffi==1.11.2
+cffi==1.14.5
 cryptography==2.8
 ecdsa==0.13
 future==0.16.0

@@ -504,68 +504,64 @@ export default {
   },
 }
 </script>
-<style scoped lang="sass">
-
-.d3-bar-chart
-  max-height: 100%
-  max-width: 100%
-  svg
-    overflow: visible
-
-.bar
-  fill: #0ff
-  stroke: none
-
-.dummy-bar
-  fill: none
-  stroke: none
-  pointer-events: all
-  &.has-bars:hover
-    fill: rgba(0, 0, 0, 0.1)
-
-.bar-text
-  fill: #fa0505
-  font-size: 14px
-
-.rulers
-  stroke-width: 1px
-  stroke: #000
-
-.lines
-  stroke: #808080
-  stroke-width: 1px
-  stroke-opacity: 0.3
-
-.axis
-  stroke-width: 1px
-  stroke: #808080
-
-.axis-label
-  fill: #808080
-  stroke: none
-  font-size: 6px
-
-.line
-  stroke: rgba(0, 0, 0, 0.5)
-  stroke-width: 2px
-
-.curve, .curve-back
-  stroke: #000
-  stroke-width: 3px
-  fill: none
-
-.curve-point
-  fill: #808080
-  stroke: #000
-
-.chart-tip-back
-  fill: #000
-  width: 180px
-  stroke-width: 1px
-  stroke: #808080
-  opacity: 0.5
-
-.chart-line
-  pointer-events: none
-
+<style scoped lang="scss">
+.d3-bar-chart {
+  max-height: 100%;
+  max-width: 100%;
+  overflow: visible;
+}
+.bar {
+  fill: #0ff;
+  stroke: none;
+}
+.dummy-bar {
+  fill: none;
+  stroke: none;
+  pointer-events: all;
+}
+.bar-text {
+  fill: #fa0505;
+  font-size: 14px;
+}
+.rulers {
+  stroke-width: 1px;
+  stroke: #000;
+}
+.lines {
+  stroke: #808080;
+  stroke-width: 1px;
+  stroke-opacity: 0.3;
+}
+.axis {
+  stroke-width: 1px;
+  stroke: #808080;
+}
+.axis-label {
+  fill: #808080;
+  stroke: none;
+  font-size: 6px;
+}
+.line {
+  stroke: rgba(0, 0, 0, 0.5);
+  stroke-width: 2px;
+}
+.curve, .curve-back {
+  stroke: #000;
+  stroke-width: 3px;
+  fill: none;
+}
+.curve-point {
+  fill: #808080;
+  stroke: #000;
+}
+.chart-tip-back {
+  fill: #000;
+  width: 180px;
+  stroke-width: 1px;
+  stroke: #808080;
+  opacity: 0.5;
+}
+.chart-line {
+  pointer-events: none;
+}
 </style>

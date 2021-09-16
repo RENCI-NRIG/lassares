@@ -1,0 +1,7 @@
+yarn install
+quasar dev
+quasar build
+
+docker-compose -f docker-compose-dev-quasar.yml up -d --build
+docker-compose -f docker-compose-dev-quasar.yml logs -f
+

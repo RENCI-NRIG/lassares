@@ -32,7 +32,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', True)
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS").split(" ")
 
 # Application definition
 
@@ -95,11 +95,12 @@ try:
 except ImportError:
     pass
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_WHITELIST = (
-        'https://'+secrets.PUBHOST_URL,
-)
+#CORS_ORIGIN_WHITELIST = (
+#        'https://'+secrets.PUBHOST_URL,
+#)
 
 ROOT_URLCONF = 'pfiProject.urls'
 

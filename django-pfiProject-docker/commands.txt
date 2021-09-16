@@ -1,0 +1,11 @@
+docker-compose -f docker-compose_dev.yml logs -f
+docker-compose -f docker-compose-dev.yml logs -f
+docker-compose -f docker-compose-dev.yml up -d
+
+docker-compose -f docker-compose-dev-django.yml up -d --build
+docker-compose -f docker-compose-dev-django.yml logs -f
+
+docker-compose -f docker-compose-dev-django.yml exec django python manage.py makemigrations --noinput
+docker-compose -f docker-compose-dev-django.yml exec django python manage.py migrate --noinput
+
+

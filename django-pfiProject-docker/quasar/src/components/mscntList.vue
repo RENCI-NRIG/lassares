@@ -173,11 +173,8 @@ export default {
   }
 }
 </script>
-<style lang="sass">
-  .ml
+<style lang="scss">
+  .ml {
     window-width: "50vw"
-
-  .measurement-card
-    fit
-
+  }
 </style>

@@ -10,37 +10,37 @@ export class APIService{
       
   }
   getMeasurements(param) {
-    const url = `https://${API_URL}/meas/api/${param}/`
+    const url = ${API_URL}/meas/api/${param}/`
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.get(url, { headers: headers }).then(response => response.data)
   }
   getMeasurementsByURL(link) {
-    const url = `https://${API_URL}${link}`
+    const url = ${API_URL}${link}`
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.get(url, { headers: headers }).then(response => response.data)
   }
   getMeasurement(param,id) {
-    const url = `https://${API_URL}/meas/api/${param}/${id}`
+    const url = ${API_URL}/meas/api/${param}/${id}`
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.get(url, { headers: headers }).then(response => response.data)
   }    
   deleteMeasurement(param,measurement) {
-    const url = `https://${API_URL}/meas/api/${param}/${measurement.id}`
+    const url = ${API_URL}/meas/api/${param}/${measurement.id}`
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.delete(url, { headers: headers })
   }
   createMeasurement(param,measurement) {
-    const url = `https://${API_URL}/meas/api/${param}/`
+    const url = ${API_URL}/meas/api/${param}/`
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.post(url, measurement, { headers: headers })
   }
   updateMeasurement(param,measurement) {
-    const url = `https://${API_URL}/meas/api/${param}/${measurement.id}`
+    const url = ${API_URL}/meas/api/${param}/${measurement.id}`
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.put(url, measurement, { headers: headers })
   }
   createPowerline(powerline) {
-    const url = `https://${API_URL}/drf/api/powerlines/`
+    const url = ${API_URL}/drf/api/powerlines/`
     const headers = { Authorization: `Bearer ${AuthService.getAuthToken()}` }
     return axios.post(url, powerline, { headers: headers })
   }

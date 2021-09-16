@@ -902,7 +902,7 @@ export default {
           visible: true,
           source: {
             cmp: 'vl-source-vector',
-            url: 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/powerline/?format=json'
+            url: pubhost[0].PUBHOST_URL + '/drf/api/powerline/?format=json'
           },
           style: [
             {
@@ -921,7 +921,7 @@ export default {
             url (extent, starttimestampx, endtimestampx) {
               starttimestampx = '2018-10-01T00:00:00'
               endtimestampx = '2020-01-01T00:00:00'
-              return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/mscnt/?format=json&timestamp__gte=' +
+              return pubhost[0].PUBHOST_URL + '/drf/api/mscnt/?format=json&timestamp__gte=' +
                 starttimestampx.replace('T', ' ') + '&timestamp__lte=' + endtimestampx.replace('T', ' ') + '&in_bbox=' + extent.join(',').toString()
             },
             strategyFactory () {
@@ -945,7 +945,7 @@ export default {
             url (extent, starttimestampx, endtimestampx) {
               starttimestampx = '2018-10-01T00:00:00'
               endtimestampx = '2020-01-01T00:00:00'
-              return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/gcmv/?format=json&timestamp__gte=' +
+              return pubhost[0].PUBHOST_URL + '/drf/api/gcmv/?format=json&timestamp__gte=' +
                 starttimestampx.replace('T', ' ') + '&timestamp__lte=' + endtimestampx.replace('T', ' ') + '&in_bbox=' + extent.join(',').toString()
             },
             strategyFactory () {
@@ -971,7 +971,7 @@ export default {
 
     // search timestamp
     let that = this
-    let sjurl = 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/mscntjobid/?format=json'
+    let sjurl = pubhost[0].PUBHOST_URL + '/drf/api/mscntjobid/?format=json'
     axios.get(sjurl)
       .then(function (response) {
         that.searchmscntjoptions = response.data
@@ -980,7 +980,7 @@ export default {
         console.log(error)
       })
     // search jobid
-    let cjurl = 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/gcmvjobid/?format=json'
+    let cjurl = pubhost[0].PUBHOST_URL + '/drf/api/gcmvjobid/?format=json'
     axios.get(cjurl)
       .then(function (response) {
         that.searchgcmvjoptions = response.data
@@ -1228,24 +1228,24 @@ export default {
     },
     MeasurementsURL: function (extent, instcode, starttimestampx, endtimestampx, jobidsx) {
       if (!jobidsx) {
-        return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&in_bbox=' + extent.join(',').toString()
+        return pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&in_bbox=' + extent.join(',').toString()
       } else if (jobidsx) {
         if (starttimestampx) {
           if (jobidsx.length === 1) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
+            return pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
           } else if (jobidsx.length > 1) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id__in=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
+            return pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&job_id__in=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
           } else if (jobidsx.length === 0) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&in_bbox=' + extent.join(',').toString()
+            return pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&timestamp__gte=' + starttimestampx + '&timestamp__lte=' + endtimestampx + '&in_bbox=' + extent.join(',').toString()
           } else {
             alert('this should not happen!')
             return 'this should not happen!'
           }
         } else if (!starttimestampx) {
           if (jobidsx.length === 1) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&job_id=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
+            return pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&job_id=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
           } else if (jobidsx.length > 1) {
-            return 'https://' + pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&job_id__in=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
+            return pubhost[0].PUBHOST_URL + '/drf/api/' + instcode + '/?format=json&job_id__in=' + jobidsx + '&in_bbox=' + extent.join(',').toString()
           } else {
             alert(jobidsx.length)
             // alert('this should not happen, too!')
@@ -1586,227 +1586,247 @@ export default {
 }
 </script>
 
-<style lang="sass">
-  .ol-control button
-    color: black
-    background-color: rgb(0,128,128)
-
-  .ol-control button:hover
-  .ol-control button:focus
-    text-decoration: none
-    background-color: rgb(0,128,128)
-
-  .ol-control button:hover,
-  .ol-control button:focus
-    text-decoration: none
-    background-color: rgba(0,128,128,0.8)
-
-  .ol-scale-line
-    background: rgba(0,128,128,0.8)
-
-  a:hover
-    font-weight:bold
-
-  .Powerlines
-    position: relative
-
-  .map
-    margin: 0
-    padding: 0
-    width: 100%
-    height: 100%
-
-  .view
-    margin: 0
-    padding: 0
-    width: 100%
-    height: 100%
-
-  .feature-popup
-    position: absolute
-    left: -20px
-    bottom: 12px
-    width: 20em
-    max-width: none
-
-    &:after, &:before
-      top: 100%
-      border: solid transparent
-      content: ' '
-      height: 0
-      width: 0
-      position: absolute
-      pointer-events: none
-    &:after
-      border-top-color: white
-      border-width: 10px
-      left: 48px
-      margin-left: -10px
-    &:before
-      border-top-color: #cccccc
-      border-width: 11px
-      left: 48px
-      margin-left: -11px
-
-    .card-content
-      max-height: 20em
-      overflow: auto
-
-    .content
-       word-break: break-all
-
-  .barchart-popup
-    position: absolute
-    left: -20px
-    bottom: 12px
-    width: auto
-    min-width: 27em
-    max-width: 50em
-
-    &:after, &:before
-      top: 100%
-      border: solid transparent
-      content: ' '
-      height: 0
-      width: 0
-      position: absolute
-      pointer-events: none
-    &:after
-      border-top-color: white
-      border-width: 10px
-      left: 48px
-      margin-left: -10px
-    &:before
-      border-top-color: #cccccc
-      border-width: 11px
-      left: 48px
-      margin-left: -11px
-
-    .card-content
-      max-height: 20em
-      overflow: auto
-
-    .content
-       word-break: break-all
-
-  .measurement-popup
-    window-height: 100em
-
-  .mtable
-    border: 0px
-    border-collapse: collapse
-    border-spacing: 0px
-
-  .msdot1
+<style lang="scss">
+  .ol-control button {
+    color: black;
+    background-color: rgb(0,128,128);
+  }
+  .ol-control button:hover {
+    text-decoration: none;
+    background-color: rgb(0,128,128);
+  }
+  .ol-control button:focus {
+    text-decoration: none;
+    background-color: rgb(0,128,128);
+  }
+  .ol-control button:hover, {
+    text-decoration: none;
+    background-color: rgba(0,128,128,0.8);
+  }
+  .ol-control button:focus {
+    text-decoration: none;
+    background-color: rgba(0,128,128,0.8);
+  }
+  .ol-scale-line {
+    background: rgba(0,128,128,0.8);
+  }
+  a:hover {
+    font-weight:bold;
+  }
+  .Powerlines {
+    position: relative;
+  }
+  .map {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .view {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .feature-popup {
+    position: absolute;
+    left: -20px;
+    bottom: 12px;
+    width: 20em;
+    max-width: none;
+   }
+  .feature-popup:after {
+    top: 100%;
+    border: solid transparent;
+    content: ' ';
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+  .feature-popup:before {
+    top: 100%;
+    border: solid transparent;
+    content: ' ';
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+  .feature-popup:after {
+    border-top-color: white;
+    border-width: 10px;
+    left: 48px;
+    margin-left: -10px;
+  }
+  .feature-popup:before {
+    border-top-color: #cccccc;
+    border-width: 11px;
+    left: 48px;
+    margin-left: -11px;
+  }
+  .feature-popup .card-content {
+    max-height: 20em;
+    overflow: auto;
+  }
+  .feature-popup .content {
+    word-break: break-all;
+  }
+  .barchart-popup {
+    position: absolute;
+    left: -20px;
+    bottom: 12px;
+    width: auto;
+    min-width: 27em;
+    max-width: 50em;
+  }
+  .barchart-popup:after .barchart-popup:after {
+      top: 100%;
+      border: solid transparent;
+      content: ' ';
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+  }
+  .barchart-popup:after {
+      border-top-color: white;
+      border-width: 10px;
+      left: 48px;
+      margin-left: -10px;
+  }
+  .barchart-popup:before {
+      border-top-color: #cccccc;
+      border-width: 11px;
+      left: 48px;
+      margin-left: -11px;
+  }
+  .barchart-popup .card-content {
+      max-height: 20em;
+      overflow: auto;
+  }
+  .barchart-popup .content {
+       word-break: break-all;
+  }
+  .measurement-popup {
+    window-height: 100em;
+  }
+  .mtable {
+    border: 0px;
+    border-collapse: collapse;
+    border-spacing: 0px;
+  }
+  .msdot1 {
     height: 15px;
     width: 15px;
     background-color: #84f542;
     border-radius: 50%;
-    display: inline-block
-
-  .msdot2
+    display: inline-block;
+  }
+  .msdot2 {
     height: 20px;
     width: 20px;
     background-color: #ffff04;
     border-radius: 50%;
-    display: inline-block
-
-  .msdot3
+    display: inline-block;
+  }
+  .msdot3 {
     height: 25px;
     width: 25px;
     background-color: #f52701;
     border-radius: 50%;
-    display: inline-block
-
-  .gcdot1
+    display: inline-block;
+  }
+  .gcdot1 {
     height: 15px;
     width: 15px;
     background-color: #00ff8c;
     border-radius: 50%;
-    display: inline-block
-
-  .gcdot2
+    display: inline-block;
+  }
+  .gcdot2 {
     height: 20px;
     width: 20px;
     background-color: #00a4ff;
     border-radius: 50%;
-    display: inline-block
-
-  .gcdot3
+    display: inline-block;
+  }
+  .gcdot3 {
     height: 25px;
     width: 25px;
     background-color: #062aff;
     border-radius: 50%;
-    display: inline-block
-
-  .chart
-    display: inline-block
-    width: 700px
-    height: 200px
-    margin-top: 0em
-
-  .treeinput
-    color: #025c5c
-
-  .vue-treeselect__control
+    display: inline-block;
+  }
+  .chart {
+    display: inline-block;
+    width: 700px;
+    height: 200px;
+    margin-top: 0em;
+  }
+  .treeinput {
+    color: #025c5c;
+  }
+  .vue-treeselect__control {
     height: 46px;
     border: 1px solid #b8b8b8;
     border-radius: 8px;
     background: #e0f2f1;
-
-  .vue-treeselect:not(.vue-treeselect--disabled):not(.vue-treeselect--focused) .vue-treeselect__control:hover
+  }
+  .vue-treeselect:not(.vue-treeselect--disabled):not(.vue-treeselect--focused) .vue-treeselect__control:hover {
     border-color: #919191;
-
-  .vue-treeselect--open .vue-treeselect__control
+  }
+  .vue-treeselect--open .vue-treeselect__control {
     border-color: #2e2e2e;
-
-  .vue-treeselect--focused:not(.vue-treeselect--open) .vue-treeselect__control
+  }
+  .vue-treeselect--focused:not(.vue-treeselect--open) .vue-treeselect__control {
     border-color: #008080;
     box-shadow: 0 0 0 3px rgba(3, 155, 229, 0.1);
-
-  .vue-treeselect__multi-value-item
+  }
+  .vue-treeselect__multi-value-item {
     background: #6bcfcf;
     color: #025c5c;
-
-  .vue-treeselect:not(.vue-treeselect--disabled) .vue-treeselect__multi-value-item:not(.vue-treeselect__multi-value-item- disabled):hover .vue-treeselect__multi-value-item:not(.vue-treeselect__multi-value-item-new) .vue-treeselect__multi-    value-item:not(.vue-treeselect__multi-value-item-new):hover
+  }
+  .vue-treeselect:not(.vue-treeselect--disabled) .vue-treeselect__multi-value-item:not(.vue-treeselect__multi-value-item- disabled):hover .vue-treeselect__multi-value-item:not(.vue-treeselect__multi-value-item-new) .vue-treeselect__multi-    value-item:not(.vue-treeselect__multi-value-item-new):hover {
     background: #6bcfcf;
     color: #025c5c;
-
-  .vue-treeselect__value-remove
+  }
+  .vue-treeselect__value-remove {
     color: #025c5c;
-
-  .vue-treeselect__label-container:hover .vue-treeselect__checkbox--unchecked
+  }
+  .vue-treeselect__label-container:hover .vue-treeselect__checkbox--unchecked {
     border-color: #025c5c;
     background: #fff;
-
-  .vue-treeselect__checkbox--indeterminate
+  }
+  .vue-treeselect__checkbox--indeterminate {
     border-color: #025c5c;
     background: #025c5c;
-
-  .vue-treeselect__label-container:hover .vue-treeselect__checkbox--indeterminate
+  }
+  .vue-treeselect__label-container:hover .vue-treeselect__checkbox--indeterminate {
     border-color: #025c5c;
     background: #025c5c;
-
-  .vue-treeselect__checkbox--checked
+  }
+  .vue-treeselect__checkbox--checked {
     border-color: #025c5c;
     background: #025c5c;
-
-  .vue-treeselect__label-container:hover .vue-treeselect__checkbox--checked
+  }
+  .vue-treeselect__label-container:hover .vue-treeselect__checkbox--checked {
     border-color: #025c5c;
     background: #025c5c;
-
-  .vue-treeselect__placeholder
+  }
+  .vue-treeselect__placeholder {
     color: #787878;
-
-  .q-datetimepicker.q-card
+  }
+  .q-datetimepicker.q-card {
     background: #e0f2f1;
-    .q-tab-panels
+  }
+  .q-tab-panels {
       background: #e0f2f1;
-
-  .q-input
+  }
+  .q-input {
     height: 4.0em;
-
-  .q-select
+  }
+  .q-select {
     height: 4.0em;
-
+  }
 </style>
