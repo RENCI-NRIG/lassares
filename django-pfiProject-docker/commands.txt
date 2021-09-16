@@ -1,11 +1,23 @@
-docker-compose -f docker-compose_dev.yml logs -f
-docker-compose -f docker-compose-dev.yml logs -f
-docker-compose -f docker-compose-dev.yml up -d
-
+# Build docker images and containers
 docker-compose -f docker-compose-dev-django.yml up -d --build
+
+# Check container logs
 docker-compose -f docker-compose-dev-django.yml logs -f
 
+# Create tables in database
 docker-compose -f docker-compose-dev-django.yml exec django python manage.py makemigrations --noinput
 docker-compose -f docker-compose-dev-django.yml exec django python manage.py migrate --noinput
 
+# Access database
+psql -U postgres --password -d postgres -p 5432 -h localhost
+
+# Access postgres shell
+docker exec -it django-pfiproject-docker_database_1 bash
+
+# Access django shell
+docker exec -it django-pfiproject-docker_django_1 bash
+
+# Stop and start Django container
+docker stop django-pfiproject-docker_django_1
+docker start django-pfiproject-docker_django_1
 

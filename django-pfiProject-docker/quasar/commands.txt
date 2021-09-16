@@ -1,7 +1,9 @@
-yarn install
-quasar dev
-quasar build
-
+# Build image and container
 docker-compose -f docker-compose-dev-quasar.yml up -d --build
+
+# Check quasar container logs
 docker-compose -f docker-compose-dev-quasar.yml logs -f
+
+# Access quasar shell
+docker exec -it quasar-lassares-dev sh
 

@@ -46,29 +46,7 @@ Django is a high-level Python Web framework that encourages rapid development an
      export POSTGRES_PORT=5432
      export ADMIN_PWD=abcd1234!
      ```
- 4. Update the `nginx` section of the `docker-compose.yml` file, if you want to run the operational version on your local machine. If you want to run the development version the docker-compose-dev.yml already has these changes.
-
-     ```
-     ...
-       nginx:
-         build:
-           context: .
-           dockerfile: nginx/Dockerfile
-         image: quasar 
-         container_name: quasar 
-         ports:
-           - 8080:80                    # change http port as needed
-           - 8443:443                   # change https port as needed
-         depends_on:
-           - django
-         volumes:
-           - .:/code
-           - ./static:/code/static
-           - ./media:/code/media
-           - /LOCAL_PATH_TO/your-ssl.crt:/etc/ssl/SSL.crt               # path to your SSL cert
-           - /LOCAL_PATH_TO/your-ssl.key:/etc/ssl/SSL.key               # path to your SSL key
-     ```
-     If you don't have a valid SSL certificate pair, you can generate a self-signed pair using the `generate-certificates.sh` script
+ 4. If you don't have a valid SSL certificate pair, you can generate a self-signed pair using the `generate-certificates.sh` script
 
      ```console
      $ ./generate-certificates.sh
@@ -79,17 +57,57 @@ Django is a high-level Python Web framework that encourages rapid development an
      ├── self.signed.crt
      └── self.signed.key
      ```
- 5. Run `docker-compose up -d` if you want to run the operational version, or run 'docker-compose -f docker-compose-dev.yml up -d' if you want to run the development version.
+ 5. Run 'docker-compose -f docker-compose-dev-django.yml logs -f' to run the local development version.
 
      ```console
-     $ docker-compose -f docker-compose-dev.yml up -d
+     $ docker-compose -f docker-compose-dev-django.yml logs -f
      Creating django   ... done
      Creating database ... done
      Creating quasar    ... done
      ```
     After a few moments the docker containers will have stood up and configured themselves.
- Naviage to [https://127.0.0.1:8443/](https://127.0.0.1:8443/) (or whatever you've configured your host to be).
+ Naviage to [http://127.0.0.1:8000](https://127.0.0.1:8000) (or whatever you've configured your host to be).
  
+  6. Migrate database, and load data.
+  
+  ```console
+  docker-compose -f docker-compose-dev-django.yml exec django python manage.py makemigrations --noinput
+  docker-compose -f docker-compose-dev-django.yml exec django python manage.py migrate --noinput
+  ```
+  
+  change directory to data, load data, and create views
+  
+  ```console
+  cd data
+  ./load_data.sh
+  ./create_views.sh 
+  ```
+  
+  You can check to see if you data has been loaded by going to the following url:
+  
+  http://localhost:8000/drf/api/
+  
+  If that page does not load try to stopping and then restarting the Django container:
+  
+  ```console
+  docker stop django-pfiproject-docker_django_1
+  docker start django-pfiproject-docker_django_1
+  
+  ```
+  
+  7. Create Quasar image and container.
+  
+  Change your directory to the quasar directory, and run docker compose:
+  
+    ```console
+    cd ../quasar
+    docker-compose -f docker-compose-dev-quasar.yml up -d --build    
+    ```
+    
+  After the image and container have been built you should be able to access the application at the following URL:
+  
+  http://localhost:8081/
+
 ## <a name="auth"></a>Authentication
 
 The Lassaress application uses auth0.com for authentication. The frontend of this application has a sign in button: 
