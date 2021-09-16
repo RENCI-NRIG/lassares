@@ -92,17 +92,16 @@ Django is a high-level Python Web framework that encourages rapid development an
   ```console
   docker stop django-pfiproject-docker_django_1
   docker start django-pfiproject-docker_django_1
-  
   ```
   
   7. Create Quasar image and container.
   
   Change your directory to the quasar directory, and run docker compose:
   
-    ```console
-    cd ../quasar
-    docker-compose -f docker-compose-dev-quasar.yml up -d --build    
-    ```
+  ```console
+  cd ../quasar
+  docker-compose -f docker-compose-dev-quasar.yml up -d --build    
+  ```
     
   After the image and container have been built you should be able to access the application at the following URL:
   
