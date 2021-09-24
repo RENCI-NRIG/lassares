@@ -57,10 +57,10 @@ Django is a high-level Python Web framework that encourages rapid development an
      ├── self.signed.crt
      └── self.signed.key
      ```
- 5. Run 'docker-compose -f docker-compose-dev-django.yml logs -f' to run the local development version.
+ 5. Run 'docker-compose -f docker-compose-dev-django.yml up -d --build' to run the local development version.
 
      ```console
-     $ docker-compose -f docker-compose-dev-django.yml logs -f
+     $ docker-compose -f docker-compose-dev-django.yml up -d --build
      Creating django   ... done
      Creating database ... done
      Creating quasar    ... done
