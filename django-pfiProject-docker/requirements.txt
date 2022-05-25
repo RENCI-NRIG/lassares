@@ -14,7 +14,7 @@ future==0.16.0
 idna==2.6
 pycparser==2.18
 pycrypto==2.6.1
-PyJWT==1.5.3
+PyJWT==2.4.0
 python-jose==1.4.0
 markdown==3.1.1
 packaging==19.2
